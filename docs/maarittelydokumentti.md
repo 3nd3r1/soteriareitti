@@ -1,45 +1,87 @@
-# TransitXpert - Määrittelydokumentti
+# SoteriaReitti - Määrittelydokumentti
 
-TransitXpert on joukkoliikenteen reittien optimointisovellus, jonka avulla kaupunkien omistajat ja joukkoliikennepalvelujen tarjoajat voivat suunnitella tehokkaita bussireittejä. Sovellus yhdistää käyttäjien tarpeet, matkustusvaatimukset ja joukkoliikenteen resurssit tarjoten älykkään reittien optimoinnin.
+SoteriaReitti on Pythonilla toteutettava sovellus, joka on suunniteltu hätätyöntekijöille. Sovellus auttaa heitä löytämään parhaat mahdolliset reitit hätätilanteissa ja ruuhkaisilla teillä. SoteriaReitti tulee kreikasta ja tarkoittaa pelastuksen tietä, mikä kuvastaa projektin ydintavoitetta: tarjota pelastava reitti niille, jotka sitä tarvitsevat.
 
-## Ohjelmointikieli
+## Ohjelmointikieli ja Muut Kielet
+### Ohjelmointikieli:
+SoteriaReitti-projekti toteutetaan pääasiassa Python-ohjelmointikielellä. Python tarjoaa monipuolisen valikoiman kirjastoja ja työkaluja datan käsittelyyn, verkkorakenteiden rakentamiseen ja reitinhakuun, mikä tekee siitä ihanteellisen kielen tähän projektiin. 
 
-Tämän projektin pääasiallinen ohjelmointikieli on Python. Projektin alkuvaiheessa keskitytään komentorivitoiminnallisuuteen, ja myöhemmin toteutetaan Tkinter-pohjainen graafinen käyttöliittymä (GUI).
+Projektin alkuvaiheessa keskitytään komentorivitoiminnallisuuteen, ja myöhemmin toteutetaan Tkinter-pohjainen tai Django-pohjainen graafinen käyttöliittymä (GUI).
 
-## Muut kielet
+Jos käytössä on Tkinter-pohjainen käyttöliittymä voidaan käyttää [TkinterMapViewtä](https://github.com/TomSchimansky/TkinterMapView)
 
-Dokumentaatiomme pääkieli on suomi. Koodi ja siihen liittyvät nimet, kuten muuttujat ja funktiot, kirjoitetaan pääosin englanniksi, ja kommentit koodissa kirjoitetaan myös englanniksi.
+**Muut ohjelmointikielet joita hallitsen:** Javascript, Python
 
-## Algoritmit ja tietorakenteet:
+### Kirjakielet:
+Projektissa keskitytään pääasiassa suomen kieleen dokumentaation osalta. Koodi ja siihen liittyvät nimet, kuten muuttujat ja funktiot, kirjoitetaan pääosin englanniksi. Koodin kommentit kirjoitetaan myös englanniksi varmistaen näin hyvän yhteistyön ja avoimen kommunikaation projektin eri vaiheissa.
 
-Projektin tavoitteena on suunnitella ja kehittää ohjelmisto kaupunkien bussireittien suunnitteluun ja optimointiin.
+## Algoritmit ja Tietorakenteet
+### Algoritmit
+Pääasiallisina reittinhakualgoritmeina käytetään Dijkstra'n algoritmia ja IDA* (Iterative Deepening A*). Näiden kahden algoritmin valinta perustuu seuraaviin perusteluihin:
 
-Projektissa käytetään useita algoritmeja ja tietorakenteita, mukaan lukien heuristisia ratkaisuja ja lähes optimoituja ratkaisuja VRP-ongelman (Vehicle Routing Problem) ratkaisemiseen.
+- **Dijkstra'n algoritmi**: Dijkstra'n algoritmi on laajalti käytetty lyhimmän polun etsintäalgoritmi, joka toimii painotetussa verkossa. Tämä algoritmi soveltuu erityisesti tilanteisiin, joissa tarvitaan tarkan ja optimaalisen reitin etsintää. Dijkstra'n algoritmi pystyy laskemaan lyhimmän reitin kaikille mahdollisille kohteille lähtöpisteestä. [Wikipedia](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
 
-VRP on lyhenteenä Vehicle Routing Problem, ja se on NP-vaikea ongelma, joka esiintyy monissa käytännön tilanteissa, kuten joukkoliikenteen suunnittelussa. Ongelma liittyy siihen, miten joukkoliikennevälineitä, kuten busseja, käytetään tehokkaasti ja taloudellisesti reittien suunnittelussa. Tavoitteena on löytää optimaaliset reitit kaikille liikennevälineille kattamaan kaikki matkasuunnitelmat.
+- **IDA\* (Iterative Deepening A\*)**: IDA\* on tehokas algoritmi, joka löytää lyhimmän reitin lähtöpisteestä määränpäähän, mutta se tekee sen iteratiivisesti ja käyttää vähemmän muistia kuin perinteinen A\* algoritmi. IDA\* on hyvä valinta, kun tarvitaan nopeita reittihakuja reaaliajassa, ja muistin käyttö on rajoitettua. [Wikipedia](https://en.wikipedia.org/wiki/Iterative_deepening_A*)
 
-VRP Ongelmasta lisää tietoa [Wikipediasta](https://en.wikipedia.org/wiki/Vehicle_routing_problem)
+### Tietorakenteet
+SoteriaReitti-sovelluksessa hyödynnetään kekorakenteita ja erilaisia verkkorakenteita, jotka perustuvat liikennetietoihin ja reitinetsintään. Kekorakenteet ovat keskeinen osa Dijkstra'n algoritmin toimintaa, kun taas verkkorakenteet auttavat tehokkaassa reitinetsinnässä.
 
-### Projektissa käytettävät päätösalgoritmit ja tietorakenteet sisältävät seuraavat:
+## Aika- ja tilavaativuudet:
 
--   Clarke-Wright -säästöalgoritmi (Clark & Wright Savings Algorithm) reittien alustavaan luomiseen. Lisää [täältä](https://iopscience.iop.org/article/10.1088/1742-6596/2421/1/012045/pdf)
--   Lähimmän naapurin algoritmi reittien optimointiin. Lisää [Wikipediasta](https://en.wikipedia.org/wiki/Nearest_neighbour_algorithm)
--   Geneettinen algoritmi. Lisää [Wikipediasta](https://en.wikipedia.org/wiki/Genetic_algorithm)
+Dijkstra'n algoritmin aikavaativuus riippuu verkoston koosta ja rakenteesta, mutta se voi olla $O(V^2)$ tai $O(E + V \cdot log(V))$, missä $V$ on solmujen määrä ja $E$ on kaarten määrä verkossa.
 
-## Aika- ja Tilavaativuudet:
+IDA* algoritmi perustuu A* algoritmiin, ja sen aikavaativuus riippuu heuristiikan laadusta ja tilavaativuus riippuu rekursiivisten kutsujen syvyydestä. Tyypillisesti IDA* on tilavaativuudeltaan parempi kuin A*, mutta se voi olla hitaampi, koska se tekee saman työn iteratiivisesti useaan otteeseen.
 
-Projektin tavoitteena on luoda tehokas ja nopea reittien optimointiohjelma. Aikavaativuuksien ja tilavaativuuksien tarkempi analyysi suoritetaan projektin edetessä.
+Lisäksi OSM (OpenStreetMap) datan lukeminen view jonkin verran aikaa ja muistia.
 
-## Syötteet
+## Syötteet:
 
-Ohjelma saa syötteenä tietoja kaupunkien bussireiteistä, kuten pysäkit ja niihin liittyvät matkat. Tietoja voidaan antaa tekstitiedostojen tai käyttöliittymän kautta.
+SoteriaReitti-sovelluksessa on useita syötteitä, jotka auttavat määrittämään hätätilanteen parametrit ja reitinetsintäparametrit. Syötteet sisältävät seuraavat tiedot:
 
-### Käyttäjän valinta ja tulosten vertailu:
+- Hätätilanteen sijainti: Käyttäjä antaa hätätilanteen sijainnin, joko koordinaatteina tai osoitteena. Tämä on lähtöpiste, josta reitinetsintä alkaa.
 
-Ohjelmiston käyttäjälle tarjotaan mahdollisuus valita erilaisia algoritmeja ja asettaa erilaisia tavoitteita reittien optimoinnille. Käyttäjä voi esimerkiksi valita Clarke-Wright -algoritmin ja asettaa tavoitteeksi minimoida kuljetuskustannuksia, tai valita lähimmän naapurin -algoritmin ja asettaa tavoitteeksi minimoida reittien pituutta.
+- Hätätilanteen tyyppi: Käyttäjä määrittelee hätätilanteen tyypin, esimerkiksi sydänkohtaus, onnettomuus, tulipalo jne. Jokaiselle hätätilanteelle voi olla erilaiset reitinetsintäparametrit.
 
-Ohjelmisto tuottaa käyttäjän valintojen perusteella erilaisia reittiehdotuksia, ja käyttäjä voi vertailla näitä ehdotuksia eri algoritmien ja tavoitteiden perusteella. Tämä mahdollistaa eri reittien ja ratkaisujen vertailun ja auttaa käyttäjää valitsemaan parhaiten tarpeisiinsa sopivan ratkaisun.
+- Reitinoptimointi: Käyttäjä voi valita haluamansa reitinoptimointialgoritmin (esimerkiksi Dijkstra, IDA*). Jokaisella algoritmilla voi olla erilaiset tulokset ja parametrit.
 
-## Lähteitä
+Sovellus ottaa nämä syötteet huomioon ja käyttää niitä reitinetsinnän aloittamiseen. Hätätilanteen luonteen ja hätäajoneuvon tyyppi vaikuttavat siihen, miten reitti optimoidaan. Sovelluksen tehtävänä on etsiä nopein ja tehokkain reitti hätätilanteen sijaintiin sekä hätätilanteen sijainnista eteenpäin, esimerkiksi sairaalaan, mikäli kyseessä on ambulanssi. Tavoitteena on tarjota mahdollisimman nopea ja sujuva reittiohje hätätilanteiden hoitohenkilöstölle, jotta he voivat saapua kohteeseen nopeasti ja turvallisesti.
 
--   https://en.wikipedia.org/wiki/Vehicle_routing_problem
+### Ulkoista dataa
+
+SoteriaReitti-sovelluksen kehityksen alkuvaiheessa keskitytään Helsingin kaupunkiin, ja se hyödyntää erityisesti Helsingissä sijaitsevia palveluja ja tietolähteitä. Tämä mahdollistaa tehokkaan reittien suunnittelun ja optimoinnin hätätilanteissa Helsingin alueella. Tässä on joitakin keskeisiä ulkoisen datan lähteitä:
+
+- Liikennetietojen Lähde: Sovellus saa ajantasaista liikennetietoa eri reittiosuuksilta. Tämä tieto voi tulla erilaisista liikennevirastoista tai palveluntarjoajista, kuten kaupungin liikennetietopalveluista tai liikennedataa tarjoavista yrityksistä. Esimerkiksi [Helsingin kaupunki](https://hri.fi/data/fi/dataset/liikennemaarat-helsingissa) voi tarjota liikennetietojaan avoimen datan rajapinnan kautta. 
+
+- Karttatietojen Lähde: Karttatiedot ovat olennainen osa reittien suunnittelua. Sovellus voi käyttää karttatietoja, jotka tulevat avoimen karttadatan lähteistä, kuten [OpenStreetMap](https://www.openstreetmap.org) (OSM). OSM tarjoaa laajan tietokannan karttatietoja, kuten katujen sijainnit, liikennemerkit ja maantieteelliset piirteet. 
+
+- Reittidata ja Osoitetiedot: Saadakseen tietoa reittiosuuksista ja osoitteista, sovellus voi hyödyntää julkisia reittidataa tarjoavia rajapintoja, kuten [Nominatim](https://nominatim.openstreetmap.org/ui/search.html). Näitä tietoja voidaan käyttää reittien suunnitteluun ja osoitteiden tunnistamiseen.
+
+- Hätäpalvelujen Tiedot: Tietoja eri hätäpalveluista, kuten sairaaloista, paloasemista ja poliisiasemista, voidaan saada suoraan virallisilta hätäpalvelujen organisaatioilta. Sovellus voi hyödyntää näitä tietoja tarjotakseen käyttäjille reittejä näihin tärkeisiin kohteisiin hätätilanteissa. Lisäksi on mahdollista harkita reaaliaikaisen hälytysajoneuvojen sijainnin seuraamista tulevaisuudessa. Projektin alkuvaiheessa suurin osa tiedoista syötetään manuaalisesti, kunnes automatisoidut tiedonkeruujärjestelmät voidaan integroida osaksi sovellusta.
+
+Nämä ulkoisen datan lähteet ja rajapinnat ovat keskeisiä SoteriaReitti-sovelluksen toiminnassa. Ne mahdollistavat reaaliaikaisen ja tarkan reittien optimoinnin hätätilanteissa ottaen huomioon liikennetiedot, karttatiedot ja tarvittavat kohteet.
+
+## Alkeellinen luokka rakenne
+
+```mermaid 
+classDiagram
+    class SoteriaReitti {
+    }
+
+    class Kartta {
+    }
+
+    class HataPalvelut {
+    }
+
+    class Utils {
+    }
+
+    class GUI {
+    }
+
+```
+
+## Muuta
+
+- **Opinto-ohjelma:** tietojenkäsittelytieteen kandidaatti (TKT)
+- **Muut ohjelmointikielet joita hallitsen:** Javascript, Python

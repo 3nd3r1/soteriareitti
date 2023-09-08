@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "transitxpert"
+name = "soteriareitti"
 version = "0.1.0"
 description = ""
 authors = ["3nd3r1 <ender.spam.guru@gmail.com>"]
