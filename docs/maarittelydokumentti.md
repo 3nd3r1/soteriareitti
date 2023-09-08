@@ -60,27 +60,6 @@ SoteriaReitti-sovelluksen kehityksen alkuvaiheessa keskitytään Helsingin kaupu
 
 Nämä ulkoisen datan lähteet ja rajapinnat ovat keskeisiä SoteriaReitti-sovelluksen toiminnassa. Ne mahdollistavat reaaliaikaisen ja tarkan reittien optimoinnin hätätilanteissa ottaen huomioon liikennetiedot, karttatiedot ja tarvittavat kohteet.
 
-## Alkeellinen luokka rakenne
-
-```mermaid 
-classDiagram
-    class SoteriaReitti {
-    }
-
-    class Kartta {
-    }
-
-    class HataPalvelut {
-    }
-
-    class Utils {
-    }
-
-    class GUI {
-    }
-
-```
-
 ## Muuta
 
 - **Opinto-ohjelma:** tietojenkäsittelytieteen kandidaatti (TKT)
