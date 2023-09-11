@@ -1,10 +1,10 @@
+""" soteriareitti/core/graph.py """
+import logging
 import itertools
-
 import networkx as nx
 
 from core._overpass import OverpassAPI
 from utils.utils_graph import GraphUtils
-from utils.logger import logger
 
 
 class Graph:
@@ -15,7 +15,7 @@ class Graph:
         self._graph = nx.DiGraph()
 
     def create_graph(self):
-        logger.debug("Starting graph creation")
+        logging.debug("Starting graph creation")
         data = self.overpass_api.get_overpass_data("Töölö")
 
         nodes = {}
@@ -34,11 +34,11 @@ class Graph:
             self._graph.add_edges_from(edges)
 
         self._graph = GraphUtils.get_largest_component(self._graph)
-        logger.debug("Graph creation done")
+        logging.debug("Graph creation done")
 
     def get_shortest_path(self, start, end) -> list | None:
         # Tämä toteutetaan myöhemmin omalla alogirtmillä
-        logger.debug("Starting shortest path search")
+        logging.debug("Starting shortest path search")
 
         try:
             path = list(nx.shortest_path(self._graph, start, end))

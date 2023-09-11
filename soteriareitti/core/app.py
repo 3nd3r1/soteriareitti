@@ -2,7 +2,6 @@
 import logging
 
 from geopy.distance import geodesic
-
 from core.graph import Graph
 
 

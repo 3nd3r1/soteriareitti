@@ -1,8 +1,8 @@
 # soteriareitti/overpass_api.py
-
 import overpy
+import logging
+
 from utils.settings import Settings
-from utils.logger import logger
 
 
 class OverpassAPI:
@@ -26,7 +26,7 @@ class OverpassAPI:
             self._maxsize = f"[maxsize:{Settings.max_size}]"
 
     def get_overpass_data(self, place) -> overpy.Result:
-        logger.debug("Starting overpass query")
+        logging.debug("Starting overpass query")
         op_settings = OverpassAPI.overpass_settings.format(
             timeout=self._timeout, maxsize=self._maxsize)
         op_search = OverpassAPI.overpass_search.format(name=place)
@@ -35,5 +35,5 @@ class OverpassAPI:
         query_str = f"{op_settings};{op_search};(way(area.searchArea){op_filter};>;);out;"
 
         result = self._api.query(query_str)
-        logger.debug("Overpass query done")
+        logging.debug("Overpass query done")
         return result
