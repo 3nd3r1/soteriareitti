@@ -9,8 +9,9 @@ from utils.utils_geo import GeoUtils, Location, Distance
 
 
 class Graph:
-    def __init__(self):
+    def __init__(self, user_interface):
         self._overpass_api = OverpassAPI()
+        self._ui = user_interface
 
         # Tästä tulee myöhemmin oma tietorakenne
         self._graph = nx.DiGraph()
@@ -50,6 +51,10 @@ class Graph:
 
     def get_closest_node(self, location: Location):
         bounding_box = GeoUtils.calculate_bbox(location, Distance(100))
+        self._ui.create_marker(location)
+        self._ui.create_marker(bounding_box.max_location)
+        self._ui.create_marker(bounding_box.min_location)
+
         data = self._overpass_api.get_overpass_bbox(bounding_box)
 
         closest_node = None

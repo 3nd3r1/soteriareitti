@@ -2,15 +2,15 @@
 import sys
 
 from utils.logging_config import configure_logging
-from ui.ui import Ui
+from ui.gui import Gui
 
 
 def main():
-    user_interface = Ui()
+    user_interface = Gui()
     user_interface.run()
 
 
 if __name__ == "__main__":
-    debug = (sys.argv[-1] == "debug")
-    configure_logging(debug)
+    DEBUG = sys.argv[-1] == "debug"
+    configure_logging(DEBUG)
     main()

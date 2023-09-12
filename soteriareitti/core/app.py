@@ -2,15 +2,14 @@
 import logging
 
 from core.graph import Graph
-from ui.ui import Ui
 from utils.utils_geo import Location
 
 
 class SoteriaReitti:
-    def __init__(self, user_interface: Ui):
+    def __init__(self, user_interface):
 
-        self._graph = Graph()
         self._ui = user_interface
+        self._graph = Graph(user_interface)
 
         self._graph.create_graph()
 
