@@ -5,18 +5,19 @@ import networkx as nx
 
 from core._overpass import OverpassAPI
 from utils.utils_graph import GraphUtils
+from utils.utils_geo import GeoUtils, Location, Distance
 
 
 class Graph:
     def __init__(self):
-        self.overpass_api = OverpassAPI()
+        self._overpass_api = OverpassAPI()
 
         # Tästä tulee myöhemmin oma tietorakenne
         self._graph = nx.DiGraph()
 
     def create_graph(self):
         logging.debug("Starting graph creation")
-        data = self.overpass_api.get_overpass_data("Töölö")
+        data = self._overpass_api.get_overpass_place("Töölö")
 
         nodes = {}
         ways = {}
@@ -46,6 +47,14 @@ class Graph:
             path = None
 
         return path
+
+    def get_closest_node(self, location: Location):
+        bounding_box = GeoUtils.calculate_bbox(location, Distance(100))
+        data = self._overpass_api.get_overpass_bbox(bounding_box)
+
+        closest_node = None
+        for node in data.nodes:
+            logging.debug(node)
 
     @property
     def nodes(self) -> list:

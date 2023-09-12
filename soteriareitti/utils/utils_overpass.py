@@ -1,4 +1,5 @@
 """ soteriareitti/utils/utils_overpass.py """
+from utils.utils_geo import BoundingBox
 
 
 class OverpassUtils:
@@ -27,7 +28,7 @@ class OverpassUtils:
         return f"{op_settings};{op_search};(way(area.searchArea){op_filter};>;);out;"
 
     @staticmethod
-    def generate_bbox_query(bbox: tuple[float, float, float, float],
+    def generate_bbox_query(bounding_box: BoundingBox,
                             maxsize: int | None = None, timeout: int = 30) -> str:
         """ Generate an overpass query for a bounding box """
 
@@ -36,5 +37,7 @@ class OverpassUtils:
 
         op_settings = OverpassUtils.op_settings.format(maxsize=op_maxsize, timeout=op_timeout)
         op_filter = OverpassUtils.op_filter
+
+        bbox = bounding_box.as_tuple()
 
         return f"{op_settings};(way({bbox[1]},{bbox[0]},{bbox[3]},{bbox[2]}){op_filter};>;);out;"
