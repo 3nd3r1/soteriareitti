@@ -28,7 +28,14 @@ class Gui:
 
     def __on_left_click(self, pos: tuple):
         logging.debug("Left click at %s", pos)
-        self._app.get_closest_node(Location(*pos))
+
+        closest_node = self._app.get_closest_node(Location(pos[1], pos[0]))
+
+        if closest_node and closest_node.lon and closest_node.lat:
+            logging.debug("Closest node: %s", closest_node)
+
+            node_location = Location(float(closest_node.lon), float(closest_node.lat))
+            self._map_widget.set_marker(node_location.latitude, node_location.longitude)
 
     def run(self):
         self._root.mainloop()

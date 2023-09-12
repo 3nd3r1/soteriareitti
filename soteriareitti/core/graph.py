@@ -2,10 +2,11 @@
 import logging
 import itertools
 import networkx as nx
+import overpy
 
 from core._overpass import OverpassAPI
 from utils.utils_graph import GraphUtils
-from utils.utils_geo import Location, Distance
+from utils.utils_geo import GeoUtils, Location, Distance
 
 
 class Graph:
@@ -48,13 +49,27 @@ class Graph:
 
         return path
 
-    def get_closest_node(self, location: Location):
-        data = self._overpass_api.get_location_nodes(location, Distance(100))
+    def get_closest_node(self, location: Location) -> overpy.Node | None:
+        """ Get closest node from a location that is atleast 50 meters close"""
+        min_distance = Distance(50)
 
-        logging.debug("Data: %s", data)
-        logging.debug("Nodes: %s", data.nodes)
-        for node in data.nodes:
-            logging.debug("Node: %s", node)
+        data = self._overpass_api.get_around_data(location, min_distance)
+
+        closest_node = None
+
+        nodes: list[overpy.Node] = data.nodes
+        for node in nodes:
+            if not node.lon or not node.lat:
+                continue
+
+            distance_to_center = GeoUtils.calculate_distance(
+                location, Location(float(node.lon), float(node.lat)))
+
+            if distance_to_center.meters < min_distance.meters:
+                closest_node = node
+                min_distance = distance_to_center
+
+        return closest_node
 
     @property
     def nodes(self) -> list:

@@ -20,20 +20,25 @@ class OverpassAPI:
         logging.debug("Starting overpass place query with: %s", place)
 
         query_str = OverpassUtils.generate_place_query(place, self._maxsize, self._timeout)
+        logging.debug("Running query: %s", query_str)
+
         result = self._api.query(query_str)
 
         logging.debug("Overpass place query done")
 
         return result
 
-    def get_location_nodes(self, location: Location, radius: Distance) -> overpy.Result:
-        """ Get overpass data from a bounding_box of form (lon1, lat1, lon2, lat2)"""
-        logging.debug("Starting overpass location area query with: %s", location)
+    def get_around_data(self, center: Location, radius: Distance) -> overpy.Result:
+        """ Get overpass data around a center location """
+        logging.debug("Starting overpass around query with center: %s", center)
 
-        query_str = OverpassUtils.generate_location_query(
-            location, radius, self._maxsize, self._timeout)
+        query_str = OverpassUtils.generate_around_query(
+            center, radius, self._maxsize, self._timeout)
+
+        logging.debug("Running query: %s", query_str)
+
         result = self._api.query(query_str)
 
-        logging.debug("Overpass location query done")
+        logging.debug("Overpass around query done")
 
         return result

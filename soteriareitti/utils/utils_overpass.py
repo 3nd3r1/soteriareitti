@@ -28,8 +28,8 @@ class OverpassUtils:
         return f"{op_settings};{op_search};(way(area.searchArea){op_filter};>;);out;"
 
     @staticmethod
-    def generate_location_query(location: Location, radius: Distance,
-                                maxsize: int | None = None, timeout: int = 30) -> str:
+    def generate_around_query(center: Location, radius: Distance,
+                              maxsize: int | None = None, timeout: int = 30) -> str:
         """ Generate an overpass query that searches for nodes around a location """
 
         op_maxsize = f"[maxsize:{maxsize}]" if maxsize else ""
@@ -38,5 +38,5 @@ class OverpassUtils:
         op_settings = OverpassUtils.op_settings.format(maxsize=op_maxsize, timeout=op_timeout)
         op_filter = OverpassUtils.op_filter
 
-        return f"{op_settings};(node(around:{radius.meters},{location.latitude},\
-            {location.longitude}){op_filter};);out;"
+        return f"{op_settings};(node(around:{radius.meters},{center.latitude},\
+        {center.longitude}){op_filter};);out;"
