@@ -1,4 +1,4 @@
-# soteriareitti/utils_graph.py
+""" soteriareitti/utils_graph.py """
 import networkx as nx
 
 

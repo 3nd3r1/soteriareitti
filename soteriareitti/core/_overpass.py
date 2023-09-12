@@ -1,39 +1,37 @@
-# soteriareitti/overpass_api.py
-import overpy
+""" soteriareitti/overpass_api.py """
 import logging
+import overpy
 
 from utils.settings import Settings
+from utils.utils_overpass import OverpassUtils
 
 
 class OverpassAPI:
-    overpass_settings = "[out:json][timeout:{timeout}]{maxsize}"
-    overpass_search = "area[name='{name}']->.searchArea"
-    overpass_filter = (
-        f'["highway"]["area"!~"yes"]["access"!~"private"]'
-        f'["highway"!~"abandoned|bridleway|bus_guideway|construction|corridor|cycleway|elevator|'
-        f"escalator|footway|no|path|pedestrian|planned|platform|proposed|raceway|razed|steps|"
-        f'track"]'
-        f'["motor_vehicle"!~"no"]["motorcar"!~"no"]'
-        f'["service"!~"emergency_access|parking|parking_aisle|private"]'
-    )
 
     def __init__(self):
         self._api = overpy.Overpass()
-        self._timeout = str(Settings.timeout)
-        self._maxsize = ""
 
-        if Settings.max_size:
-            self._maxsize = f"[maxsize:{Settings.max_size}]"
+        self._maxsize = Settings.max_size
+        self._timeout = Settings.timeout or 30
 
-    def get_overpass_data(self, place) -> overpy.Result:
-        logging.debug("Starting overpass query")
-        op_settings = OverpassAPI.overpass_settings.format(
-            timeout=self._timeout, maxsize=self._maxsize)
-        op_search = OverpassAPI.overpass_search.format(name=place)
-        op_filter = OverpassAPI.overpass_filter
+    def get_overpass_place(self, place: str) -> overpy.Result:
+        """ Get overpass data from a place name """
+        logging.debug("Starting overpass place query with: %s", place)
 
-        query_str = f"{op_settings};{op_search};(way(area.searchArea){op_filter};>;);out;"
-
+        query_str = OverpassUtils.generate_place_query(place, self._maxsize, self._timeout)
         result = self._api.query(query_str)
-        logging.debug("Overpass query done")
+
+        logging.debug("Overpass place query done")
+
+        return result
+
+    def get_overpass_bbox(self, bounding_box: tuple[float, float, float, float]) -> overpy.Result:
+        """ Get overpass data from a bounding_box of form (lon1, lat1, lon2, lat2)"""
+        logging.debug("Starting overpass bounding box query with: %s", bounding_box)
+
+        query_str = OverpassUtils.generate_bbox_query(bounding_box, self._maxsize, self._timeout)
+        result = self._api.query(query_str)
+
+        logging.debug("Overpass bbox query query done")
+
         return result

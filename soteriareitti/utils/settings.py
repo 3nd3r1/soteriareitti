@@ -1,4 +1,4 @@
-# soteriareitti/settings.py
+""" soteriareitti/settings.py """
 
 
 class Settings:
