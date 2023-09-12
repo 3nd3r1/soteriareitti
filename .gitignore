@@ -1,6 +1,6 @@
 /.vscode
+/.vscode/**
 /.py_cache
 /trash
 /cache
 **/__pycache__
-.vscode/settings.json
