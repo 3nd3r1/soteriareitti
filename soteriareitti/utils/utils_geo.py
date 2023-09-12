@@ -80,12 +80,10 @@ class GeoUtils:
     @staticmethod
     def calculate_bbox(location: Location, distance: Distance) -> BoundingBox:
         """ Calculate a bounding box from a location that is distance large"""
-        latitude_rad = math.radians(location.latitude)
 
-        angular_distance = distance.meters / GeoUtils.earth_radius.meters
-
-        latitude_offset = angular_distance
-        longitude_offset = angular_distance / math.cos(latitude_rad)
+        latitude_offset = (distance.meters/2) / GeoUtils.earth_radius.meters
+        longitude_offset = (distance.meters/2) / \
+            (GeoUtils.earth_radius.meters*math.cos(location.latitude_rad))
 
         latitude_offset_deg = math.degrees(latitude_offset)
         longitude_offset_deg = math.degrees(longitude_offset)
@@ -103,20 +101,15 @@ class GeoUtils:
     @staticmethod
     def calculate_distance(location_source: Location, location_target: Location) -> Distance:
         """ Calculate distance between two locations """
-        latitude_source_rad = math.radians(location_source.latitude)
-        longitude_source_rad = math.radians(location_source.longitude)
-        latitude_target_rad = math.radians(location_target.latitude)
-        longitude_target_rad = math.radians(location_target.longitude)
-
-        difference_longitude = longitude_target_rad - longitude_source_rad
-        difference_latitude = latitude_target_rad - latitude_source_rad
+        difference_longitude = location_target.longitude_rad - location_source.longitude_rad
+        difference_latitude = location_target.latitude_rad - location_source.latitude_rad
 
         # Haversine formula
         # https://www.movable-type.co.uk/scripts/latlong.html
 
         # pylint: disable-next=invalid-name
-        a = math.sin(difference_latitude / 2)**2 + math.cos(latitude_source_rad) * \
-            math.cos(latitude_target_rad) * math.sin(difference_longitude / 2)**2
+        a = math.sin(difference_latitude / 2)**2 + math.cos(location_source.latitude_rad) * \
+            math.cos(location_target.latitude_rad) * math.sin(difference_longitude / 2)**2
 
         # pylint: disable-next=invalid-name
         c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
