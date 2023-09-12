@@ -47,56 +47,8 @@ class Distance:
         return self.__distance_meters/1000
 
 
-class BoundingBox:
-    """
-    BoundingBox class represents a bounding box on the map
-
-    min_location is the bottom left corner of the box 
-    max_location is the top right corner of the box
-    """
-
-    def __init__(self, min_location: Location, max_location: Location):
-        self.min_location = min_location
-        self.max_location = max_location
-
-    def __str__(self):
-        return f"Bounding box from {self.min_location} to {self.max_location}"
-
-    def as_tuple(self) -> tuple[float, float, float, float]:
-        return self.min_location.as_tuple() + self.max_location.as_tuple()
-
-    def as_polygon(self) -> list[tuple[float, float]]:
-        top_left = Location(self.min_location.longitude, self.max_location.latitude).as_tuple()
-        top_right = self.max_location.as_tuple()
-        bottom_right = Location(self.max_location.longitude, self.min_location.latitude).as_tuple()
-        bottom_left = self.min_location.as_tuple()
-
-        return [top_left, top_right, bottom_right, bottom_left]
-
-
 class GeoUtils:
     earth_radius = Distance(6378137)  # Earth radius in meters
-
-    @staticmethod
-    def calculate_bbox(location: Location, distance: Distance) -> BoundingBox:
-        """ Calculate a bounding box from a location that is distance large"""
-
-        latitude_offset = (distance.meters/2) / GeoUtils.earth_radius.meters
-        longitude_offset = (distance.meters/2) / \
-            (GeoUtils.earth_radius.meters*math.cos(location.latitude_rad))
-
-        latitude_offset_deg = math.degrees(latitude_offset)
-        longitude_offset_deg = math.degrees(longitude_offset)
-
-        min_latitude = location.latitude - latitude_offset_deg
-        min_longitude = location.longitude - longitude_offset_deg
-        max_latitude = location.latitude + latitude_offset_deg
-        max_longitude = location.longitude + longitude_offset_deg
-
-        min_location = Location(min_longitude, min_latitude)
-        max_location = Location(max_longitude, max_latitude)
-
-        return BoundingBox(min_location, max_location)
 
     @staticmethod
     def calculate_distance(location_source: Location, location_target: Location) -> Distance:

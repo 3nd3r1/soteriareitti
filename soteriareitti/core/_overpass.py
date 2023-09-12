@@ -4,7 +4,7 @@ import overpy
 
 from utils.settings import Settings
 from utils.utils_overpass import OverpassUtils
-from utils.utils_geo import BoundingBox
+from utils.utils_geo import Location, Distance
 
 
 class OverpassAPI:
@@ -15,7 +15,7 @@ class OverpassAPI:
         self._maxsize = Settings.max_size
         self._timeout = Settings.timeout or 30
 
-    def get_overpass_place(self, place: str) -> overpy.Result:
+    def get_place_data(self, place: str) -> overpy.Result:
         """ Get overpass data from a place name """
         logging.debug("Starting overpass place query with: %s", place)
 
@@ -26,13 +26,14 @@ class OverpassAPI:
 
         return result
 
-    def get_overpass_bbox(self, bounding_box: BoundingBox) -> overpy.Result:
+    def get_location_nodes(self, location: Location, radius: Distance) -> overpy.Result:
         """ Get overpass data from a bounding_box of form (lon1, lat1, lon2, lat2)"""
-        logging.debug("Starting overpass bounding box query with: %s", bounding_box)
+        logging.debug("Starting overpass location area query with: %s", location)
 
-        query_str = OverpassUtils.generate_bbox_query(bounding_box, self._maxsize, self._timeout)
+        query_str = OverpassUtils.generate_location_query(
+            location, radius, self._maxsize, self._timeout)
         result = self._api.query(query_str)
 
-        logging.debug("Overpass bbox query query done")
+        logging.debug("Overpass location query done")
 
         return result

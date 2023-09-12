@@ -1,5 +1,5 @@
 """ soteriareitti/utils/utils_overpass.py """
-from utils.utils_geo import BoundingBox
+from utils.utils_geo import Location, Distance
 
 
 class OverpassUtils:
@@ -16,7 +16,7 @@ class OverpassUtils:
 
     @staticmethod
     def generate_place_query(place: str, maxsize: int | None = None, timeout: int = 30) -> str:
-        """ Generate an overpass query for a place name """
+        """ Generate an overpass query that searches for nodes and ways in a place """
 
         op_maxsize = f"[maxsize:{maxsize}]" if maxsize else ""
         op_timeout = str(timeout) if timeout else "30"
@@ -28,9 +28,9 @@ class OverpassUtils:
         return f"{op_settings};{op_search};(way(area.searchArea){op_filter};>;);out;"
 
     @staticmethod
-    def generate_bbox_query(bounding_box: BoundingBox,
-                            maxsize: int | None = None, timeout: int = 30) -> str:
-        """ Generate an overpass query for a bounding box """
+    def generate_location_query(location: Location, radius: Distance,
+                                maxsize: int | None = None, timeout: int = 30) -> str:
+        """ Generate an overpass query that searches for nodes around a location """
 
         op_maxsize = f"[maxsize:{maxsize}]" if maxsize else ""
         op_timeout = str(timeout) if timeout else "30"
@@ -38,6 +38,5 @@ class OverpassUtils:
         op_settings = OverpassUtils.op_settings.format(maxsize=op_maxsize, timeout=op_timeout)
         op_filter = OverpassUtils.op_filter
 
-        bbox = bounding_box.as_tuple()
-
-        return f"{op_settings};(way({bbox[1]},{bbox[0]},{bbox[3]},{bbox[2]}){op_filter};>;);out;"
+        return f"{op_settings};(node(around:{radius.meters},{location.latitude},\
+            {location.longitude}){op_filter};);out;"

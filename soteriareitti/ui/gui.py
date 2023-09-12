@@ -4,7 +4,7 @@ import tkinter
 import tkintermapview
 
 from core.app import SoteriaReitti
-from utils.utils_geo import GeoUtils, Location, Distance
+from utils.utils_geo import Location
 
 
 class Gui:
@@ -28,9 +28,7 @@ class Gui:
 
     def __on_left_click(self, pos: tuple):
         logging.debug("Left click at %s", pos)
-        bounding_box = GeoUtils.calculate_bbox(Location(*pos), Distance(100))
-
-        self._map_widget.set_polygon(bounding_box.as_polygon())
+        self._app.get_closest_node(Location(*pos))
 
     def run(self):
         self._root.mainloop()
