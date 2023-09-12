@@ -3,14 +3,15 @@ import logging
 import tkinter
 import tkintermapview
 
-from ui.ui import Ui
-from soteriareitti.utils.utils_geo import Location
+from core.app import SoteriaReitti
+from utils.utils_geo import GeoUtils, Location, Distance
 
 
-class Gui(Ui):
+class Gui:
     """ Graphical interface class """
 
     def __init__(self):
+        self._app = SoteriaReitti()
         self._root = tkinter.Tk()
         self._root.geometry("800x600")
         self._root.title("SoteriaReitti")
@@ -26,11 +27,10 @@ class Gui(Ui):
         self._map_widget.add_left_click_map_command(self.__on_left_click)
 
     def __on_left_click(self, pos: tuple):
-        self._app.get_closest_node(Location(*pos))
+        logging.debug("Left click at %s", pos)
+        bounding_box = GeoUtils.calculate_bbox(Location(*pos), Distance(100))
+
+        self._map_widget.set_polygon(bounding_box.as_polygon())
 
     def run(self):
         self._root.mainloop()
-
-    def create_marker(self, location: Location):
-        logging.debug("Creating marker at %s", location)
-        self._map_widget.set_marker(location.latitude, location.longitude)

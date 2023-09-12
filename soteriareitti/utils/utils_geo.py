@@ -6,6 +6,12 @@ class Location:
     """ Location class represents a point location on a map"""
 
     def __init__(self, longitude: float, latitude: float):
+        """ 
+        Initialize a location with longitude and latitude 
+
+        Remember that longitude is the x-axis and latitude is the y-axis
+        Longitude and latitude are in degrees
+        """
         self.longitude = longitude
         self.latitude = latitude
 
@@ -14,6 +20,16 @@ class Location:
 
     def as_tuple(self) -> tuple[float, float]:
         return (self.longitude, self.latitude)
+
+    @property
+    def longitude_rad(self) -> float:
+        """ Return longitude in radians """
+        return math.radians(self.longitude)
+
+    @property
+    def latitude_rad(self) -> float:
+        """ Return latitude in radians """
+        return math.radians(self.latitude)
 
 
 class Distance:
@@ -32,7 +48,12 @@ class Distance:
 
 
 class BoundingBox:
-    """ BoundingBox class represents a bounding box on the map"""
+    """
+    BoundingBox class represents a bounding box on the map
+
+    min_location is the bottom left corner of the box 
+    max_location is the top right corner of the box
+    """
 
     def __init__(self, min_location: Location, max_location: Location):
         self.min_location = min_location
@@ -44,16 +65,24 @@ class BoundingBox:
     def as_tuple(self) -> tuple[float, float, float, float]:
         return self.min_location.as_tuple() + self.max_location.as_tuple()
 
+    def as_polygon(self) -> list[tuple[float, float]]:
+        top_left = Location(self.min_location.longitude, self.max_location.latitude).as_tuple()
+        top_right = self.max_location.as_tuple()
+        bottom_right = Location(self.max_location.longitude, self.min_location.latitude).as_tuple()
+        bottom_left = self.min_location.as_tuple()
+
+        return [top_left, top_right, bottom_right, bottom_left]
+
 
 class GeoUtils:
-    earth_radius = 6378137  # Earth radius in meters
+    earth_radius = Distance(6378137)  # Earth radius in meters
 
     @staticmethod
     def calculate_bbox(location: Location, distance: Distance) -> BoundingBox:
         """ Calculate a bounding box from a location that is distance large"""
         latitude_rad = math.radians(location.latitude)
 
-        angular_distance = distance.meters / GeoUtils.earth_radius
+        angular_distance = distance.meters / GeoUtils.earth_radius.meters
 
         latitude_offset = angular_distance
         longitude_offset = angular_distance / math.cos(latitude_rad)
@@ -83,6 +112,7 @@ class GeoUtils:
         difference_latitude = latitude_target_rad - latitude_source_rad
 
         # Haversine formula
+        # https://www.movable-type.co.uk/scripts/latlong.html
 
         # pylint: disable-next=invalid-name
         a = math.sin(difference_latitude / 2)**2 + math.cos(latitude_source_rad) * \
@@ -92,6 +122,6 @@ class GeoUtils:
         c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
 
         # pylint: disable-next=invalid-name
-        d = GeoUtils.earth_radius * c
+        d = GeoUtils.earth_radius.meters * c
 
         return Distance(d)

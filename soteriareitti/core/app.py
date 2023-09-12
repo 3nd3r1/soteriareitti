@@ -6,11 +6,9 @@ from utils.utils_geo import Location
 
 
 class SoteriaReitti:
-    def __init__(self, user_interface):
+    def __init__(self):
 
-        self._ui = user_interface
-        self._graph = Graph(user_interface)
-
+        self._graph = Graph()
         self._graph.create_graph()
 
         logging.debug("SoteriaReitti initialized")
