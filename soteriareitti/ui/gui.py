@@ -12,6 +12,9 @@ class Gui:
 
     def __init__(self):
         self._app = SoteriaReitti()
+        self._source = None
+        self._target = None
+
         self._root = tkinter.Tk()
         self._root.geometry("800x600")
         self._root.title("SoteriaReitti")
@@ -20,6 +23,7 @@ class Gui:
             self._root, width=800, height=600, corner_radius=0)
         self._map_widget.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
         self._map_widget.set_address("Töölö, Helsinki, Finland")
+
         self.__initialize_events()
         super().__init__()
 
@@ -29,13 +33,22 @@ class Gui:
     def __on_left_click(self, pos: tuple):
         logging.debug("Left click at %s", pos)
 
-        closest_node = self._app.get_closest_node(Location(pos[1], pos[0]))
+        if self._source and self._target:
+            self._source = None
+            self._target = None
+            self._map_widget.delete_all_marker()
+            self._map_widget.delete_all_path()
 
-        if closest_node and closest_node.lon and closest_node.lat:
-            logging.debug("Closest node: %s", closest_node)
-
-            node_location = Location(float(closest_node.lon), float(closest_node.lat))
-            self._map_widget.set_marker(node_location.latitude, node_location.longitude)
+        if not self._source:
+            self._source = Location(pos[1], pos[0])
+            self._map_widget.set_marker(pos[0], pos[1])
+        else:
+            self._target = Location(pos[1], pos[0])
+            self._map_widget.set_marker(pos[0], pos[1])
+            path = self._app.get_path(self._source, self._target)
+            if path:
+                path = [(node.latitude, node.longitude) for node in path]
+                self._map_widget.set_path(path)
 
     def run(self):
         self._root.mainloop()

@@ -12,6 +12,10 @@ class Location:
         Remember that longitude is the x-axis and latitude is the y-axis
         Longitude and latitude are in degrees
         """
+        if not isinstance(latitude, float) or not isinstance(longitude, float):
+            raise TypeError(
+                f"Latitude and longitude must be floats, not {type(latitude)} and {type(longitude)}")
+
         self.longitude = longitude
         self.latitude = latitude
 

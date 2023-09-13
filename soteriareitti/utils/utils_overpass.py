@@ -38,5 +38,5 @@ class OverpassUtils:
         op_settings = OverpassUtils.op_settings.format(maxsize=op_maxsize, timeout=op_timeout)
         op_filter = OverpassUtils.op_filter
 
-        return f"{op_settings};(node(around:{radius.meters},{center.latitude},\
-        {center.longitude}){op_filter};);out;"
+        return f"{op_settings};(way(around:{radius.meters},{center.latitude},\
+        {center.longitude}){op_filter};>;);out;"
