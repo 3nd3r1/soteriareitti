@@ -1,8 +1,8 @@
 """ soteriareitti/core/app.py """
 import logging
-from core.map import Map
-from utils.utils_geo import Location
-from utils.utils_graph import Node
+from soteriareitti.core.map import Map
+from soteriareitti.utils.utils_geo import Location
+from soteriareitti.utils.utils_graph import Node
 
 
 class SoteriaReitti:

@@ -1,0 +1,3 @@
+[run]
+source = soteriareitti
+omit = soteriareitti/**/__init__.py,soteriareitti/ui/**

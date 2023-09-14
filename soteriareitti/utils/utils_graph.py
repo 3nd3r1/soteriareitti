@@ -2,7 +2,7 @@
 from queue import PriorityQueue
 import overpy
 
-from utils.utils_geo import GeoUtils, Location, Distance
+from soteriareitti.utils.utils_geo import GeoUtils, Location, Distance
 
 
 class Node:
@@ -83,12 +83,6 @@ class Graph:
         self.nodes = {}
         self.edges = {}
 
-    def get_node(self, node_id: str) -> Node | None:
-        """ Get node object by node id"""
-        if node_id in self.nodes:
-            return self.nodes[node_id]
-        return None
-
     def get_nodes(self) -> list[Node]:
         """ Get all nodes """
         return list(self.nodes.values())
@@ -100,16 +94,28 @@ class Graph:
             edges += edge_list
         return edges
 
-    def add_node(self, node: overpy.Node | Node | str):
-        """ Add node to graph """
+    def add_node(self, node: overpy.Node | Node | str | tuple | list):
+        """
+         Add node to graph or update existing node
+
+         If node is str, it is assumed to be an existing node's id
+
+         Returns: the node that was added or updated
+        """
 
         if isinstance(node, overpy.Node):
             node = Node.from_overpy_node(node)
 
+        if isinstance(node, (tuple, list)):
+            if len(node) != 3:
+                raise ValueError(
+                    f"Node must be a tuple or list of length 3, not {len(node)}")
+            node = Node(*node)
+
         if isinstance(node, str):
             if node not in self.nodes:
-                raise ValueError(f"Node with id: {node} is not in graph")
-            node = self.nodes[node]
+                raise ValueError(f"Node {node} does not exist")
+            return self.nodes[node]
 
         if not isinstance(node, Node):
             raise TypeError(
@@ -125,7 +131,12 @@ class Graph:
         return self.nodes[node.id]
 
     def add_edge(self, node_a: any, node_b: any, distance: Distance | None = None):
-        """ Add edge to graph """
+        """ 
+        Add edge to graph
+
+        node_a and node_b can be either a new node that is added/updated or an existing node's id
+
+        """
         node_a = self.add_node(node_a)
         node_b = self.add_node(node_b)
 
@@ -141,7 +152,7 @@ class Graph:
         for edge in edges:
             if isinstance(edge, Edge):
                 self.add_edge(edge.source, edge.target, edge.distance)
-            elif isinstance(edge, tuple) or isinstance(edge, list):
+            elif isinstance(edge, (tuple, list)):
                 self.add_edge(edge[0], edge[1], edge[2] if len(edge) > 2 else None)
             else:
                 raise TypeError(f"Edge must be Edge, tuple or list, not {type(edge)}")

@@ -1,8 +1,8 @@
 """ soteriareitti/main.py """
 import sys
 
-from utils.logging_config import configure_logging
-from ui.gui import Gui
+from soteriareitti.utils.logging_config import configure_logging
+from soteriareitti.ui.gui import Gui
 
 
 def main():

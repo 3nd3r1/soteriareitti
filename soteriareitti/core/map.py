@@ -2,9 +2,9 @@
 import logging
 import overpy
 
-from core._overpass import OverpassAPI
-from utils.utils_graph import GraphUtils, Graph, Node
-from utils.utils_geo import GeoUtils, Location, Distance
+from soteriareitti.core._overpass import OverpassAPI
+from soteriareitti.utils.utils_graph import GraphUtils, Graph, Node
+from soteriareitti.utils.utils_geo import GeoUtils, Location, Distance
 
 
 class Map:
@@ -73,7 +73,7 @@ class Map:
             if node.id not in self._graph.nodes:
                 continue
 
-            graph_node = self._graph.get_node(node.id)
+            graph_node = self._graph.nodes[node.id]
             distance_to_center = GeoUtils.calculate_distance(
                 location, graph_node.location)
 

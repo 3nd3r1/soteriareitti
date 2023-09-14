@@ -3,8 +3,8 @@ import logging
 import tkinter
 import tkintermapview
 
-from core.app import SoteriaReitti
-from utils.utils_geo import Location
+from soteriareitti.core.app import SoteriaReitti
+from soteriareitti.utils.utils_geo import Location
 
 
 class Gui:

@@ -1,5 +1,5 @@
 """ soteriareitti/utils/utils_overpass.py """
-from utils.utils_geo import Location, Distance
+from soteriareitti.utils.utils_geo import Location, Distance
 
 
 class OverpassUtils:
