@@ -1,4 +1,4 @@
-# soteriareitti/main.py
+""" soteriareitti/main.py """
 import sys
 
 from utils.logging_config import configure_logging

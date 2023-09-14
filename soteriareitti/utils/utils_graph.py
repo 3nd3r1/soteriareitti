@@ -1,17 +1,19 @@
 """ soteriareitti/utils_graph.py """
-import logging
+from queue import PriorityQueue
 import overpy
 
-from utils.utils_geo import Location
+from utils.utils_geo import GeoUtils, Location, Distance
 
 
 class Node:
-    def __init__(self, id: str, longitude: float, latitude: float):
-        self.id = id
+    """ Node class that represents a node in a graph """
+
+    def __init__(self, identification: str, longitude: float, latitude: float):
+        self.id = identification
         self.location = Location(longitude, latitude)
 
     def __repr__(self):
-        return "<utils_graph.Node id=%s, location=%s>" % (self.id, self.location)
+        return f"<utils_graph.Node id={self.id}, location={self.location}>"
 
     @classmethod
     def from_overpy_node(cls, node: overpy.Node):
@@ -30,40 +32,89 @@ class Node:
         self.location = node.location
 
 
+class Edge:
+    """ Edge class that represents an edge between two nodes """
+
+    def __init__(self, source: Node, target: Node, distance: Distance = None):
+        self.source = source
+        self.target = target
+        self.distance = distance if distance else GeoUtils.calculate_distance(
+            source.location, target.location)
+
+    def __repr__(self):
+        return f"<utils_graph.Edge source={self.source},\
+        target={self.target}, distance={self.distance}>"
+
+
+class Path:
+    """ Path class that represents a path between multiple nodes """
+
+    def __init__(self, nodes: list[Node], distance: Distance | None = None):
+        self.nodes = nodes
+        if distance:
+            self.distance = distance
+        else:
+            self.distance = Distance(0)
+            for edge in list(zip(nodes[:-1], nodes[1:])):
+                self.distance.add(GeoUtils.calculate_distance(
+                    edge[0].location, edge[1].location))
+
+    def __repr__(self):
+        return f"<utils_graph.Path nodes={len(self.nodes)}, distance={self.distance}>"
+
+    def __iter__(self):
+        for node in self.nodes:
+            yield node
+
+    def __len__(self):
+        return len(self.nodes)
+
+    def add_node(self, node: Node):
+        self.nodes.append(node)
+        self.distance.add(GeoUtils.calculate_distance(
+            self.nodes[-2].location, self.nodes[-1].location))
+
+    def reverse(self):
+        return Path(self.nodes[::-1], self.distance)
+
+
 class Graph:
     def __init__(self):
         self.nodes = {}
         self.edges = {}
 
-    @classmethod
-    def from_component(cls, component: list[Node]):
-        graph = cls()
-        graph.add_nodes_from(component)
-        graph.add_edges_from(component)
-        return graph
-
-    def get_node(self, id: str) -> Node | None:
+    def get_node(self, node_id: str) -> Node | None:
         """ Get node object by node id"""
-        if id in self.nodes:
-            return self.nodes[id]
+        if node_id in self.nodes:
+            return self.nodes[node_id]
         return None
 
     def get_nodes(self) -> list[Node]:
         """ Get all nodes """
         return list(self.nodes.values())
 
-    def get_edges(self) -> list[tuple[Node, Node]]:
+    def get_edges(self) -> list[Edge]:
         """ Get all edges """
-        return [(self.nodes[node_a_id], node_b) for node_a_id in self.edges for node_b in self.edges[node_a_id]]
+        edges = []
+        for edge_list in self.edges.values():
+            edges += edge_list
+        return edges
 
-    def add_node(self, node: any):
+    def add_node(self, node: overpy.Node | Node | str):
         """ Add node to graph """
 
         if isinstance(node, overpy.Node):
             node = Node.from_overpy_node(node)
 
+        if isinstance(node, str):
+            if node not in self.nodes:
+                raise ValueError(f"Node with id: {node} is not in graph")
+            node = self.nodes[node]
+
         if not isinstance(node, Node):
-            raise TypeError(f"Node must be overpy.Node or Node, not {type(node)}")
+            raise TypeError(
+                f"Node must be overpy.Node, graph_utils.Node\
+                or a node's id (str), not {type(node)}")
 
         if node.id not in self.nodes:
             self.edges[node.id] = []
@@ -73,33 +124,39 @@ class Graph:
 
         return self.nodes[node.id]
 
-    def add_edge(self, node_a: any, node_b: any):
+    def add_edge(self, node_a: any, node_b: any, distance: Distance | None = None):
         """ Add edge to graph """
         node_a = self.add_node(node_a)
         node_b = self.add_node(node_b)
 
-        self.edges[node_a.id].append(node_b)
+        self.edges[node_a.id].append(Edge(node_a, node_b, distance))
 
     def add_nodes_from(self, nodes: list[any]):
         """ Add nodes from a list of nodes """
         for node in nodes:
             self.add_node(node)
 
-    def add_edges_from(self, path: list[any]):
-        """ Add edges from a path"""
-        for edge in list(zip(path[:-1], path[1:])):
-            if isinstance(edge[0], overpy.Node):
-                if not edge[0].lon or not edge[0].lat:
-                    continue
-
-            if isinstance(edge[1], overpy.Node):
-                if not edge[1].lon or not edge[1].lat:
-                    continue
-
-            self.add_edge(edge[0], edge[1])
+    def add_edges_from(self, edges: list[any]):
+        """ Add edges from a list of edges"""
+        for edge in edges:
+            if isinstance(edge, Edge):
+                self.add_edge(edge.source, edge.target, edge.distance)
+            elif isinstance(edge, tuple) or isinstance(edge, list):
+                self.add_edge(edge[0], edge[1], edge[2] if len(edge) > 2 else None)
+            else:
+                raise TypeError(f"Edge must be Edge, tuple or list, not {type(edge)}")
 
 
 class GraphUtils:
+    @staticmethod
+    def _reconstruct_path(previous: dict[str], target: Node) -> Path:
+        """ Reconstruct path from previous nodes """
+        path = Path([target])
+        while target.id in previous:
+            target = previous[target.id]
+            path.add_node(target)
+        return path.reverse()
+
     @staticmethod
     def dfs(graph: Graph, node: Node, visited: dict[str]) -> list[Node]:
         """ Depth-first search """
@@ -109,16 +166,17 @@ class GraphUtils:
         visited[node.id] = True
         component = [node]
 
-        for neighbour in graph.edges[node.id]:
-            component += GraphUtils.dfs(graph, neighbour, visited)
+        for edge in graph.edges[node.id]:
+            component += GraphUtils.dfs(graph, edge.target, visited)
 
         return component
 
     @staticmethod
     def get_largest_component(graph: Graph) -> Graph:
-        """
-        Get subgraph of graph's largest weakly connected component.
-        """
+        """ Get largest component from graph """
+        # TODO
+        # Currently this exceeds pythons recursion limit with large graphs
+        # This should be changed to iterative approach
 
         visited = {}
         largest_component = []
@@ -128,4 +186,50 @@ class GraphUtils:
             if len(new_component) > len(largest_component):
                 largest_component = new_component
 
-        return Graph.from_component(largest_component)
+        # Create new graph from largest component
+        new_graph = Graph()
+
+        new_graph.add_nodes_from(largest_component)
+        for edge in graph.get_edges():
+            if edge.source.id in new_graph.nodes and edge.target.id in new_graph.nodes:
+                new_graph.add_edge(edge.source, edge.target, edge.distance)
+
+        return new_graph
+
+    @staticmethod
+    def dijkstra_shortest_path(graph: Graph, source: Node, target: Node) -> list[Node] | None:
+        """ 
+        Dijkstra's algorithm
+        https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm 
+        """
+        if source.id not in graph.nodes or target.id not in graph.nodes:
+            return None
+
+        queue = PriorityQueue()
+        visited = {}
+        distances = {}
+        previous = {}
+
+        distances[source.id] = Distance(0)
+        queue.put((0, source))
+
+        while not queue.empty():
+            u_node = queue.get()[1]
+
+            if u_node.id == target.id:
+                return GraphUtils._reconstruct_path(previous, target)
+
+            if visited.get(u_node.id, False):
+                continue
+            visited[u_node.id] = True
+
+            for edge in graph.edges[u_node.id]:
+                new_distance = distances.get(u_node.id, Distance(float("inf"))).add(edge.distance)
+                old_distance = distances.get(edge.target.id, Distance(float("inf")))
+
+                if new_distance.meters < old_distance.meters:
+                    distances[edge.target.id] = new_distance
+                    previous[edge.target.id] = u_node
+                    queue.put((new_distance.meters, edge.target))
+
+        return None

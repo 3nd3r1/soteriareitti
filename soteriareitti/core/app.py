@@ -1,15 +1,14 @@
-# soteriareitti/soteriareitti.py
+""" soteriareitti/core/app.py """
 import logging
-
 from core.map import Map
 from utils.utils_geo import Location
 from utils.utils_graph import Node
 
 
 class SoteriaReitti:
-    def __init__(self):
+    def __init__(self, place: str):
 
-        self._map = Map()
+        self._map = Map(place)
 
         logging.debug("SoteriaReitti initialized")
 

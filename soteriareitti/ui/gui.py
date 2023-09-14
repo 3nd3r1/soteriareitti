@@ -11,7 +11,7 @@ class Gui:
     """ Graphical interface class """
 
     def __init__(self):
-        self._app = SoteriaReitti()
+        self._app = SoteriaReitti("Töölö")
         self._source = None
         self._target = None
 
@@ -46,8 +46,8 @@ class Gui:
             self._target = Location(pos[1], pos[0])
             self._map_widget.set_marker(pos[0], pos[1])
             path = self._app.get_path(self._source, self._target)
-            if path:
-                path = [(node.latitude, node.longitude) for node in path]
+            if path and len(path) > 1:
+                path = [(node.location.latitude, node.location.longitude) for node in path]
                 self._map_widget.set_path(path)
 
     def run(self):

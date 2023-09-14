@@ -3,7 +3,8 @@ import math
 
 
 class Location:
-    """ Location class represents a point location on a map"""
+    """Location class represents a location on the map
+    """
 
     def __init__(self, longitude: float, latitude: float):
         """ 
@@ -41,6 +42,22 @@ class Distance:
 
     def __init__(self, distance_meters: float):
         self.__distance_meters = distance_meters
+
+    def __str__(self):
+        return f"Distance: {self.meters} meters"
+
+    def add(self, distance: "Distance" or float | int) -> "Distance":
+        """ Add a distance to another distance """
+
+        if isinstance(distance, Distance):
+            self.__distance_meters += distance.meters
+        elif isinstance(distance, (float, int)):
+            self.__distance_meters += distance
+        else:
+            raise TypeError(
+                f"distance must be utils_graph.Distance, float or int, not {type(distance)}")
+
+        return self
 
     @property
     def meters(self) -> float:
