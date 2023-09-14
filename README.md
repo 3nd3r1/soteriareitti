@@ -1,6 +1,6 @@
 # SoteriaReitti 
 
-[![Coverage Report](/docs/images/coverage.svg 'Coverage Badge')](https://htmlpreview.github.io/?https://github.com/3nd3r1/soteriareitti/tree/main/htmlcov/index.html)
+[![Coverage Report](/docs/images/coverage.svg 'Coverage Badge')](https://htmlpreview.github.io/?https://github.com/3nd3r1/soteriareitti/blob/main/htmlcov/index.html)
 
 SoteriaReitti on Pythonilla toteutettava sovellus, joka on suunniteltu hätätyöntekijöille. Sovellus auttaa heitä löytämään parhaat mahdolliset reitit hätätilanteissa ja ruuhkaisilla teillä. SoteriaReitti tulee kreikasta ja tarkoittaa pelastuksen tietä, mikä kuvastaa projektin ydintavoitetta: tarjota pelastava reitti niille, jotka sitä tarvitsevat.
 
