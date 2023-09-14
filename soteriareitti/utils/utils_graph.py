@@ -42,8 +42,8 @@ class Edge:
             source.location, target.location)
 
     def __repr__(self):
-        return f"<utils_graph.Edge source={self.source},\
-        target={self.target}, distance={self.distance}>"
+        return (f"<utils_graph.Edge source={self.source},"
+                f"target={self.target}, distance={self.distance}>")
 
 
 class Path:
@@ -119,8 +119,8 @@ class Graph:
 
         if not isinstance(node, Node):
             raise TypeError(
-                f"Node must be overpy.Node, graph_utils.Node\
-                or a node's id (str), not {type(node)}")
+                f"Node must be overpy.Node, graph_utils.Node"
+                f"or a node's id (str), not {type(node)}")
 
         if node.id not in self.nodes:
             self.edges[node.id] = []
