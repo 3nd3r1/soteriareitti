@@ -69,10 +69,16 @@ class Path:
     def __len__(self):
         return len(self.nodes)
 
-    def add_node(self, node: Node):
+    def add_node(self, node: Node, calculate_distance: bool = True):
+        """
+          Add node to path if calculate_distance is True,
+          calculate distance between nodes and add to total distance
+        """
         self.nodes.append(node)
-        self.distance.add(GeoUtils.calculate_distance(
-            self.nodes[-2].location, self.nodes[-1].location))
+
+        if calculate_distance:
+            self.distance.add(GeoUtils.calculate_distance(
+                self.nodes[-2].location, self.nodes[-1].location))
 
     def reverse(self):
         return Path(self.nodes[::-1], self.distance)
@@ -160,12 +166,18 @@ class Graph:
 
 class GraphUtils:
     @staticmethod
-    def _reconstruct_path(previous: dict[str], target: Node) -> Path:
+    def _reconstruct_path(previous: dict[str], target: Node,
+                          distance: Distance | None = None) -> Path:
         """ Reconstruct path from previous nodes """
+
         path = Path([target])
+        if distance:
+            path.distance = distance
+
         while target.id in previous:
             target = previous[target.id]
-            path.add_node(target)
+            path.add_node(target, calculate_distance=bool(distance))
+
         return path.reverse()
 
     @staticmethod
@@ -228,7 +240,7 @@ class GraphUtils:
             u_node = queue.get()[1]
 
             if u_node.id == target.id:
-                return GraphUtils._reconstruct_path(previous, target)
+                return GraphUtils._reconstruct_path(previous, target, distances[target.id])
 
             if visited.get(u_node.id, False):
                 continue
