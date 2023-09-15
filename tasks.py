@@ -34,7 +34,7 @@ def coverage(ctx):
 
 @task(coverage)
 def coverage_report(ctx):
-    ctx.run("coverage html")
+    ctx.run("coverage html -d ./docs/coverage")
     ctx.run("coverage-badge -o ./docs/images/coverage.svg -f")
 
 
