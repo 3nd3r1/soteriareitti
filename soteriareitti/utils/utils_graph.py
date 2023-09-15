@@ -49,8 +49,8 @@ class Edge:
 class Path:
     """ Path class that represents a path between multiple nodes """
 
-    def __init__(self, nodes: list[Node], distance: Distance | None = None):
-        self.nodes = nodes
+    def __init__(self, nodes: list[Node] | None = None, distance: Distance | None = None):
+        self.nodes = nodes if nodes else []
         if distance:
             self.distance = distance
         else:
@@ -69,14 +69,17 @@ class Path:
     def __len__(self):
         return len(self.nodes)
 
-    def add_node(self, node: Node, calculate_distance: bool = True):
+    def add_node(self, node: Node, distance: Distance | None = None):
         """
-          Add node to path if calculate_distance is True,
-          calculate distance between nodes and add to total distance
+        Add node to path 
+
+        If distance is not given, it is calculated from the previous node
         """
         self.nodes.append(node)
 
-        if calculate_distance:
+        if distance:
+            self.distance.add(distance)
+        else:
             self.distance.add(GeoUtils.calculate_distance(
                 self.nodes[-2].location, self.nodes[-1].location))
 
@@ -166,17 +169,15 @@ class Graph:
 
 class GraphUtils:
     @staticmethod
-    def _reconstruct_path(previous: dict[str], target: Node,
-                          distance: Distance | None = None) -> Path:
+    def _reconstruct_path(previous: dict[str], target: Node) -> Path:
         """ Reconstruct path from previous nodes """
 
         path = Path([target])
-        if distance:
-            path.distance = distance
 
-        while target.id in previous:
-            target = previous[target.id]
-            path.add_node(target, calculate_distance=bool(distance))
+        while previous.get(target.id, False):
+            edge = previous.get(target.id)
+            target = edge.source
+            path.add_node(target, edge.distance)
 
         return path.reverse()
 
@@ -240,7 +241,7 @@ class GraphUtils:
             u_node = queue.get()[1]
 
             if u_node.id == target.id:
-                return GraphUtils._reconstruct_path(previous, target, distances[target.id])
+                return GraphUtils._reconstruct_path(previous, target)
 
             if visited.get(u_node.id, False):
                 continue
@@ -252,7 +253,7 @@ class GraphUtils:
 
                 if new_distance.meters < old_distance.meters:
                     distances[edge.target.id] = new_distance
-                    previous[edge.target.id] = u_node
+                    previous[edge.target.id] = edge
                     queue.put((new_distance.meters, edge.target))
 
         return None
