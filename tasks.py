@@ -13,8 +13,6 @@ def start(ctx):
     else:
         ctx.run("python soteriareitti/main.py")
 
-#
-
 
 @task
 def debug(ctx):
@@ -53,4 +51,4 @@ def lint(ctx):
         default_color='forestgreen',
         value_suffix='/10'
     )
-    badge.write_badge('./docs/images/pylint-badge.svg')
+    badge.write_badge('./docs/images/pylint-badge.svg', overwrite=True)
