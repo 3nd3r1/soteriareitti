@@ -208,7 +208,7 @@ class GraphUtils:
         return new_graph
 
     @staticmethod
-    def dijkstra_shortest_path(graph: Graph, source: Node, target: Node) -> list[Node] | None:
+    def dijkstra_shortest_path(graph: Graph, source: Node, target: Node) -> Path | None:
         """ 
         Dijkstra's algorithm
         https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm 
