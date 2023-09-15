@@ -22,4 +22,4 @@ jobs:
     - name: Install dependencies
       run: poetry install
     - name: Analysing the code with pylint
-      run: poetry run pylint soteriareitti
+      run: poetry run pytest .
