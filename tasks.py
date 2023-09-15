@@ -1,6 +1,8 @@
 """ tasks.py """
 
 import sys
+import os
+import anybadge
 from invoke.tasks import task
 
 
@@ -40,4 +42,15 @@ def coverage_report(ctx):
 
 @task
 def lint(ctx):
-    ctx.run("pylint soteriareitti")
+    _result = ctx.run("pylint soteriareitti", warn=True)
+
+    pylint_output = os.popen("pylint --output-format=text soteriareitti").read()
+    pylint_score = float(pylint_output.split("/")[-3].split(" ")[-1].strip())
+
+    badge = anybadge.Badge(
+        'Pylint',
+        pylint_score,
+        default_color='forestgreen',
+        value_suffix='/10'
+    )
+    badge.write_badge('./docs/images/pylint-badge.svg')
