@@ -35,7 +35,7 @@ class Node:
 class Edge:
     """ Edge class that represents an edge between two nodes """
 
-    def __init__(self, source: Node, target: Node, distance: Distance = None):
+    def __init__(self, source: Node, target: Node, distance: Distance | None = None):
         self.source = source
         self.target = target
         self.distance = distance if distance else GeoUtils.calculate_distance(
@@ -56,8 +56,8 @@ class Path:
         else:
             self.distance = Distance(0)
             for edge in list(zip(nodes[:-1], nodes[1:])):
-                self.distance.add(GeoUtils.calculate_distance(
-                    edge[0].location, edge[1].location))
+                self.distance += GeoUtils.calculate_distance(
+                    edge[0].location, edge[1].location)
 
     def __repr__(self):
         return f"<utils_graph.Path nodes={len(self.nodes)}, distance={self.distance}>"
@@ -78,10 +78,10 @@ class Path:
         self.nodes.append(node)
 
         if distance:
-            self.distance.add(distance)
+            self.distance += distance
         else:
-            self.distance.add(GeoUtils.calculate_distance(
-                self.nodes[-2].location, self.nodes[-1].location))
+            self.distance += GeoUtils.calculate_distance(
+                self.nodes[-2].location, self.nodes[-1].location)
 
     def reverse(self):
         return Path(self.nodes[::-1], self.distance)
@@ -139,16 +139,20 @@ class Graph:
 
         return self.nodes[node.id]
 
-    def add_edge(self, node_a: any, node_b: any, distance: Distance | None = None):
+    def add_edge(self, node_a: any, node_b: any, distance: Distance | float | None = None):
         """ 
         Add edge to graph
 
         node_a and node_b can be either a new node that is added/updated or an existing node's id
+        distance is optional and can be either a Distance object or a float
 
         """
+        if isinstance(distance, float):
+            distance = Distance(distance)
+
         if not isinstance(distance, Distance) and distance is not None:
             raise TypeError(
-                f"Distance must be Distance or None, not {type(distance)}")
+                f"Distance must be Distance, float or None, not {type(distance)}")
 
         node_a = self.add_node(node_a)
         node_b = self.add_node(node_b)
@@ -173,7 +177,7 @@ class Graph:
 
 class GraphUtils:
     @staticmethod
-    def _reconstruct_path(previous: dict[str], target: Node) -> Path:
+    def _reconstruct_path(previous: dict, target: Node) -> Path:
         """ Reconstruct path from previous nodes """
 
         path = Path([target])
@@ -252,7 +256,7 @@ class GraphUtils:
             visited[u_node.id] = True
 
             for edge in graph.edges[u_node.id]:
-                new_distance = distances.get(u_node.id, Distance(float("inf"))).add(edge.distance)
+                new_distance = distances.get(u_node.id, Distance(float("inf"))) + edge.distance
                 old_distance = distances.get(edge.target.id, Distance(float("inf")))
 
                 if new_distance.meters < old_distance.meters:

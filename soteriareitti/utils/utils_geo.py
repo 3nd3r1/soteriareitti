@@ -15,7 +15,8 @@ class Location:
         """
         if not isinstance(latitude, float) or not isinstance(longitude, float):
             raise TypeError(
-                f"Latitude and longitude must be floats, not {type(latitude)} and {type(longitude)}")
+                f"Latitude and longitude must be floats,"
+                f"not {type(latitude)} and {type(longitude)}")
 
         self.longitude = longitude
         self.latitude = latitude
@@ -41,18 +42,28 @@ class Distance:
     """ Distance class represents a distance on the map"""
 
     def __init__(self, distance_meters: float):
-        self.__distance_meters = distance_meters
+        self.meters = distance_meters
 
     def __str__(self):
         return f"Distance: {self.meters} meters"
 
-    def add(self, distance: "Distance" or float | int) -> "Distance":
-        """ Add a distance to another distance """
+    def __add__(self, distance: "Distance" or float | int) -> "Distance":
+        """ Add two distances together """
 
         if isinstance(distance, Distance):
-            self.__distance_meters += distance.meters
+            return Distance(self.meters + distance.meters)
+        if isinstance(distance, (float, int)):
+            return Distance(self.meters + distance)
+        raise TypeError(
+            f"distance must be utils_graph.Distance, float or int, not {type(distance)}")
+
+    def __iadd__(self, distance: "Distance" or float | int):
+        """ Add a distance to current distance """
+
+        if isinstance(distance, Distance):
+            self.meters += distance.meters
         elif isinstance(distance, (float, int)):
-            self.__distance_meters += distance
+            self.meters += distance
         else:
             raise TypeError(
                 f"distance must be utils_graph.Distance, float or int, not {type(distance)}")
@@ -60,12 +71,8 @@ class Distance:
         return self
 
     @property
-    def meters(self) -> float:
-        return self.__distance_meters
-
-    @property
     def kilometers(self) -> float:
-        return self.__distance_meters/1000
+        return self.meters/1000
 
 
 class GeoUtils:
