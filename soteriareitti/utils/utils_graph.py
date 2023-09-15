@@ -146,6 +146,10 @@ class Graph:
         node_a and node_b can be either a new node that is added/updated or an existing node's id
 
         """
+        if not isinstance(distance, Distance) and distance is not None:
+            raise TypeError(
+                f"Distance must be Distance or None, not {type(distance)}")
+
         node_a = self.add_node(node_a)
         node_b = self.add_node(node_b)
 
