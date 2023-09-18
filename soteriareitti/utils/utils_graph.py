@@ -13,7 +13,7 @@ class Node:
         self.location = Location(longitude, latitude)
 
     def __repr__(self):
-        return f"<utils_graph.Node id={self.id}, location={self.location}>"
+        return f"<soteriareitti.Node id={self.id}, location={self.location}>"
 
     @classmethod
     def from_overpy_node(cls, node: overpy.Node):
@@ -42,7 +42,7 @@ class Edge:
             source.location, target.location)
 
     def __repr__(self):
-        return (f"<utils_graph.Edge source={self.source},"
+        return (f"<soteriareitti.Edge source={self.source},"
                 f"target={self.target}, distance={self.distance}>")
 
 
@@ -60,7 +60,7 @@ class Path:
                     edge[0].location, edge[1].location)
 
     def __repr__(self):
-        return f"<utils_graph.Path nodes={len(self.nodes)}, distance={self.distance}>"
+        return f"<soteriareitti.Path nodes={len(self.nodes)}, distance={self.distance}>"
 
     def __iter__(self):
         for node in self.nodes:

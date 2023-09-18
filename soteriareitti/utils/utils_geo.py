@@ -24,6 +24,17 @@ class Location:
     def __str__(self):
         return f"Location: ({self.longitude}, {self.latitude})"
 
+    def __repr__(self):
+        return f"<soteriareitti.Location ({self.longitude}, {self.latitude})>"
+
+    def __eq__(self, other: "Location" or tuple) -> bool:
+        if isinstance(other, Location):
+            return self.longitude == other.longitude and self.latitude == other.latitude
+        if isinstance(other, tuple):
+            return self.longitude == other[0] and self.latitude == other[1]
+        raise TypeError(
+            f"other must be utils_graph.Location or tuple, not {type(other)}")
+
     def as_tuple(self) -> tuple[float, float]:
         return (self.longitude, self.latitude)
 

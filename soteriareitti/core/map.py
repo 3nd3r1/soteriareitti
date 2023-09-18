@@ -3,7 +3,7 @@ import logging
 import overpy
 
 from soteriareitti.core._overpass import OverpassAPI
-from soteriareitti.utils.utils_graph import GraphUtils, Graph, Node
+from soteriareitti.utils.utils_graph import GraphUtils, Graph, Node, Path
 from soteriareitti.utils.utils_geo import GeoUtils, Location, Distance
 
 
@@ -42,7 +42,7 @@ class Map:
 
         logging.debug("Graph creation done")
 
-    def get_shortest_path(self, source: Node, target: Node) -> list[Node] | None:
+    def get_shortest_path(self, source: Node, target: Node) -> Path | None:
         """ Get shortest path from source to target """
         logging.debug("Getting shortest path from %s to %s", source, target)
 
