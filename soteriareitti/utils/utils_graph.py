@@ -107,8 +107,9 @@ class Graph:
         """
          Add node to graph or update existing node
 
-         If node is str, it is assumed to be an existing node's id
-         If node is tuple or list, it is assumed to be a new node of format (id, longitude, latitude)
+         - If node is str, it is assumed to be an existing node's id
+         - If node is tuple or list, it is assumed to be a new node 
+         of format (id, longitude, latitude)
 
          Returns: the node that was added or updated
         """
@@ -189,20 +190,6 @@ class GraphUtils:
             path.add_node(target, edge.distance)
 
         return path.reverse()
-
-    @staticmethod
-    def dfs(graph: Graph, node: Node, visited: dict[str]) -> list[Node]:
-        """ Depth-first search """
-        if visited.get(node.id, False):
-            return []
-
-        visited[node.id] = True
-        component = [node]
-
-        for edge in graph.edges[node.id]:
-            component += GraphUtils.dfs(graph, edge.target, visited)
-
-        return component
 
     @staticmethod
     def get_largest_component(graph: Graph) -> Graph:
