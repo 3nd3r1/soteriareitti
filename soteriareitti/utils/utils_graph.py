@@ -108,6 +108,7 @@ class Graph:
          Add node to graph or update existing node
 
          If node is str, it is assumed to be an existing node's id
+         If node is tuple or list, it is assumed to be a new node of format (id, longitude, latitude)
 
          Returns: the node that was added or updated
         """
