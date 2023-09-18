@@ -119,7 +119,7 @@ class Graph:
             if len(node) != 3:
                 raise ValueError(
                     f"Node must be a tuple or list of length 3, not {len(node)}")
-            node = Node(*node)
+            node = Node(str(node[0]), float(node[1]), float(node[2]))
 
         if isinstance(node, str):
             if node not in self.nodes:
@@ -139,7 +139,7 @@ class Graph:
 
         return self.nodes[node.id]
 
-    def add_edge(self, node_a: any, node_b: any, distance: Distance | float | None = None):
+    def add_edge(self, node_a: any, node_b: any, distance: Distance | float | int | None = None):
         """ 
         Add edge to graph
 
@@ -147,8 +147,8 @@ class Graph:
         distance is optional and can be either a Distance object or a float
 
         """
-        if isinstance(distance, float):
-            distance = Distance(distance)
+        if isinstance(distance, (float, int)):
+            distance = Distance(float(distance))
 
         if not isinstance(distance, Distance) and distance is not None:
             raise TypeError(
