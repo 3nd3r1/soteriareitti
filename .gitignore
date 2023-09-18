@@ -1,7 +1,9 @@
 /.vscode
 /.vscode/**
+
 /.py_cache
-/trash
-/cache
 **/__pycache__
+/cache
+/.pytest_cache
+
 .coverage

@@ -206,17 +206,30 @@ class GraphUtils:
     @staticmethod
     def get_largest_component(graph: Graph) -> Graph:
         """ Get largest component from graph """
-        # TODO
-        # Currently this exceeds pythons recursion limit with large graphs
-        # This should be changed to iterative approach
 
         visited = {}
         largest_component = []
 
         for node in graph.get_nodes():
-            new_component = GraphUtils.dfs(graph, node, visited)
-            if len(new_component) > len(largest_component):
-                largest_component = new_component
+            if visited.get(node.id, False):
+                continue
+            component = []
+            stack = [node]
+
+            while stack:
+                current_node = stack.pop()
+
+                if current_node.id in component or visited.get(current_node.id, False):
+                    continue
+
+                component.append(current_node)
+                visited[current_node.id] = True
+
+                for edge in graph.edges[current_node.id]:
+                    stack.append(edge.target)
+
+            if len(component) > len(largest_component):
+                largest_component = component
 
         # Create new graph from largest component
         new_graph = Graph()
