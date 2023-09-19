@@ -4,8 +4,9 @@ import logging
 from soteriareitti.core.map import Map
 from soteriareitti.core.responder import Responder, ResponderType
 from soteriareitti.core.emergency import Emergency, EmergencyType
+from soteriareitti.core.station import Station, StationType
 
-from soteriareitti.utils.utils_geo import Location
+from soteriareitti.utils.geo import Location
 
 
 class SoteriaReitti:
@@ -14,6 +15,7 @@ class SoteriaReitti:
 
         self._map = Map(place)
         self._responders: list[Responder] = []
+        self._stations: list[Station] = []
 
         logging.debug("SoteriaReitti initialized")
 
@@ -30,3 +32,12 @@ class SoteriaReitti:
         """ Creates a first responder """
         new_responder = Responder(self._map, responder_type, location)
         self._responders.append(new_responder)
+
+        logging.debug("Created responder: %s", new_responder)
+
+    def create_station(self, station_type: StationType, location: Location):
+        """ Creates a station """
+        new_station = Station(self._map, station_type, location)
+        self._stations.append(new_station)
+
+        logging.debug("Created station: %s", new_station)

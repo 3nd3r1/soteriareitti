@@ -1,16 +1,17 @@
-""" soteriareitti/utils_graph.py """
+""" soteriareitti/utils/graph.py """
+import logging
 from queue import PriorityQueue
 import overpy
 
-from soteriareitti.utils.utils_geo import GeoUtils, Location, Distance
+from soteriareitti.utils.geo import GeoUtils, Location, Distance
 
 
 class Node:
     """ Node class that represents a node in a graph """
 
-    def __init__(self, identification: str, longitude: float, latitude: float):
+    def __init__(self, identification: str, latitude: float, longitude: float):
         self.id = identification
-        self.location = Location(longitude, latitude)
+        self.location = Location(latitude, longitude)
 
     def __repr__(self):
         return f"<soteriareitti.Node id={self.id}, location={self.location}>"
@@ -19,10 +20,10 @@ class Node:
     def from_overpy_node(cls, node: overpy.Node):
         if not isinstance(node, overpy.Node):
             raise TypeError(f"Node must be overpy.Node, not {type(node)}")
-        if not node.lon or not node.lat:
+        if not node.lat or not node.lon:
             raise ValueError(f"Node {node.id} has no longitude or latitude")
 
-        return cls(node.id, float(node.lon), float(node.lat))
+        return cls(node.id, float(node.lat), float(node.lon))
 
     def update(self, node: "Node"):
         """ Update node with data from another node """
@@ -49,25 +50,34 @@ class Edge:
 class Path:
     """ Path class that represents a path between multiple nodes """
 
-    def __init__(self, nodes: list[Node] | None = None, distance: Distance | None = None):
-        self.nodes = nodes if nodes else []
-        if distance:
-            self.distance = distance
+    def __init__(self, edges: list[Edge] | None = None):
+        self.distance = Distance(0)
+
+        if edges:
+            for edge in edges:
+                if not isinstance(edge, Edge):
+                    raise TypeError(f"Edge must be Edge, not {type(edge)}")
+                self.distance += edge.distance
+            self.__edges = edges
         else:
-            self.distance = Distance(0)
-            for edge in list(zip(nodes[:-1], nodes[1:])):
-                self.distance += GeoUtils.calculate_distance(
-                    edge[0].location, edge[1].location)
+            self.__edges = []
+
+    @classmethod
+    def from_nodes(cls, nodes: list[Node]):
+        path = cls()
+        for node in nodes:
+            path.add_node(node)
+        return path
 
     def __repr__(self):
-        return f"<soteriareitti.Path nodes={len(self.nodes)}, distance={self.distance}>"
+        return f"<soteriareitti.Path nodes={len(self)}, distance={self.distance}>"
 
     def __iter__(self):
-        for node in self.nodes:
-            yield node
+        for edge in self.__edges:
+            yield edge.target
 
     def __len__(self):
-        return len(self.nodes)
+        return len(self.__edges)
 
     def add_node(self, node: Node, distance: Distance | None = None):
         """
@@ -75,22 +85,34 @@ class Path:
 
         If distance is not given, it is calculated from the previous node
         """
-        self.nodes.append(node)
-
-        if distance:
-            self.distance += distance
+        if self.last:
+            new_edge = Edge(self.last, node, distance)
+            self.__edges.append(new_edge)
+            self.distance += new_edge.distance
         else:
-            self.distance += GeoUtils.calculate_distance(
-                self.nodes[-2].location, self.nodes[-1].location)
+            self.__edges.append(Edge(node, node, Distance(0)))
 
-    def reverse(self):
-        return Path(self.nodes[::-1], self.distance)
+    def pop(self) -> Node:
+        self.distance -= self.__edges[-1].distance
+        return self.__edges.pop().target
+
+    def reverse(self) -> "Path":
+        return Path(self.__edges[::-1])
+
+    @property
+    def last(self) -> Node | None:
+        if len(self.__edges) > 0:
+            return self.__edges[-1].target
+        return None
 
 
 class Graph:
     def __init__(self):
         self.nodes = {}
         self.edges = {}
+
+    def __repr__(self) -> str:
+        return f"<soteriareitti.Graph nodes={len(self.nodes)}, edges={len(self.get_edges())}>"
 
     def get_nodes(self) -> list[Node]:
         """ Get all nodes """
@@ -109,7 +131,7 @@ class Graph:
 
          - If node is str, it is assumed to be an existing node's id
          - If node is tuple or list, it is assumed to be a new node 
-         of format (id, longitude, latitude)
+         of format (id, latitude, longitude)
 
          Returns: the node that was added or updated
         """
@@ -179,17 +201,32 @@ class Graph:
 
 class GraphUtils:
     @staticmethod
-    def _reconstruct_path(previous: dict, target: Node) -> Path:
-        """ Reconstruct path from previous nodes """
+    def reconstruct_path(previous: dict, source: Node, target: Node) -> Path | None:
+        """ Reconstruct path from `previous` dictionary """
 
-        path = Path([target])
+        current_edge = previous.get(target.id)
+        path = Path()
+        while current_edge:
+            if current_edge.source.id == source.id:
+                return path
+            path.add_node(current_edge.target, current_edge.distance)
+            current_edge = previous.get(current_edge.source.id)
 
-        while previous.get(target.id, False):
-            edge = previous.get(target.id)
-            target = edge.source
-            path.add_node(target, edge.distance)
+        if path.last.id == source.id:
+            return path
+        return None
 
-        return path.reverse()
+    @staticmethod
+    def reverse_graph(graph: Graph) -> Graph:
+        """ Reverse all edges in a directional graph """
+        edges = graph.get_edges()
+        reversed_edges = [Edge(edge.target, edge.source, edge.distance) for edge in edges]
+
+        new_graph = Graph()
+        new_graph.add_nodes_from(graph.get_nodes())
+        new_graph.add_edges_from(reversed_edges)
+
+        return new_graph
 
     @staticmethod
     def get_largest_component(graph: Graph) -> Graph:
@@ -230,12 +267,72 @@ class GraphUtils:
         return new_graph
 
     @staticmethod
+    def ida_star_shortest_path(graph: Graph, source: Node, target: Node) -> Path | None:
+        """ Use IDA* algorithm to find shortest path from source to target """
+
+        def heuristic(node: Node) -> Distance:
+            return GeoUtils.calculate_distance(node.location, target.location)
+
+        def search(node: Node, current_cost: Distance, limit: Distance, visited: dict) -> Distance:
+
+            estimated_cost = current_cost + heuristic(node)
+
+            if node.id == target.id:
+                return Distance(-1)
+
+            if estimated_cost > limit:
+                visited[node.id] = True
+                return estimated_cost
+
+            min_distance = Distance(float("inf"))
+
+            for edge in graph.edges[node.id]:
+                if visited.get(edge.target.id, False):
+                    continue
+                threshold = search(edge.target, current_cost + edge.distance, limit, visited)
+                if threshold < 0:
+                    return threshold
+
+                if threshold < min_distance:
+                    min_distance = threshold
+
+            return min_distance
+
+        limit = heuristic(source)
+        visited = {}
+
+        while True:
+            threshold = search(source, Distance(0), limit, visited)
+            if threshold < 0:
+                logging.debug("Path found with distance %s", limit)
+                return Path.from_nodes([source, target])
+            if threshold == float("inf"):
+                return None
+            logging.debug("Threshold: %s", threshold)
+            limit = threshold
+
+    @staticmethod
     def dijkstra_shortest_path(graph: Graph, source: Node, target: Node) -> Path | None:
-        """ 
+        """ Use Dijkstra's algorithm to find shortest path from source to target """
+        previous = GraphUtils.dijkstras_algorithm(graph, source)
+        return GraphUtils.reconstruct_path(previous, source, target)
+
+    @staticmethod
+    def dijkstras_algorithm(graph: Graph, source: Node) -> dict[str, Edge]:
+        """
         Dijkstra's algorithm
         https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm 
+
+        returns: the `previous` dictionary
+
+        The `previous` dictionary is used to keep track of the previous edge on the shortest path
+        from the starting node to each node in the graph.
+        It helps in reconstructing the shortest paths by specifying the sequence of edges to follow
+        from the starting node to a specific destination node.
+
+        Use reconstruct_path to reconstruct a Path from the `previous` dictionary 
         """
-        if source.id not in graph.nodes or target.id not in graph.nodes:
+        if source.id not in graph.nodes:
             return None
 
         queue = PriorityQueue()
@@ -248,9 +345,6 @@ class GraphUtils:
 
         while not queue.empty():
             u_node = queue.get()[1]
-
-            if u_node.id == target.id:
-                return GraphUtils._reconstruct_path(previous, target)
 
             if visited.get(u_node.id, False):
                 continue
@@ -265,4 +359,4 @@ class GraphUtils:
                     previous[edge.target.id] = edge
                     queue.put((new_distance.meters, edge.target))
 
-        return None
+        return previous

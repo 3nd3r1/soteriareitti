@@ -1,4 +1,4 @@
-""" soteriareitti/utils/logging_config.py """
+""" soteriareitti/utils/logging.py """
 import logging
 
 

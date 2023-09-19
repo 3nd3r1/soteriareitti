@@ -1,7 +1,7 @@
 """ tests/test_utils_graph.py """
 
 import unittest
-from soteriareitti.utils.utils_graph import GraphUtils, Graph
+from soteriareitti.utils.graph import GraphUtils, Graph
 
 
 class TestUtilsGraph(unittest.TestCase):

@@ -1,4 +1,4 @@
-""" soteriareitti/utils/utils_geo.py """
+""" soteriareitti/utils/geo.py """
 import math
 
 
@@ -6,12 +6,10 @@ class Location:
     """Location class represents a location on the map
     """
 
-    def __init__(self, longitude: float, latitude: float):
+    def __init__(self, latitude: float, longitude: float):
         """ 
-        Initialize a location with longitude and latitude 
-
-        Remember that longitude is the x-axis and latitude is the y-axis
-        Longitude and latitude are in degrees
+        Initialize a location with latitude and longitude
+        Latitude and longitude are in degrees
         """
         if not isinstance(latitude, float) or not isinstance(longitude, float):
             raise TypeError(
@@ -22,10 +20,10 @@ class Location:
         self.latitude = latitude
 
     def __str__(self):
-        return f"Location: ({self.longitude}, {self.latitude})"
+        return f"Location: ({self.latitude}, {self.longitude})"
 
     def __repr__(self):
-        return f"<soteriareitti.Location ({self.longitude}, {self.latitude})>"
+        return f"<soteriareitti.Location ({self.latitude}, {self.longitude})>"
 
     def __eq__(self, other: "Location" or tuple) -> bool:
         if isinstance(other, Location):
@@ -36,17 +34,17 @@ class Location:
             f"other must be utils_graph.Location or tuple, not {type(other)}")
 
     def as_tuple(self) -> tuple[float, float]:
-        return (self.longitude, self.latitude)
-
-    @property
-    def longitude_rad(self) -> float:
-        """ Return longitude in radians """
-        return math.radians(self.longitude)
+        return (self.latitude, self.longitude)
 
     @property
     def latitude_rad(self) -> float:
         """ Return latitude in radians """
         return math.radians(self.latitude)
+
+    @property
+    def longitude_rad(self) -> float:
+        """ Return longitude in radians """
+        return math.radians(self.longitude)
 
 
 class Distance:
@@ -58,9 +56,37 @@ class Distance:
     def __str__(self):
         return f"Distance: {self.meters} meters"
 
-    def __add__(self, distance: "Distance" or float | int) -> "Distance":
-        """ Add two distances together """
+    def __lt__(self, distance: "Distance" or float | int) -> bool:
+        if isinstance(distance, Distance):
+            return self.meters < distance.meters
 
+        if isinstance(distance, (float, int)):
+            return self.meters < distance
+
+        raise TypeError(
+            f"distance must be soteriareitti.Distance, float or int, not {type(distance)}")
+
+    def __gt__(self, distance: "Distance" or float | int) -> bool:
+        if isinstance(distance, Distance):
+            return self.meters > distance.meters
+
+        if isinstance(distance, (float, int)):
+            return self.meters > distance
+
+        raise TypeError(
+            f"distance must be soteriareitti.Distance, float or int, not {type(distance)}")
+
+    def __eq__(self, distance: "Distance" or float | int) -> bool:
+        if isinstance(distance, Distance):
+            return self.meters == distance.meters
+
+        if isinstance(distance, (float, int)):
+            return self.meters == distance
+
+        raise TypeError(
+            f"distance must be soteriareitti.Distance, float or int, not {type(distance)}")
+
+    def __add__(self, distance: "Distance" or float | int) -> "Distance":
         if isinstance(distance, Distance):
             return Distance(self.meters + distance.meters)
         if isinstance(distance, (float, int)):
@@ -68,13 +94,30 @@ class Distance:
         raise TypeError(
             f"distance must be utils_graph.Distance, float or int, not {type(distance)}")
 
-    def __iadd__(self, distance: "Distance" or float | int):
-        """ Add a distance to current distance """
+    def __sub__(self, distance: "Distance" or float | int) -> "Distance":
+        if isinstance(distance, Distance):
+            return Distance(self.meters - distance.meters)
+        if isinstance(distance, (float, int)):
+            return Distance(self.meters - distance)
+        raise TypeError(
+            f"distance must be utils_graph.Distance, float or int, not {type(distance)}")
 
+    def __iadd__(self, distance: "Distance" or float | int):
         if isinstance(distance, Distance):
             self.meters += distance.meters
         elif isinstance(distance, (float, int)):
             self.meters += distance
+        else:
+            raise TypeError(
+                f"distance must be utils_graph.Distance, float or int, not {type(distance)}")
+
+        return self
+
+    def __isub__(self, distance: "Distance" or float | int):
+        if isinstance(distance, Distance):
+            self.meters -= distance.meters
+        elif isinstance(distance, (float, int)):
+            self.meters -= distance
         else:
             raise TypeError(
                 f"distance must be utils_graph.Distance, float or int, not {type(distance)}")

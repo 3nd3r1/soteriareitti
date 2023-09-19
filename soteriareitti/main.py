@@ -1,7 +1,7 @@
 """ soteriareitti/main.py """
 import sys
 
-from soteriareitti.utils.logging_config import configure_logging
+from soteriareitti.utils.logging import configure_logging
 from soteriareitti.ui.gui import Gui
 
 

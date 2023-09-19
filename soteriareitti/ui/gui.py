@@ -4,7 +4,7 @@ import tkinter
 import tkintermapview
 
 from soteriareitti.core.app import SoteriaReitti
-from soteriareitti.utils.utils_geo import Location
+from soteriareitti.utils.geo import Location
 
 
 class Gui:
@@ -33,22 +33,18 @@ class Gui:
     def __on_left_click(self, pos: tuple):
         logging.debug("Left click at %s", pos)
 
-        if self._source and self._target:
-            self._source = None
-            self._target = None
-            self._map_widget.delete_all_marker()
+        if self._target:
             self._map_widget.delete_all_path()
+            self._target = None
+            self._source = None
 
         if not self._source:
-            self._source = Location(pos[1], pos[0])
-            self._map_widget.set_marker(pos[0], pos[1])
+            self._source = Location(*pos)
         else:
-            self._target = Location(pos[1], pos[0])
-            self._map_widget.set_marker(pos[0], pos[1])
-            path = self._app.get_path(self._source, self._target)
-            if path and len(path) > 1:
-                path = [(node.location.latitude, node.location.longitude) for node in path]
-                self._map_widget.set_path(path)
+            self._target = Location(*pos)
+            path = self._app._map.get_shortest_path(self._source, self._target)
+            path = [node.location.as_tuple() for node in path]
+            self._map_widget.set_path(path)
 
     def run(self):
         self._root.mainloop()

@@ -2,10 +2,9 @@
 
 from enum import Enum
 
-from soteriareitti.core.map import Map
 from soteriareitti.core.responder import ResponderType, Responder
 
-from soteriareitti.utils.utils_geo import Location, Distance
+from soteriareitti.utils.geo import Location, Distance
 
 
 class EmergencyType(Enum):
@@ -24,9 +23,9 @@ class Emergency:
     def __init__(self, emergency_type: EmergencyType,
                  responder_types: list[ResponderType], location: Location, description: str):
         self.type = emergency_type
-        self.responder_types = responder_types
         self.location = location
         self.description = description
+        self.responder_types = responder_types
 
         self.responders = []
 
