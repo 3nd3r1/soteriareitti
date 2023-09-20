@@ -77,8 +77,6 @@ class TestUtilsGraph(unittest.TestCase):
         node_target = self.graph.nodes.get("3")
         shortest_path = GraphUtils.dijkstra_shortest_path(self.graph, node_source, node_target)
 
-        print("Shortest path: %s", shortest_path)
-
         self.assertEqual(shortest_path.distance.meters, 3.0)
         self.assertListEqual([node.id for node in shortest_path], ["1", "2", "3"])
 
