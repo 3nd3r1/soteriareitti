@@ -70,14 +70,14 @@ class TestUtilsGraph(unittest.TestCase):
 
     # GraphUtils tests
 
-    def test_graph_shortest_path(self):
-        """ Test that GraphUtils finds the shortest path correctly """
+    def test_graph_dijkstra_shortest_path(self):
+        """ Test that Dijkstra implementation finds the shortest path correctly """
 
         node_source = self.graph.nodes.get("1")
         node_target = self.graph.nodes.get("3")
         shortest_path = GraphUtils.dijkstra_shortest_path(self.graph, node_source, node_target)
 
-        print(shortest_path.nodes)
+        print("Shortest path: %s", shortest_path)
 
         self.assertEqual(shortest_path.distance.meters, 3.0)
         self.assertListEqual([node.id for node in shortest_path], ["1", "2", "3"])

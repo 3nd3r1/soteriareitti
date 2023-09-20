@@ -1,5 +1,4 @@
 """ soteriareitti/utils/graph.py """
-import logging
 from queue import PriorityQueue
 import overpy
 
@@ -52,12 +51,14 @@ class Path:
 
     def __init__(self, edges: list[Edge] | None = None):
         self.distance = Distance(0)
+        self.__visited = {}
 
         if edges:
             for edge in edges:
                 if not isinstance(edge, Edge):
                     raise TypeError(f"Edge must be Edge, not {type(edge)}")
                 self.distance += edge.distance
+                self.__visited[edge.target.id] = True
             self.__edges = edges
         else:
             self.__edges = []
@@ -85,6 +86,7 @@ class Path:
 
         If distance is not given, it is calculated from the previous node
         """
+        self.__visited[node.id] = True
         if self.last:
             new_edge = Edge(self.last, node, distance)
             self.__edges.append(new_edge)
@@ -94,10 +96,14 @@ class Path:
 
     def pop(self) -> Node:
         self.distance -= self.__edges[-1].distance
+        self.__visited[self.last.id] = False
         return self.__edges.pop().target
 
     def reverse(self) -> "Path":
         return Path(self.__edges[::-1])
+
+    def contains(self, node: Node) -> bool:
+        return self.__visited.get(node.id, False)
 
     @property
     def last(self) -> Node | None:
@@ -205,15 +211,14 @@ class GraphUtils:
         """ Reconstruct path from `previous` dictionary """
 
         current_edge = previous.get(target.id)
-        path = Path()
+        path = Path.from_nodes([target])
+
         while current_edge:
+            path.add_node(current_edge.source, current_edge.distance)
             if current_edge.source.id == source.id:
                 return path
-            path.add_node(current_edge.target, current_edge.distance)
             current_edge = previous.get(current_edge.source.id)
 
-        if path.last.id == source.id:
-            return path
         return None
 
     @staticmethod
@@ -268,54 +273,63 @@ class GraphUtils:
 
     @staticmethod
     def ida_star_shortest_path(graph: Graph, source: Node, target: Node) -> Path | None:
-        """ Use IDA* algorithm to find shortest path from source to target """
+        """
+        Use IDA* algorithm to find shortest path from source to target 
+        https://en.wikipedia.org/wiki/Iterative_deepening_A*
+        """
 
         def heuristic(node: Node) -> Distance:
             return GeoUtils.calculate_distance(node.location, target.location)
 
-        def search(node: Node, current_cost: Distance, limit: Distance, visited: dict) -> Distance:
+        def search(path: Path, limit: Distance) -> Distance:
 
-            estimated_cost = current_cost + heuristic(node)
+            node = path.last
+            estimated_cost = path.distance + heuristic(node)
 
             if node.id == target.id:
                 return Distance(-1)
 
             if estimated_cost > limit:
-                visited[node.id] = True
                 return estimated_cost
 
             min_distance = Distance(float("inf"))
 
             for edge in graph.edges[node.id]:
-                if visited.get(edge.target.id, False):
+                if path.contains(edge.target):
                     continue
-                threshold = search(edge.target, current_cost + edge.distance, limit, visited)
+
+                path.add_node(edge.target, edge.distance)
+
+                threshold = search(path, limit)
                 if threshold < 0:
                     return threshold
 
                 if threshold < min_distance:
                     min_distance = threshold
 
+                path.pop()
+
             return min_distance
 
         limit = heuristic(source)
-        visited = {}
+        path = Path.from_nodes([source])
 
         while True:
-            threshold = search(source, Distance(0), limit, visited)
+            threshold = search(path, limit)
             if threshold < 0:
-                logging.debug("Path found with distance %s", limit)
-                return Path.from_nodes([source, target])
+                return path
             if threshold == float("inf"):
                 return None
-            logging.debug("Threshold: %s", threshold)
-            limit = threshold
+            # One meter is added to the threshold for faster convergence
+            # A meters inaccuracy is acceptable
+            limit = threshold + 1
 
     @staticmethod
     def dijkstra_shortest_path(graph: Graph, source: Node, target: Node) -> Path | None:
         """ Use Dijkstra's algorithm to find shortest path from source to target """
         previous = GraphUtils.dijkstras_algorithm(graph, source)
-        return GraphUtils.reconstruct_path(previous, source, target)
+        print(previous)
+        return GraphUtils.reconstruct_path(previous, source, target).reverse()
 
     @staticmethod
     def dijkstras_algorithm(graph: Graph, source: Node) -> dict[str, Edge]:
