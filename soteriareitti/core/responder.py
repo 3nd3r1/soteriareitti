@@ -3,6 +3,7 @@ from enum import Enum
 
 from soteriareitti.core.map import Map
 from soteriareitti.utils.geo import Location
+from soteriareitti.utils.graph import Path, Distance
 
 
 class ResponderType(Enum):
@@ -24,3 +25,11 @@ class Responder:
         self.type = responder_type
         self.location = location
         self.available = True
+
+    def path_to(self, location: Location) -> Path:
+        """ Returns the path to the given location. """
+        return self.__map.get_shortest_path(self.location, location)
+
+    def distance_to(self, location: Location) -> Distance:
+        """ Returns the distance to the given location. """
+        return self.path_to(location).distance
