@@ -10,6 +10,7 @@ python = "^3.10"
 overpy = "^0.6"
 invoke = "^2.2.0"
 tkintermapview = "^1.29"
+customtkinter = "^5.2.0"
 
 
 [tool.poetry.group.dev.dependencies]

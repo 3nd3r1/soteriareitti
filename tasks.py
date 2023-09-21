@@ -46,7 +46,7 @@ def lint(ctx):
     pylint_score = float(pylint_output.split("/")[-3].split(" ")[-1].strip())
 
     badge = anybadge.Badge(
-        'Pylint',
+        'pylint',
         pylint_score,
         default_color='forestgreen',
         value_suffix='/10'
