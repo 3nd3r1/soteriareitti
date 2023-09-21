@@ -36,6 +36,10 @@ class Location:
     def as_tuple(self) -> tuple[float, float]:
         return (self.latitude, self.longitude)
 
+    def rounded(self, precision: int = 4) -> "Location":
+        """ Return location rounded to given precision """
+        return Location(round(self.latitude, precision), round(self.longitude, precision))
+
     @property
     def latitude_rad(self) -> float:
         """ Return latitude in radians """

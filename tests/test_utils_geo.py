@@ -39,6 +39,10 @@ class TestUtilsGeo(unittest.TestCase):
         # Test as tuple
         self.assertEqual(location.as_tuple(), (60.0, 24.0))
 
+        # Test rounding
+        location = Location(60.123456789, 24.123456789)
+        self.assertEqual(location.rounded(4), Location(60.1235, 24.1235))
+
     def test_geo_calculate_distance(self):
         """ Test that the calculate_distance function calculates the distance correctly """
         location_helsinki = Location(60.1699, 24.9384)
