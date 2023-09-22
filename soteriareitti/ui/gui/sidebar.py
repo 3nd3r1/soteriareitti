@@ -1,69 +1,79 @@
 """ soteriareitti/ui/gui/sidebar.py """
+from typing import TYPE_CHECKING
 import customtkinter
 
 from soteriareitti.core.emergency import EmergencyType
 from soteriareitti.core.responder import ResponderType
 
+from soteriareitti.utils.geo import Location
+
+if TYPE_CHECKING:
+    from soteriareitti.ui.gui.gui import Gui
+
 
 class Sidebar(customtkinter.CTkFrame):
-    def __init__(self, master, *args, **kwargs):
+    labels = [
+        ("SoteriaReitti", 32, 0, 0, 3, "w", 5, 5),
+        ("New Emergency:", 24, 1, 0, 3, "w", 5, 5),
+        ("Location:", 16, 2, 0, 3, "w", 5, 5),
+        ("Type:", 16, 4, 0, 3, "w", 5, 5),
+        ("Description:", 16, 6, 0, 3, "w", 5, 5),
+        ("Responders:", 16, 8, 0, 3, "w", 5, 5),
+    ]
+
+    def __init__(self, master: "Gui", *args, **kwargs):
         super().__init__(master=master, width=250, *args, **kwargs)
         self.grid(row=0, column=0, padx=0, pady=0, sticky="nsew")
 
-        self._title = customtkinter.CTkLabel(master=self, text="SoteriaReitti", font=("Ubuntu", 32))
-        self._title.grid(row=0, column=0, columnspan=3, sticky="w", padx=5, pady=5)
+        self.master: "Gui" = master
+        self.em_type = customtkinter.StringVar()
+        self.em_location = customtkinter.StringVar()
+        self.em_description = customtkinter.StringVar()
+        self.em_responder_types = {k: customtkinter.BooleanVar() for k in ResponderType}
 
-        self._em_title = customtkinter.CTkLabel(
-            master=self, text="New emergency:", font=("Ubuntu", 24))
-        self._em_title.grid(row=1, column=0, columnspan=3, sticky="w", padx=5, pady=5)
+        self.__create_widgets()
 
-        self._em_location_label = customtkinter.CTkLabel(
-            master=self, text="Location:", font=("Ubuntu", 16))
-        self._em_location_label.grid(row=2, column=0, columnspan=3, sticky="w", padx=5, pady=5)
+    def __create_widgets(self):
+        # Labels
+        for label in Sidebar.labels:
+            customtkinter.CTkLabel(self, text=label[0], font=("Ubuntu", label[1])).grid(
+                row=label[2], column=label[3], columnspan=label[4], sticky=label[5],
+                padx=label[6], pady=label[7])
 
-        self._em_location = customtkinter.CTkLabel(
-            master=self, textvariable=self.master.map_view.emergency_location_var, font=("Ubuntu", 16))
-        self._em_location.grid(row=3, column=0, columnspan=3, sticky="w", padx=5, pady=5)
-
-        self._em_type_label = customtkinter.CTkLabel(master=self, text="Type:", font=("Ubuntu", 16))
-        self._em_type_label.grid(row=4, column=0, columnspan=3, sticky="w", padx=5, pady=5)
-
-        self._em_type = customtkinter.CTkOptionMenu(
-            master=self, values=[type.value for type in EmergencyType])
-        self._em_type.grid(row=5, column=0, columnspan=3, sticky="w", padx=5, pady=5)
-
-        self._em_description_label = customtkinter.CTkLabel(
-            master=self, text="Description:", font=("Ubuntu", 16))
-        self._em_description_label.grid(row=6, column=0, columnspan=3, sticky="w", padx=5, pady=5)
-
-        self._em_description = customtkinter.CTkTextbox(master=self)
-        self._em_description.grid(row=7, column=0, columnspan=3, sticky="w", padx=5, pady=5)
-
-        self._em_responders_label = customtkinter.CTkLabel(
-            master=self, text="Responders:", font=("Ubuntu", 16))
-        self._em_responders_label.grid(row=8, column=0, columnspan=3, sticky="w", padx=5, pady=5)
-
-        self._em_responders_vars = {}
-        self._em_responders_checkboxes = {}
+        # Inputs
+        customtkinter.CTkOptionMenu(
+            self, variable=self.em_type, values=[k.value for k in EmergencyType]).grid(
+            row=5, column=0, columnspan=3, sticky="w", padx=5, pady=5)
+        customtkinter.CTkLabel(
+            self, textvariable=self.em_location).grid(
+            row=3, column=0, columnspan=3, sticky="w", padx=5, pady=5)
+        customtkinter.CTkEntry(
+            self, textvariable=self.em_description, width=200).grid(
+            row=7, column=0, columnspan=3, sticky="w", padx=5, pady=5)
 
         column = 0
-        for responder in ResponderType:
-            variable = customtkinter.BooleanVar(value=False)
-            checkbox = customtkinter.CTkCheckBox(master=self,
-                                                 text=responder.value,
-                                                 variable=variable)
-            checkbox.grid(row=9, column=column, sticky="w", padx=5, pady=5)
+        for key, value in self.em_responder_types.items():
+            customtkinter.CTkCheckBox(
+                self, text=key.value, variable=value).grid(
+                row=9, column=column, columnspan=1, sticky="w", padx=5, pady=5)
             column += 1
-            self._em_responders_vars[responder.value] = variable
-            self._em_responders_checkboxes[responder.value] = checkbox
 
-        self._em_submit = customtkinter.CTkButton(
-            master=self, text="Create", command=self.create_emergency)
-        self._em_submit.grid(row=10, column=0, columnspan=3, sticky="w", padx=5, pady=5)
+        customtkinter.CTkButton(
+            self, text="Create", command=self.create_emergency).grid(
+            row=10, column=0, columnspan=3, sticky="w", padx=5, pady=5)
 
     def create_emergency(self):
-        em_type = self._em_type.get()
-        em_responder_types = [k for k, v in self._em_responders_vars if v.get()]
-        em_location = self.master.map_view.emergency_location_var.get()
-        em_description = self._em_description.get("0.0", "end")
+        em_type = EmergencyType(self.em_type.get())
+        em_responder_types = [k for k, v in self.em_responder_types.items() if v.get()]
+        em_location = Location.from_str(self.em_location.get())
+        em_description = self.em_description.get()
+
         self.master.app.create_emergency(em_type, em_responder_types, em_location, em_description)
+
+        for responder in self.master.app.active_emergency.responders:
+            path_to_emergency = responder.path_to(self.master.app.active_emergency.location)
+            self.master.map_view.draw_path(path_to_emergency)
+
+        for station in self.master.app.active_emergency.stations_from:
+            path_to_emergency = station.path_to(self.master.app.active_emergency.location)
+            self.master.map_view.draw_path(path_to_emergency)

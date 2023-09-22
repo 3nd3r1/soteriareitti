@@ -19,8 +19,13 @@ class Location:
         self.longitude = longitude
         self.latitude = latitude
 
+    @classmethod
+    def from_str(cls, location_str: str) -> "Location":
+        lat_str, lon_str = location_str.strip("(").strip(")").split(",")
+        return cls(float(lat_str), float(lon_str))
+
     def __str__(self):
-        return f"Location: ({self.latitude}, {self.longitude})"
+        return f"({self.latitude},{self.longitude})"
 
     def __repr__(self):
         return f"<soteriareitti.Location ({self.latitude}, {self.longitude})>"

@@ -31,8 +31,8 @@ class Station:
         self.__map = app_map
         self.__dijkstra_data = self.__map.get_dijkstra_data(self.location)
 
-    def __str__(self):
-        return f"{self.type} station at {self.location}"
+    def __repr__(self):
+        return f"<soteriareitti.Station type={self.type} location={self.location}>"
 
     def path_to(self, location: Location) -> Path:
         """ Return shortest path from station to location """

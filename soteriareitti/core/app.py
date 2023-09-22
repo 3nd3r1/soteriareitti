@@ -24,7 +24,7 @@ class SoteriaReitti:
         """ Creates an emergency call. """
 
         self.active_emergency = Emergency(emergency_type, responder_types, location, description)
-        self.active_emergency.find_nearest_responders(self._responders)
+        self.active_emergency.handle(self._responders, self._stations)
 
         logging.debug("Created emergency call: %s", self.active_emergency)
 

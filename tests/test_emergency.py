@@ -38,21 +38,9 @@ class TestEmergency(unittest.TestCase):
         # One type
         emergency = Emergency(EmergencyType.MEDICAL, [ResponderType.AMBULANCE],
                               Location(60.1846, 24.9230), "Test emergency 1")
-        emergency.find_nearest_responders(self.responders)
+        responder = emergency.find_nearest_responder(self.responders, ResponderType.AMBULANCE)
 
-        self.assertEqual(len(emergency.responders), 1)
-        self.assertEqual(emergency.responders[0].type, ResponderType.AMBULANCE)
-        self.assertEqual(emergency.responders[0].location,
+        self.assertIsNotNone(responder)
+        self.assertEqual(responder.type, ResponderType.AMBULANCE)
+        self.assertEqual(responder.location,
                          Location(60.1825, 24.9265))
-
-        # Multiple types
-        emergency = Emergency(EmergencyType.MEDICAL,
-                              [ResponderType.AMBULANCE, ResponderType.POLICE_CAR],
-                              Location(60.1799, 24.9129), "Test emergency 2")
-        emergency.find_nearest_responders(self.responders)
-
-        self.assertEqual(len(emergency.responders), 2)
-        self.assertIn(emergency.responders[0].type, [
-                      ResponderType.AMBULANCE, ResponderType.POLICE_CAR])
-        self.assertIn(emergency.responders[1].type, [
-                      ResponderType.AMBULANCE, ResponderType.POLICE_CAR])
