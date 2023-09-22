@@ -20,3 +20,14 @@
 | 14.09.2023   | 5h                    | Ensimmäisen toimivan prototyypin luominen ja testien kirjoittaminen            |
 | 15.09.2023   | 3h                    | Viikkoraportin teko, virheiden korjaamista ja testien täydentämistä            |
 | **Yhteensä** | **16h**               |                                                                                |
+
+## Viikko 3
+
+| Päivämäärä   | Käytetty aika (tunni) | Toiminta                                                                       |
+| ------------ | --------------------- | ------------------------------------------------------------------------------ |
+| 18.09.2023   | 4h                    | Testien tekoa, koodin parantelua ja hätätapausten implementoinnin aloittaminen |
+| 19.09.2023   | 3h                    | Yritetään ja epäonnistutaan implementoimaan IDA\* algoritmi reitinhakuun       |
+| 20.09.2023   | 3h                    | IDA\* saatiin toimimaan ja testien korjaamista                                 |
+| 21.09.2023   | 4h                    | Lisää testejä ja käyttöliittymän kehittämistä toiseen prototyyppiin            |
+| 22.09.2023   | 4h                    | Toinen prototyyppi on valmis! +virheiden korjaamista ja viikkoraportin teko    |
+| **Yhteensä** | **18h**               |                                                                                |
