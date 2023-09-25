@@ -20,13 +20,15 @@ class SoteriaReitti:
         logging.debug("SoteriaReitti initialized")
 
     def create_emergency(self, emergency_type: EmergencyType, responder_types: list[ResponderType],
-                         location: Location, description: str):
+                         location: Location, description: str) -> Emergency:
         """ Creates an emergency call. """
 
         self.active_emergency = Emergency(emergency_type, responder_types, location, description)
         self.active_emergency.handle(self._responders, self._stations)
 
         logging.debug("Created emergency call: %s", self.active_emergency)
+
+        return self.active_emergency
 
     def create_responder(self, responder_type: ResponderType, location: Location):
         """ Creates a first responder """

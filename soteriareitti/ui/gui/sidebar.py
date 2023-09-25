@@ -68,12 +68,15 @@ class Sidebar(customtkinter.CTkFrame):
         em_location = Location.from_str(self.em_location.get())
         em_description = self.em_description.get()
 
-        self.master.app.create_emergency(em_type, em_responder_types, em_location, em_description)
+        emergency = self.master.app.create_emergency(
+            em_type, em_responder_types, em_location, em_description)
 
-        for responder in self.master.app.active_emergency.responders:
-            path_to_emergency = responder.path_to(self.master.app.active_emergency.location)
-            self.master.map_view.draw_path(path_to_emergency)
+        self.master.map_view.clear_paths()
 
-        for station in self.master.app.active_emergency.stations_from:
-            path_to_emergency = station.path_to(self.master.app.active_emergency.location)
-            self.master.map_view.draw_path(path_to_emergency)
+        for responder in emergency.responders:
+            path_to_emergency = responder.path_to(emergency.location)
+            self.master.map_view.draw_path(path_to_emergency, "#FF0000")
+
+        for station in emergency.stations_from:
+            path_to_emergency = station.path_to(emergency.location)
+            self.master.map_view.draw_path(path_to_emergency, "#0000FF")

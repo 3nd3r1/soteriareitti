@@ -79,8 +79,8 @@ class Map:
         source_node = self.get_closest_node(source)
         target_node = self.get_closest_node(target)
 
-        if source_node.id not in self._graph.nodes or target_node.id not in self._graph.nodes:
-            logging.debug("Source or target node are not in graph")
+        if not source_node or not target_node:
+            logging.debug("No closest node found at source or target location.")
             return None
 
         path = GraphUtils.ida_star_shortest_path(self._graph, source_node, target_node)
