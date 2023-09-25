@@ -1,10 +1,14 @@
 """ soteriareitti/core/map.py """
+import os
 import logging
+import pickle
 import overpy
 
 from soteriareitti.core._overpass import OverpassAPI
+
 from soteriareitti.utils.graph import GraphUtils, Graph, Node, Edge, Path
 from soteriareitti.utils.geo import GeoUtils, Location, Distance
+from soteriareitti.utils.file_reader import get_data
 
 
 class Map:
@@ -12,10 +16,15 @@ class Map:
 
     def __init__(self, place: str):
         self._overpass_api = OverpassAPI()
-        self._graph = Graph()
         self._place = place
 
-        self.__create_graph()
+        try:
+            self._graph = pickle.load(open(get_data(f"{place}-graph.pickle"), "rb"))
+            logging.debug("Loaded graph (%s) from pickle file", self._graph)
+        except (OSError, IOError):
+            self._graph = Graph()
+            self.__create_graph()
+            pickle.dump(self._graph, open(get_data(f"{place}-graph.pickle"), "wb"))
 
     def __create_graph(self):
         """ Create graph from data """
