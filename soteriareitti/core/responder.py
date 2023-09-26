@@ -2,8 +2,8 @@
 from enum import Enum
 
 from soteriareitti.core.map import Map
-from soteriareitti.utils.geo import Location
-from soteriareitti.utils.graph import Path, Distance
+from soteriareitti.utils.geo import Location, Distance
+from soteriareitti.utils.graph import Path
 
 
 class ResponderType(Enum):

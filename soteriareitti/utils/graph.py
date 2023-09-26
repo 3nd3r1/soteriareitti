@@ -1,64 +1,61 @@
 """ soteriareitti/utils/graph.py """
+from typing import Callable, Any
 from queue import PriorityQueue
-import overpy
-
-from soteriareitti.utils.geo import GeoUtils, Location, Distance
 
 
 class Node:
     """ Node class that represents a node in a graph """
 
-    def __init__(self, identification: str, latitude: float, longitude: float):
-        self.id = identification
-        self.location = Location(latitude, longitude)
+    def __init__(self, node_id: str, **kwargs):
+        if not isinstance(node_id, str):
+            raise TypeError(f"Node_id must be str, not {type(node_id)}")
+        self.id = node_id
+        self.data = kwargs
+
+    def __str__(self) -> str:
+        return self.id
 
     def __repr__(self):
-        return f"<soteriareitti.Node id={self.id}, location={self.location}>"
-
-    @classmethod
-    def from_overpy_node(cls, node: overpy.Node):
-        if not isinstance(node, overpy.Node):
-            raise TypeError(f"Node must be overpy.Node, not {type(node)}")
-        if not node.lat or not node.lon:
-            raise ValueError(f"Node {node.id} has no longitude or latitude")
-
-        return cls(node.id, float(node.lat), float(node.lon))
+        return f"<soteriareitti.Node id={self.id}>"
 
     def update(self, node: "Node"):
         """ Update node with data from another node """
         if not isinstance(node, Node):
             raise TypeError(f"Node must be Node, not {type(node)}")
-
-        self.location = node.location
+        self.data.update(node.data)
 
 
 class Edge:
-    """ Edge class that represents an edge between two nodes """
+    """ 
+    Edge class that represents an edge between two nodes
 
-    def __init__(self, source: Node, target: Node, distance: Distance | None = None):
+    - source and target must be nodes in the graph
+    - cost can be any comparable value that can be compared with other costs in the graph
+    """
+
+    def __init__(self, source: Node, target: Node, cost: Any):
         self.source = source
         self.target = target
-        self.distance = distance if distance else GeoUtils.calculate_distance(
-            source.location, target.location)
+        self.cost = cost
 
     def __repr__(self):
         return (f"<soteriareitti.Edge source={self.source},"
-                f"target={self.target}, distance={self.distance}>")
+                f"target={self.target}, cost={self.cost}>")
 
 
 class Path:
     """ Path class that represents a path between multiple nodes """
 
     def __init__(self, edges: list[Edge] | None = None):
-        self.distance = Distance(0)
+        self.cost = 0
         self.__visited = {}
 
         if edges:
             for edge in edges:
                 if not isinstance(edge, Edge):
                     raise TypeError(f"Edge must be Edge, not {type(edge)}")
-                self.distance += edge.distance
-                self.__visited[edge.target.id] = True
+                self.cost += edge.cost
+                self.__visited[edge.target] = True
             self.__edges = edges
         else:
             self.__edges = []
@@ -71,7 +68,7 @@ class Path:
         return path
 
     def __repr__(self):
-        return f"<soteriareitti.Path nodes={len(self)}, distance={self.distance}>"
+        return f"<soteriareitti.Path nodes={len(self)}, cost={self.cost}>"
 
     def __iter__(self):
         for edge in self.__edges:
@@ -80,22 +77,20 @@ class Path:
     def __len__(self):
         return len(self.__edges)
 
-    def add_node(self, node: Node, distance: Distance | None = None):
+    def add_node(self, node: Node, cost: Any = None):
         """
         Add node to path 
-
-        If distance is not given, it is calculated from the previous node
         """
-        self.__visited[node.id] = True
+        self.__visited[node] = True
         if self.last:
-            new_edge = Edge(self.last, node, distance)
+            new_edge = Edge(self.last, node, cost)
             self.__edges.append(new_edge)
-            self.distance += new_edge.distance
+            self.cost += new_edge.cost
         else:
-            self.__edges.append(Edge(node, node, Distance(0)))
+            self.__edges.append(Edge(node, node, 0))
 
     def pop(self) -> Node:
-        self.distance -= self.__edges[-1].distance
+        self.cost -= self.__edges[-1].cost
         self.__visited[self.last.id] = False
         return self.__edges.pop().target
 
@@ -131,90 +126,65 @@ class Graph:
             edges += edge_list
         return edges
 
-    def add_node(self, node: overpy.Node | Node | str | tuple | list):
+    def add_node(self, node: str | Node, **kwargs) -> Node:
         """
          Add node to graph or update existing node
-
-         - If node is str, it is assumed to be an existing node's id
-         - If node is tuple or list, it is assumed to be a new node 
-         of format (id, latitude, longitude)
 
          Returns: the node that was added or updated
         """
 
-        if isinstance(node, overpy.Node):
-            node = Node.from_overpy_node(node)
-
-        if isinstance(node, (tuple, list)):
-            if len(node) != 3:
-                raise ValueError(
-                    f"Node must be a tuple or list of length 3, not {len(node)}")
-            node = Node(str(node[0]), float(node[1]), float(node[2]))
-
         if isinstance(node, str):
-            if node not in self.nodes:
-                raise ValueError(f"Node {node} does not exist")
-            return self.nodes[node]
+            node = Node(node, **kwargs)
 
         if not isinstance(node, Node):
-            raise TypeError(
-                f"Node must be overpy.Node, graph_utils.Node"
-                f"or a node's id (str), not {type(node)}")
+            raise TypeError(f"node_id must be Node or str, not {type(node)}")
 
-        if node.id not in self.nodes:
+        if node.id in self.nodes:
+            self.nodes[node.id].update(node)
+        else:
             self.edges[node.id] = []
             self.nodes[node.id] = node
-        else:
-            self.nodes[node.id].update(node)
 
         return self.nodes[node.id]
 
-    def add_edge(self, node_a: any, node_b: any, distance: Distance | float | int | None = None):
+    def add_edge(self, node_a: str | Node, node_b: str | Node, cost: Any):
         """ 
         Add edge to graph
 
-        node_a and node_b can be either a new node that is added/updated or an existing node's id
-        distance is optional and can be either a Distance object or a float
+        node_a and node_b must be node_ids or nodes
 
         """
-        if isinstance(distance, (float, int)):
-            distance = Distance(float(distance))
-
-        if not isinstance(distance, Distance) and distance is not None:
-            raise TypeError(
-                f"Distance must be Distance, float or None, not {type(distance)}")
-
         node_a = self.add_node(node_a)
         node_b = self.add_node(node_b)
 
-        self.edges[node_a.id].append(Edge(node_a, node_b, distance))
+        self.edges[node_a.id].append(Edge(node_a, node_b, cost))
 
-    def add_nodes_from(self, nodes: list[any]):
+    def add_nodes_from(self, nodes: list[Node | str]):
         """ Add nodes from a list of nodes """
         for node in nodes:
             self.add_node(node)
 
-    def add_edges_from(self, edges: list[any]):
+    def add_edges_from(self, edges: list[Edge | tuple | list]):
         """ Add edges from a list of edges"""
         for edge in edges:
             if isinstance(edge, Edge):
-                self.add_edge(edge.source, edge.target, edge.distance)
+                self.add_edge(edge.source, edge.target, edge.cost)
             elif isinstance(edge, (tuple, list)):
-                self.add_edge(edge[0], edge[1], edge[2] if len(edge) > 2 else None)
+                self.add_edge(edge[0], edge[1], edge[2])
             else:
                 raise TypeError(f"Edge must be Edge, tuple or list, not {type(edge)}")
 
 
 class GraphUtils:
     @staticmethod
-    def reconstruct_path(previous: dict, source: Node, target: Node) -> Path | None:
+    def reconstruct_path(previous: dict[Any, Edge], source: Node, target: Node) -> Path | None:
         """ Reconstruct path from `previous` dictionary """
 
         current_edge = previous.get(target.id)
         path = Path.from_nodes([target])
 
         while current_edge:
-            path.add_node(current_edge.source, current_edge.distance)
+            path.add_node(current_edge.source, current_edge.cost)
             if current_edge.source.id == source.id:
                 return path
             current_edge = previous.get(current_edge.source.id)
@@ -225,7 +195,7 @@ class GraphUtils:
     def reverse_graph(graph: Graph) -> Graph:
         """ Reverse all edges in a directional graph """
         edges = graph.get_edges()
-        reversed_edges = [Edge(edge.target, edge.source, edge.distance) for edge in edges]
+        reversed_edges = [Edge(edge.target, edge.source, edge.cost) for edge in edges]
 
         new_graph = Graph()
         new_graph.add_nodes_from(graph.get_nodes())
@@ -267,32 +237,30 @@ class GraphUtils:
         new_graph.add_nodes_from(largest_component)
         for edge in graph.get_edges():
             if edge.source.id in new_graph.nodes and edge.target.id in new_graph.nodes:
-                new_graph.add_edge(edge.source, edge.target, edge.distance)
+                new_graph.add_edge(edge.source, edge.target, edge.cost)
 
         return new_graph
 
     @staticmethod
-    def ida_star_shortest_path(graph: Graph, source: Node, target: Node) -> Path | None:
+    def ida_star_shortest_path(graph: Graph, heuristic: Callable[[Node], Any],
+                               source: Node, target: Node) -> Path | None:
         """
         Use IDA* algorithm to find shortest path from source to target 
         https://en.wikipedia.org/wiki/Iterative_deepening_A*
         """
 
-        def heuristic(node: Node) -> Distance:
-            return GeoUtils.calculate_distance(node.location, target.location)
-
-        def search(path: Path, limit: Distance) -> Distance:
+        def search(path: Path, limit: float) -> float:
 
             node = path.last
-            estimated_cost = path.distance + heuristic(node)
+            estimated_cost = path.cost + heuristic(node)
 
             if node.id == target.id:
-                return Distance(-1)
+                return -1
 
             if estimated_cost > limit:
                 return estimated_cost
 
-            min_distance = Distance(float("inf"))
+            min_distance = float("inf")
 
             for edge in graph.edges[node.id]:
                 if path.contains(edge.target):
@@ -328,7 +296,6 @@ class GraphUtils:
     def dijkstra_shortest_path(graph: Graph, source: Node, target: Node) -> Path | None:
         """ Use Dijkstra's algorithm to find shortest path from source to target """
         previous = GraphUtils.dijkstras_algorithm(graph, source)
-        print(previous)
         return GraphUtils.reconstruct_path(previous, source, target).reverse()
 
     @staticmethod
@@ -351,10 +318,10 @@ class GraphUtils:
 
         queue = PriorityQueue()
         visited = {}
-        distances = {}
+        cost = {}
         previous = {}
 
-        distances[source.id] = Distance(0)
+        cost[source.id] = 0
         queue.put((0, source))
 
         while not queue.empty():
@@ -365,12 +332,12 @@ class GraphUtils:
             visited[u_node.id] = True
 
             for edge in graph.edges[u_node.id]:
-                new_distance = distances.get(u_node.id, Distance(float("inf"))) + edge.distance
-                old_distance = distances.get(edge.target.id, Distance(float("inf")))
+                new_distance = cost.get(u_node.id, float("inf")) + edge.cost
+                old_distance = cost.get(edge.target.id, float("inf"))
 
-                if new_distance.meters < old_distance.meters:
-                    distances[edge.target.id] = new_distance
+                if new_distance < old_distance:
+                    cost[edge.target.id] = new_distance
                     previous[edge.target.id] = edge
-                    queue.put((new_distance.meters, edge.target))
+                    queue.put((new_distance, edge.target))
 
         return previous
