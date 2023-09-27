@@ -10,7 +10,7 @@ class Node:
         if not isinstance(node_id, str):
             raise TypeError(f"Node_id must be str, not {type(node_id)}")
         self.id = node_id
-        self.data = kwargs
+        self.__dict__.update(kwargs)
 
     def __str__(self) -> str:
         return self.id
@@ -22,7 +22,7 @@ class Node:
         """ Update node with data from another node """
         if not isinstance(node, Node):
             raise TypeError(f"Node must be Node, not {type(node)}")
-        self.data.update(node.data)
+        self.__dict__.update(node.__dict__)
 
 
 class Edge:
@@ -30,13 +30,20 @@ class Edge:
     Edge class that represents an edge between two nodes
 
     - source and target must be nodes in the graph
-    - cost can be any comparable value that can be compared with other costs in the graph
+    - cost must be convertible to float
     """
 
-    def __init__(self, source: Node, target: Node, cost: Any):
-        self.source = source
-        self.target = target
-        self.cost = cost
+    def __init__(self, source: Node, target: Node, cost: float | int | str):
+        if not isinstance(source, Node) or not isinstance(target, Node):
+            raise TypeError(
+                f"Source and target must be Node, not {type(source)} and {type(target)}")
+
+        if not isinstance(cost, (float, int, str)):
+            raise TypeError(f"Cost must be float, int or str, not {type(cost)}")
+
+        self.source: Node = source
+        self.target: Node = target
+        self.cost: float = float(cost)
 
     def __repr__(self):
         return (f"<soteriareitti.Edge source={self.source},"
@@ -47,7 +54,7 @@ class Path:
     """ Path class that represents a path between multiple nodes """
 
     def __init__(self, edges: list[Edge] | None = None):
-        self.cost = 0
+        self.cost: float = 0.0
         self.__visited = {}
 
         if edges:
@@ -77,17 +84,17 @@ class Path:
     def __len__(self):
         return len(self.__edges)
 
-    def add_node(self, node: Node, cost: Any = None):
+    def add_node(self, node: Node, cost: float | int | str = 0):
         """
         Add node to path 
         """
-        self.__visited[node] = True
+        self.__visited[node.id] = True
         if self.last:
             new_edge = Edge(self.last, node, cost)
             self.__edges.append(new_edge)
             self.cost += new_edge.cost
         else:
-            self.__edges.append(Edge(node, node, 0))
+            self.__edges.append(Edge(node, node, cost))
 
     def pop(self) -> Node:
         self.cost -= self.__edges[-1].cost
@@ -108,12 +115,13 @@ class Path:
 
 
 class Graph:
+    # Store a version so cache is cleared if version changes
     def __init__(self):
-        self.nodes = {}
-        self.edges = {}
+        self.nodes: dict[str, Node] = {}
+        self.edges: dict[str, Edge] = {}
 
     def __repr__(self) -> str:
-        return f"<soteriareitti.Graph nodes={len(self.nodes)}, edges={len(self.get_edges())}>"
+        return f"<soteriareitti.Graph nodes={len(self.get_nodes())}, edges={len(self.get_edges())}>"
 
     def get_nodes(self) -> list[Node]:
         """ Get all nodes """
@@ -242,7 +250,7 @@ class GraphUtils:
         return new_graph
 
     @staticmethod
-    def ida_star_shortest_path(graph: Graph, heuristic: Callable[[Node], Any],
+    def ida_star_shortest_path(graph: Graph, heuristic: Callable[[Node, Node], float],
                                source: Node, target: Node) -> Path | None:
         """
         Use IDA* algorithm to find shortest path from source to target 
@@ -252,7 +260,7 @@ class GraphUtils:
         def search(path: Path, limit: float) -> float:
 
             node = path.last
-            estimated_cost = path.cost + heuristic(node)
+            estimated_cost = path.cost + heuristic(node, target)
 
             if node.id == target.id:
                 return -1
@@ -260,26 +268,26 @@ class GraphUtils:
             if estimated_cost > limit:
                 return estimated_cost
 
-            min_distance = float("inf")
+            min_cost = float("inf")
 
             for edge in graph.edges[node.id]:
                 if path.contains(edge.target):
                     continue
 
-                path.add_node(edge.target, edge.distance)
+                path.add_node(edge.target, edge.cost)
 
                 threshold = search(path, limit)
                 if threshold < 0:
                     return threshold
 
-                if threshold < min_distance:
-                    min_distance = threshold
+                if threshold < min_cost:
+                    min_cost = threshold
 
                 path.pop()
 
-            return min_distance
+            return min_cost
 
-        limit = heuristic(source)
+        limit = heuristic(source, target)
         path = Path.from_nodes([source])
 
         while True:

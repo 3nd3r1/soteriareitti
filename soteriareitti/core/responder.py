@@ -2,7 +2,7 @@
 from enum import Enum
 
 from soteriareitti.core.map import Map
-from soteriareitti.utils.geo import Location, Distance
+from soteriareitti.utils.geo import Location
 from soteriareitti.utils.graph import Path
 
 
@@ -26,10 +26,14 @@ class Responder:
         self.location = location
         self.available = True
 
-    def path_to(self, location: Location) -> Path:
+    def path_to(self, location: Location) -> Path | None:
         """ Returns the path to the given location. """
         return self.__map.get_shortest_path(self.location, location)
 
-    def distance_to(self, location: Location) -> Distance:
+    def cost_to(self, location: Location) -> float | None:
         """ Returns the distance to the given location. """
-        return self.path_to(location).distance
+        path_to = self.path_to(location)
+        if not path_to:
+            return None
+
+        return self.path_to(location).cost

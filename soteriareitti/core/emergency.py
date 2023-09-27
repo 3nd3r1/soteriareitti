@@ -5,7 +5,7 @@ from enum import Enum
 from soteriareitti.core.responder import ResponderType, Responder
 from soteriareitti.core.station import StationType, Station
 
-from soteriareitti.utils.geo import Location, Distance
+from soteriareitti.utils.geo import Location
 
 
 class ResponderNotFound(Exception):
@@ -50,69 +50,69 @@ class Emergency:
         """ Handles the emergency. """
         logging.debug("Handling emergency: %s", self)
         for responder_type in self.responder_types:
-            nearest_responder = self.find_nearest_responder(responders, responder_type)
+            best_responder = self.find_best_responder(responders, responder_type)
 
             # If a responder is available, add it to the emergency
-            if nearest_responder:
-                nearest_responder.available = False
-                self.responders.append(nearest_responder)
+            if best_responder:
+                best_responder.available = False
+                self.responders.append(best_responder)
                 continue
 
-            # If no responders are available, find the nearest stations
-            nearest_station = None
+            # If no responders are available, find the best station
+            best_station = None
             if responder_type == ResponderType.POLICE_CAR:
-                nearest_station = self.find_nearest_station(stations, StationType.POLICE_STATION)
+                best_station = self.find_best_station(stations, StationType.POLICE_STATION)
             elif responder_type == ResponderType.FIRE_TRUCK:
-                nearest_station = self.find_nearest_station(stations, StationType.FIRE_STATION)
+                best_station = self.find_best_station(stations, StationType.FIRE_STATION)
             elif responder_type == ResponderType.AMBULANCE:
-                nearest_station = self.find_nearest_station(stations, StationType.HOSPITAL)
+                best_station = self.find_best_station(stations, StationType.HOSPITAL)
             else:
                 logging.debug("No handler for responder type %s", responder_type)
 
-            if nearest_station:
-                self.stations_from.append(nearest_station)
+            if best_station:
+                self.stations_from.append(best_station)
             else:
                 logging.debug("No available responders or stations for type %s", responder_type)
                 raise ResponderNotFound
 
-    def find_nearest_responder(self, responders: list[Responder],
-                               responder_type: ResponderType) -> Responder | None:
-        """ Finds the nearest responders of the given type and adds them to the emergency. """
-        logging.debug("Finding nearest responders")
-        nearest_responder = None
-        nearest_distance = Distance(float("inf"))
+    def find_best_responder(self, responders: list[Responder],
+                            responder_type: ResponderType) -> Responder | None:
+        """ Finds the lowest cost responder of the given type. """
+        logging.debug("Finding lowest cost responder to emergency %s", self)
+        best_responder = None
+        min_cost = float("inf")
 
         for responder in responders:
             if not responder.available or responder.type != responder_type:
                 continue
 
-            distance_to_responder = responder.distance_to(self.location)
-            if distance_to_responder.meters < nearest_distance.meters:
-                nearest_responder = responder
-                nearest_distance = distance_to_responder
+            cost_responder = responder.cost_to(self.location)
+            if cost_responder < min_cost:
+                best_responder = responder
+                min_cost = cost_responder
 
-        if nearest_responder:
-            logging.debug("Found nearest responder: %s", nearest_responder)
-            return nearest_responder
+        if best_responder:
+            logging.debug("Found best responder: %s", best_responder)
+            return best_responder
         logging.debug("No available responders of type %s", responder_type)
         return None
 
-    def find_nearest_station(self, stations: list[Station],
-                             station_type: StationType) -> Station | None:
-        """ Finds the nearest station of the given type and adds it to the emergency. """
-        logging.debug("Finding nearest station")
-        nearest_station = None
-        nearest_distance = Distance(float("inf"))
+    def find_best_station(self, stations: list[Station],
+                          station_type: StationType) -> Station | None:
+        """ Finds the lowest cost station of the given type . """
+        logging.debug("Finding lowest cost station to emergency %s", self)
+        best_station = None
+        min_cost = float("inf")
         for station in stations:
             if station.type != station_type:
                 continue
-            distance_to_station = station.distance_to(self.location)
-            if distance_to_station.meters < nearest_distance.meters:
-                nearest_station = station
-                nearest_distance = distance_to_station
+            cost_station = station.cost_to(self.location)
+            if cost_station < min_cost:
+                min_cost = cost_station
+                best_station = station
 
-        if nearest_station:
-            logging.debug("Found nearest station: %s", nearest_station)
-            return nearest_station
+        if best_station:
+            logging.debug("Found best station: %s", best_station)
+            return best_station
         logging.debug("No available stations of type %s", station_type)
         return None

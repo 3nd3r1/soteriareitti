@@ -31,4 +31,4 @@ class TestResponder(unittest.TestCase):
             self.assertIn(point.rounded(4), path_locations_rounded)
 
         # Distance is approx 1100 meters
-        self.assertAlmostEqual(path.distance.meters, 1100, delta=50)
+        self.assertAlmostEqual(path.cost, 1100, delta=50)

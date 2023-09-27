@@ -39,22 +39,22 @@ class TestEmergency(unittest.TestCase):
         self.assertEqual(emergency.location, Location(60.1763691, 24.9142483))
         self.assertEqual(emergency.description, "Test emergency")
 
-    def test_emergency_find_nearest_responder(self):
+    def test_emergency_find_best_responder(self):
         """ Test that the Emergency finds correct first responder """
         emergency = self.emergency
 
-        responder = emergency.find_nearest_responder(self.responders, ResponderType.AMBULANCE)
+        responder = emergency.find_best_responder(self.responders, ResponderType.AMBULANCE)
 
         self.assertIsNotNone(responder)
         self.assertEqual(responder.type, ResponderType.AMBULANCE)
         self.assertEqual(responder.location,
                          Location(60.1767106, 24.9171237))
 
-    def test_emergency_find_nearest_station(self):
+    def test_emergency_find_best_station(self):
         """ Tests that the Emergency finds correct station """
         emergency = self.emergency
 
-        station = emergency.find_nearest_station(self.stations, StationType.HOSPITAL)
+        station = emergency.find_best_station(self.stations, StationType.HOSPITAL)
 
         self.assertIsNotNone(station)
         self.assertEqual(station.type, StationType.HOSPITAL)

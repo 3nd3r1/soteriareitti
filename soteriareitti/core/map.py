@@ -1,5 +1,4 @@
 """ soteriareitti/core/map.py """
-import os
 import logging
 import pickle
 import overpy
@@ -9,6 +8,11 @@ from soteriareitti.core._overpass import OverpassAPI
 from soteriareitti.utils.graph import GraphUtils, Graph, Node, Edge, Path
 from soteriareitti.utils.geo import GeoUtils, Location, Distance
 from soteriareitti.utils.file_reader import get_data
+from soteriareitti.utils.settings import Settings
+
+
+class DeprecatedCache(Exception):
+    """ Raised when deprecated cache is loaded """
 
 
 class Map:
@@ -18,33 +22,62 @@ class Map:
         self._overpass_api = OverpassAPI()
         self._place = place
 
-        try:
-            self._graph = pickle.load(open(get_data(f"{place}-graph.pickle"), "rb"))
-            logging.debug("Loaded graph (%s) from pickle file", self._graph)
-        except (OSError, IOError):
-            self._graph = Graph()
+        if Settings.caching:
+            try:
+                self.__load_cached_graph()
+            except (OSError, IOError, DeprecatedCache):
+                self.__create_graph()
+                self.__save_graph()
+        else:
             self.__create_graph()
-            pickle.dump(self._graph, open(get_data(f"{place}-graph.pickle"), "wb"))
+
+    def __save_graph(self):
+        """ Save graph to pickle file """
+        pickle.dump((Settings.cache_version, self._graph), open(
+            get_data(f"{self._place}-graph.pickle"), "wb"))
+        logging.debug("Saved graph (%s) to pickle file", self._graph)
+
+    def __load_cached_graph(self):
+        """ Load graph from pickle file """
+        cache_data = pickle.load(open(get_data(f"{self._place}-graph.pickle"), "rb"))
+        if cache_data[0] != Settings.cache_version:
+            logging.debug("Trying to load deprecated cache cache version: %s current version: %s",
+                          cache_data[0], Settings.cache_version)
+            raise DeprecatedCache
+        self._graph = cache_data[1]
+        logging.debug("Loaded graph (%s) from pickle file", self._graph)
 
     def __create_graph(self):
         """ Create graph from data """
         logging.debug("Starting graph creation")
+        # Create empty graph
+        self._graph = Graph()
 
         # Get data from overpass api
         data = self._overpass_api.get_place_data(self._place)
 
         # Add all revieved nodes to graph
-        self._graph.add_nodes_from(data.nodes)
+        for node in data.nodes:
+            if not node.lat or not node.lon:
+                continue
+            self._graph.add_node(str(node.id), location=Location(float(node.lat), float(node.lon)))
 
         # For each way (road) add edges between nodes
         for way in data.ways:
             one_way = way.tags.get("oneway", "no") == "yes"
+            nodes = [str(node.id) for node in way.nodes]
+            for edge in list(zip(nodes[:-1], nodes[1:])):
+                node_source = self._graph.nodes.get(edge[0])
+                node_target = self._graph.nodes.get(edge[1])
+                if not node_source or not node_target:
+                    continue
+                self._graph.add_edge(node_source, node_target, cost=GeoUtils.calculate_distance(
+                    node_source.location, node_target.location).meters)
 
-            self._graph.add_edges_from(list(zip(way.nodes[:-1], way.nodes[1:])))
-
-            # If road is not one way, add edges from both directions
-            if not one_way:
-                self._graph.add_edges_from(list(zip(way.nodes[1:], way.nodes[:-1])))
+                # If road is not one way, add edges from both directions
+                if not one_way:
+                    self._graph.add_edge(node_target, node_source, cost=GeoUtils.calculate_distance(
+                        node_source.location, node_target.location).meters)
 
         # Get largest component from graph so all nodes are connected
         self._graph = GraphUtils.get_largest_component(self._graph)
@@ -62,10 +95,10 @@ class Map:
         data_nodes: list[overpy.Node] = data.nodes
 
         for node in data_nodes:
-            if node.id not in self._graph.nodes:
+            if str(node.id) not in self._graph.nodes:
                 continue
 
-            graph_node = self._graph.nodes[node.id]
+            graph_node = self._graph.nodes[str(node.id)]
             distance_to_center = GeoUtils.calculate_distance(
                 location, graph_node.location)
 
@@ -82,6 +115,8 @@ class Map:
 
     def get_shortest_path(self, source: Location, target: Location) -> Path | None:
         """ Get shortest path from source to target """
+        def heuristic(node: Node, target_node: Node) -> float:
+            return GeoUtils.calculate_distance(node.location, target_node.location).meters
 
         logging.debug("Getting shortest path from %s to %s", source, target)
 
@@ -92,7 +127,7 @@ class Map:
             logging.debug("No closest node found at source or target location.")
             return None
 
-        path = GraphUtils.ida_star_shortest_path(self._graph, source_node, target_node)
+        path = GraphUtils.ida_star_shortest_path(self._graph, heuristic, source_node, target_node)
 
         if path:
             logging.debug("Shortest path found: %s", path)

@@ -4,7 +4,7 @@ from enum import Enum
 
 from soteriareitti.core.map import Map
 from soteriareitti.utils.graph import Path
-from soteriareitti.utils.geo import Location, Distance
+from soteriareitti.utils.geo import Location
 
 
 class StationType(Enum):
@@ -44,12 +44,12 @@ class Station:
         path = self.__map.reconstruct_path(self.location, location, self.__dijkstra_data["to"])
         return path
 
-    def distance_to(self, location: Location) -> Distance:
-        """ Get distance to location """
+    def cost_to(self, location: Location) -> float:
+        """ Get cost to location """
         path = self.path_to(location)
-        return path.distance
+        return path.cost
 
-    def distance_from(self, location: Location) -> Distance:
-        """ Get distance from location """
+    def cost_from(self, location: Location) -> float:
+        """ Get cost from location """
         path = self.path_from(location)
-        return path.distance
+        return path.cost
