@@ -15,16 +15,21 @@ class TestUtilsGeo(unittest.TestCase):
         self.assertEqual(distance.meters, 1000)
         self.assertEqual(distance.kilometers, 1)
 
-        # Test that the _iadd_ method works correctly
+        # Test that iadd works correctly
         distance += 1000
-
         self.assertEqual(distance.meters, 2000)
         self.assertEqual(distance.kilometers, 2)
 
-        # Test type safety
+        # Test that isub works correctly
+        distance -= 1000
+        self.assertEqual(distance.meters, 1000)
+        self.assertEqual(distance.kilometers, 1)
 
-        self.assertRaises(TypeError, distance.__add__, "1000")
-        self.assertEqual(distance.meters, 2000)
+        # Test that add and eq works correctly
+        self.assertEqual(distance + 1000, 2000)
+
+        # Test that sub and eq works correctly
+        self.assertEqual(distance - 1000, 0)
 
     def test_geo_location(self):
         """ Test that the Location class works correctly """

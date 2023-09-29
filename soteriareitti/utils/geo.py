@@ -62,38 +62,16 @@ class Distance:
     def __init__(self, distance_meters: float):
         self.meters = distance_meters
 
-    def __str__(self):
-        return f"Distance: {self.meters} meters"
-
-    def __lt__(self, distance: "Distance" or float | int) -> bool:
-        if isinstance(distance, Distance):
-            return self.meters < distance.meters
-
-        if isinstance(distance, (float, int)):
-            return self.meters < distance
-
-        raise TypeError(
-            f"distance must be soteriareitti.Distance, float or int, not {type(distance)}")
-
-    def __gt__(self, distance: "Distance" or float | int) -> bool:
-        if isinstance(distance, Distance):
-            return self.meters > distance.meters
-
-        if isinstance(distance, (float, int)):
-            return self.meters > distance
-
-        raise TypeError(
-            f"distance must be soteriareitti.Distance, float or int, not {type(distance)}")
+    def __repr__(self):
+        return f"<soteriareitti.Distance meters={self.meters}>"
 
     def __eq__(self, distance: "Distance" or float | int) -> bool:
         if isinstance(distance, Distance):
             return self.meters == distance.meters
-
         if isinstance(distance, (float, int)):
             return self.meters == distance
-
         raise TypeError(
-            f"distance must be soteriareitti.Distance, float or int, not {type(distance)}")
+            f"distance must be utils_graph.Distance, float or int, not {type(distance)}")
 
     def __add__(self, distance: "Distance" or float | int) -> "Distance":
         if isinstance(distance, Distance):
