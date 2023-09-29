@@ -304,7 +304,10 @@ class GraphUtils:
     def dijkstra_shortest_path(graph: Graph, source: Node, target: Node) -> Path | None:
         """ Use Dijkstra's algorithm to find shortest path from source to target """
         previous = GraphUtils.dijkstras_algorithm(graph, source)
-        return GraphUtils.reconstruct_path(previous, source, target).reverse()
+        path = GraphUtils.reconstruct_path(previous, source, target)
+        if path:
+            return path.reverse()
+        return None
 
     @staticmethod
     def dijkstras_algorithm(graph: Graph, source: Node) -> dict[str, Edge]:

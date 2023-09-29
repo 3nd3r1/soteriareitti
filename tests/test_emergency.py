@@ -14,7 +14,8 @@ class TestEmergency(unittest.TestCase):
     """ Tests for the Emergency class """
 
     def setUp(self):
-        self.map = Map("Töölö")
+        self.map = Map()
+        self.map.load_place("Töölö")
         self.emergency = Emergency(EmergencyType.MEDICAL, [ResponderType.AMBULANCE],
                                    Location(60.1763691, 24.9142483), "Test emergency")
         self.responders = [Responder(self.map, ResponderType.AMBULANCE,

@@ -31,3 +31,13 @@
 | 21.09.2023   | 4h                    | Lisää testejä ja käyttöliittymän kehittämistä toiseen prototyyppiin            |
 | 22.09.2023   | 4h                    | Toinen prototyyppi on valmis! +virheiden korjaamista ja viikkoraportin teko    |
 | **Yhteensä** | **18h**               |                                                                                |
+
+## Viikko 4
+
+| Päivämäärä   | Käytetty aika (tunni) | Toiminta                                                                                                            |
+| ------------ | --------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| 25.09.2023   | 4h                    | Käyttöliittymän kehitystä, lisää testejä ja karttadata tallentuu muistiin                                           |
+| 26.09.2023   | 2h                    | Tehdään Graph-luokasta enemmän modulaarinen. Testit hajosivat.                                                      |
+| 27.09.2023   | 2h                    | Korjataan Graph-luokan muunnoksen hajottamat testit.                                                                |
+| 29.09.2023   | 3h                    | Käyttöliittymän kehitystä, parannetaan testejä, viikkoraportti, käyttöohje, toteutusdokumentti ja testausdokumentti |
+| **Yhteensä** | **11h**               |                                                                                                                     |

@@ -11,7 +11,8 @@ class TestStation(unittest.TestCase):
     """ Tests for the Station class """
 
     def setUp(self):
-        self.map = Map("Töölö")
+        self.map = Map()
+        self.map.load_place("Töölö")
         self.station = Station(self.map, StationType.HOSPITAL,
                                Location(60.1772996731, 24.9226685992))
 

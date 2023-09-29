@@ -11,7 +11,8 @@ class TestResponder(unittest.TestCase):
     """ Tests for the Responder class """
 
     def setUp(self):
-        self.map = Map("Töölö")
+        self.map = Map()
+        self.map.load_place("Töölö")
         self.ambulance = Responder(self.map, ResponderType.AMBULANCE,
                                    Location(60.1772996731, 24.9226685992))
 
