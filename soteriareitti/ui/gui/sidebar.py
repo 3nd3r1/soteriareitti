@@ -63,6 +63,8 @@ class Sidebar(customtkinter.CTkFrame):
             row=10, column=0, columnspan=3, sticky="w", padx=5, pady=5)
 
     def create_emergency(self):
+        self.master.event_generate("<<LoadingStart>>")
+        self.master.update()
         em_type = EmergencyType(self.em_type.get())
         em_responder_types = [k for k, v in self.em_responder_types.items() if v.get()]
         em_location = Location.from_str(self.em_location.get())
@@ -80,3 +82,5 @@ class Sidebar(customtkinter.CTkFrame):
         for station in emergency.stations_from:
             path_to_emergency = station.path_to(emergency.location)
             self.master.map_view.draw_path(path_to_emergency, "#0000FF")
+
+        self.master.event_generate("<<LoadingEnd>>")
