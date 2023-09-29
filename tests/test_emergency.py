@@ -28,7 +28,8 @@ class TestEmergency(unittest.TestCase):
 
         self.stations = [Station(self.map, StationType.HOSPITAL, Location(60.1767106, 24.9171237)),
                          Station(self.map, StationType.HOSPITAL, Location(60.1775003, 24.9252347)),
-                         Station(self.map, StationType.POLICE_STATION, Location(60.1837744, 24.9214581))]
+                         Station(self.map, StationType.POLICE_STATION,
+                                 Location(60.1837744, 24.9214581))]
 
     def test_emergency_creation(self):
         """ Test that the Emergency class is initialized correctly """
@@ -38,6 +39,17 @@ class TestEmergency(unittest.TestCase):
         self.assertEqual(emergency.responder_types, [ResponderType.AMBULANCE])
         self.assertEqual(emergency.location, Location(60.1763691, 24.9142483))
         self.assertEqual(emergency.description, "Test emergency")
+
+    def test_emergency_handle(self):
+        """ Test that the Emergency is handled correctly """
+        emergency = self.emergency
+
+        self.assertEqual(len(emergency.responders), 0)
+        emergency.handle(self.responders, self.stations)
+
+        self.assertEqual(len(emergency.responders), 1)
+        self.assertEqual(emergency.responders[0].type, ResponderType.AMBULANCE)
+        self.assertEqual(emergency.responders[0].available, False)
 
     def test_emergency_find_best_responder(self):
         """ Test that the Emergency finds correct first responder """
