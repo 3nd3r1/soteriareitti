@@ -1,5 +1,6 @@
 """ soteriareitti/ui/gui.py """
 import logging
+import threading
 import customtkinter
 
 from soteriareitti.ui.gui.mapview import MapView
@@ -29,13 +30,12 @@ class Gui(customtkinter.CTk):
     """ Graphical interface class """
 
     APP_TITLE = "SoteriaReitti"
+    APP_PLACE = "Töölö"
     WIDTH = 1280
     HEIGHT = 720
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        self.app = SoteriaReitti("Töölö")
 
         self.title(Gui.APP_TITLE)
         self.geometry(f"{Gui.WIDTH}x{Gui.HEIGHT}")
@@ -52,10 +52,17 @@ class Gui(customtkinter.CTk):
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
-        self.map_view = MapView(master=self, address="Töölö")
+        self._loader = Loader(master=self)
+
+        self.map_view = MapView(master=self, address=Gui.APP_PLACE)
         self.sidebar = Sidebar(master=self)
 
-        self._loader = Loader(master=self)
+        self.app = SoteriaReitti()
+
+    def __load_place(self, _event=0):
+        self.__on_loading_start()
+        self.app.load_place(Gui.APP_PLACE)
+        self.__on_loading_end()
 
     def __on_loading_start(self, _event=0):
         logging.debug("Loading started")
@@ -73,4 +80,5 @@ class Gui(customtkinter.CTk):
         self.destroy()
 
     def run(self):
+        threading.Thread(target=self.__load_place).start()
         self.mainloop()

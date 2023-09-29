@@ -10,14 +10,19 @@ from soteriareitti.utils.geo import Location
 
 
 class SoteriaReitti:
-    def __init__(self, place: str):
+    def __init__(self):
         self.active_emergency = None
 
-        self._map = Map(place)
+        self._map = Map()
         self._responders: list[Responder] = []
         self._stations: list[Station] = []
 
         logging.debug("SoteriaReitti initialized")
+
+    def load_place(self, place: str):
+        logging.debug("Starting loading place: %s", place)
+        self._map.load_place(place)
+        logging.debug("Loading place finished")
 
     def create_emergency(self, emergency_type: EmergencyType, responder_types: list[ResponderType],
                          location: Location, description: str) -> Emergency:

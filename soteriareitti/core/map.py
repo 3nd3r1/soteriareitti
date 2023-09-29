@@ -18,10 +18,13 @@ class DeprecatedCache(Exception):
 class Map:
     """ Map class that contains all the data and methods for the map """
 
-    def __init__(self, place: str):
+    def __init__(self):
         self._overpass_api = OverpassAPI()
-        self._place = place
+        self._graph = Graph()
+        self._place = None
 
+    def load_place(self, place: str):
+        self._place = place
         if Settings.caching:
             try:
                 self.__load_cached_graph()
