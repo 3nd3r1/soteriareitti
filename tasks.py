@@ -23,6 +23,14 @@ def debug(ctx):
 
 
 @task
+def benchmark(ctx):
+    if sys.platform.startswith("win"):
+        ctx.run("py tests/benchmark_test.py")
+    else:
+        ctx.run("python tests/benchmark_test.py")
+
+
+@task
 def test(ctx):
     ctx.run("pytest .")
 
