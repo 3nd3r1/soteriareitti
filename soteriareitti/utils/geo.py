@@ -139,3 +139,14 @@ class GeoUtils:
         d = GeoUtils.earth_radius.meters * c
 
         return Distance(d)
+
+    @staticmethod
+    def calculate_time(location_source: Location, location_target: Location,
+                       maxspeed_kmh: float) -> float:
+        """ 
+        Calculate how long it takes to travel between two locations
+        returns time in minutes
+        """
+
+        distance = GeoUtils.calculate_distance(location_source, location_target)
+        return (distance.kilometers / maxspeed_kmh) * 60

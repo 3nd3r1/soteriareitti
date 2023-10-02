@@ -18,11 +18,13 @@ class Node:
     def __repr__(self):
         return f"<soteriareitti.Node id={self.id}>"
 
-    def update(self, node: "Node"):
+    def update(self, node: "Node" or None = None, **kwargs):
         """ Update node with data from another node """
-        if not isinstance(node, Node):
-            raise TypeError(f"Node must be Node, not {type(node)}")
-        self.__dict__.update(node.__dict__)
+        if node:
+            if not isinstance(node, Node):
+                raise TypeError(f"Node must be Node, not {type(node)}")
+            self.__dict__.update(node.__dict__)
+        self.__dict__.update(kwargs)
 
 
 class Edge:
@@ -298,7 +300,7 @@ class GraphUtils:
                 return None
             # One meter is added to the threshold for faster convergence
             # A meters inaccuracy is acceptable
-            limit = threshold + 1
+            limit = threshold
 
     @staticmethod
     def dijkstra_shortest_path(graph: Graph, source: Node, target: Node) -> Path | None:

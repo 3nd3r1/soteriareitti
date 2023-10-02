@@ -68,19 +68,22 @@ class Map:
         # For each way (road) add edges between nodes
         for way in data.ways:
             one_way = way.tags.get("oneway", "no") == "yes"
+            maxspeed = (float(way.tags.get("maxspeed", "50")) + 20)*1.609344
+
             nodes = [str(node.id) for node in way.nodes]
             for edge in list(zip(nodes[:-1], nodes[1:])):
                 node_source = self._graph.nodes.get(edge[0])
                 node_target = self._graph.nodes.get(edge[1])
+                node_source.update(maxspeed=maxspeed)
+                node_target.update(maxspeed=maxspeed)
+                time = GeoUtils.calculate_time(node_source.location, node_target.location, maxspeed)
                 if not node_source or not node_target:
                     continue
-                self._graph.add_edge(node_source, node_target, cost=GeoUtils.calculate_distance(
-                    node_source.location, node_target.location).meters)
+                self._graph.add_edge(node_source, node_target, cost=time)
 
                 # If road is not one way, add edges from both directions
                 if not one_way:
-                    self._graph.add_edge(node_target, node_source, cost=GeoUtils.calculate_distance(
-                        node_source.location, node_target.location).meters)
+                    self._graph.add_edge(node_target, node_source, cost=time)
 
         # Get largest component from graph so all nodes are connected
         self._graph = GraphUtils.get_largest_component(self._graph)
@@ -119,7 +122,7 @@ class Map:
     def get_shortest_path(self, source: Location, target: Location) -> Path | None:
         """ Get shortest path from source to target """
         def heuristic(node: Node, target_node: Node) -> float:
-            return GeoUtils.calculate_distance(node.location, target_node.location).meters
+            return GeoUtils.calculate_time(node.location, target_node.location, node.maxspeed)
 
         logging.debug("Getting shortest path from %s to %s", source, target)
 
