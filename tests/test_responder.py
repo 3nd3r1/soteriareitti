@@ -30,6 +30,3 @@ class TestResponder(unittest.TestCase):
         # Assert that all points are in the path
         for point in points:
             self.assertIn(point.rounded(4), path_locations_rounded)
-
-        # Distance is approx 1100 meters
-        self.assertAlmostEqual(path.cost, 1100, delta=50)

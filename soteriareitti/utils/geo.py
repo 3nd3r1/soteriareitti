@@ -116,6 +116,34 @@ class Distance:
         return self.meters/1000
 
 
+class Speed:
+    def __init__(self, kilometers_hour: float | int):
+        self.kilometers_hour = kilometers_hour
+
+    def __repr__(self) -> str:
+        return f"<soteriareitti.Speed kilometers_hour={self.kilometers_hour}>"
+
+    @property
+    def meters_second(self) -> float:
+        return (self.kilometers_hour / 1000) / 60
+
+
+class Time:
+    def __init__(self, minutes: float | int):
+        self.minutes = minutes
+
+    def __repr__(self) -> str:
+        return f"<soteriareitti.Time minutes={self.minutes}>"
+
+    @property
+    def seconds(self) -> float:
+        return self.minutes * 60
+
+    @property
+    def hours(self) -> float:
+        return self.minutes / 60
+
+
 class GeoUtils:
     earth_radius = Distance(6378137)  # Earth radius in meters
 
@@ -142,11 +170,11 @@ class GeoUtils:
 
     @staticmethod
     def calculate_time(location_source: Location, location_target: Location,
-                       maxspeed_kmh: float) -> float:
+                       maxspeed: Speed) -> Time:
         """ 
         Calculate how long it takes to travel between two locations
         returns time in minutes
         """
 
         distance = GeoUtils.calculate_distance(location_source, location_target)
-        return (distance.kilometers / maxspeed_kmh) * 60
+        return Time(distance.meters / maxspeed.meters_second / 60)

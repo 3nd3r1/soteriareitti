@@ -6,7 +6,7 @@ import overpy
 from soteriareitti.core._overpass import OverpassAPI
 
 from soteriareitti.utils.graph import GraphUtils, Graph, Node, Edge, Path
-from soteriareitti.utils.geo import GeoUtils, Location, Distance
+from soteriareitti.utils.geo import GeoUtils, Location, Distance, Speed
 from soteriareitti.utils.file_reader import get_data
 from soteriareitti.utils.settings import Settings
 
@@ -68,7 +68,8 @@ class Map:
         # For each way (road) add edges between nodes
         for way in data.ways:
             one_way = way.tags.get("oneway", "no") == "yes"
-            maxspeed = (float(way.tags.get("maxspeed", "50")) + 20)*1.609344
+            logging.debug("Way speed: %s", way.tags.get("maxspeed", "50"))
+            maxspeed = Speed((float(way.tags.get("maxspeed", "50")) + 20)*1.609344)
 
             nodes = [str(node.id) for node in way.nodes]
             for edge in list(zip(nodes[:-1], nodes[1:])):
@@ -79,11 +80,11 @@ class Map:
                 time = GeoUtils.calculate_time(node_source.location, node_target.location, maxspeed)
                 if not node_source or not node_target:
                     continue
-                self._graph.add_edge(node_source, node_target, cost=time)
+                self._graph.add_edge(node_source, node_target, cost=time.seconds)
 
                 # If road is not one way, add edges from both directions
                 if not one_way:
-                    self._graph.add_edge(node_target, node_source, cost=time)
+                    self._graph.add_edge(node_target, node_source, cost=time.seconds)
 
         # Get largest component from graph so all nodes are connected
         self._graph = GraphUtils.get_largest_component(self._graph)
@@ -122,7 +123,9 @@ class Map:
     def get_shortest_path(self, source: Location, target: Location) -> Path | None:
         """ Get shortest path from source to target """
         def heuristic(node: Node, target_node: Node) -> float:
-            return GeoUtils.calculate_time(node.location, target_node.location, node.maxspeed)
+            average_speed = Speed((node.maxspeed.kilometers_hour +
+                                  target_node.maxspeed.kilometers_hour)/2)
+            return GeoUtils.calculate_time(node.location, target_node.location, average_speed).seconds
 
         logging.debug("Getting shortest path from %s to %s", source, target)
 

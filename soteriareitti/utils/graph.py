@@ -1,4 +1,5 @@
 """ soteriareitti/utils/graph.py """
+import logging
 from typing import Callable, Any
 from queue import PriorityQueue
 
@@ -293,6 +294,7 @@ class GraphUtils:
         path = Path.from_nodes([source])
 
         while True:
+            logging.debug("Limit: %s", limit)
             threshold = search(path, limit)
             if threshold < 0:
                 return path
@@ -300,7 +302,7 @@ class GraphUtils:
                 return None
             # One meter is added to the threshold for faster convergence
             # A meters inaccuracy is acceptable
-            limit = threshold
+            limit = threshold + 1
 
     @staticmethod
     def dijkstra_shortest_path(graph: Graph, source: Node, target: Node) -> Path | None:

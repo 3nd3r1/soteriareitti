@@ -31,9 +31,6 @@ class TestStation(unittest.TestCase):
         for point in points:
             self.assertIn(point.rounded(4), path_locations_rounded)
 
-        # Distance is approx 500 meters
-        self.assertAlmostEqual(path.cost, 500, delta=50)
-
     def test_station_path_to(self):
         """ Test that the Station finds correct path from station to location """
         test_location = Location(60.17517934757, 24.91634823927)
@@ -48,6 +45,3 @@ class TestStation(unittest.TestCase):
         # Assert that all points are in the path
         for point in points:
             self.assertIn(point.rounded(4), path_locations_rounded)
-
-        # Distance is approx 1100 meters
-        self.assertAlmostEqual(path.cost, 1100, delta=50)
