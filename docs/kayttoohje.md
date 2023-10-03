@@ -38,6 +38,6 @@ Muista, että .env-tiedosto on herkkä tiedosto, ja siinä ei tulisi olla ylimä
 
 -   Valitse kartalta hätätilanteen sijainti klikkaamalla sitä hiiren vasemmalla painikkeella.
 -   Syötä hätätilanteen tiedot sovelluksen vasemmalla olevaan valikkoon.
--   Luo hätätilanne klikkaamalla 'Create Emergency' vasemmalla.
+-   Luo hätätilanne klikkaamalla 'Create' vasemmalla.
 
 Näiden ohjeiden avulla voit hyödyntää SoteriaReitti-sovelluksen tarjoamia reittisuunnittelutoimintoja hätätilanteiden hallinnassa!

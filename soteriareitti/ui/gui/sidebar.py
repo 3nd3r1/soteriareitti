@@ -1,8 +1,9 @@
 """ soteriareitti/ui/gui/sidebar.py """
+import logging
 from typing import TYPE_CHECKING
 import customtkinter
 
-from soteriareitti.core.emergency import EmergencyType
+from soteriareitti.core.emergency import EmergencyType, ResponderNotFound
 from soteriareitti.core.responder import ResponderType
 
 from soteriareitti.utils.geo import Location
@@ -69,7 +70,9 @@ class Sidebar(customtkinter.CTkFrame):
         self.master.event_generate("<<LoadingStart>>")
         self.master.update()
 
-        if not self.em_type.get() or not self.em_location.get():
+        if not self.em_type.get() or self.em_location.get() == "":
+            logging.error("Emergency type or location not set")
+            self.master.event_generate("<<LoadingEnd>>")
             return
 
         em_type = EmergencyType(self.em_type.get())
@@ -77,8 +80,13 @@ class Sidebar(customtkinter.CTkFrame):
         em_location = Location.from_str(self.em_location.get())
         em_description = self.em_description.get()
 
-        emergency = self.master.app.create_emergency(
-            em_type, em_responder_types, em_location, em_description)
+        try:
+            emergency = self.master.app.create_emergency(
+                em_type, em_responder_types, em_location, em_description)
+        except ResponderNotFound:
+            logging.error("Responders or stations not found!")
+            self.master.event_generate("<<LoadingEnd>>")
+            return
 
         self.master.map_view.clear_paths()
 
