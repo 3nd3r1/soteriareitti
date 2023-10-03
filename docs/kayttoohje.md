@@ -26,6 +26,8 @@ Muista, että .env-tiedosto on herkkä tiedosto, ja siinä ei tulisi olla ylimä
 2. Käynnistä Sovellus:
    Käynnistä sovellus komennolla `poetry run invoke start`.
 
+**HUOM**: Jos olet konfiguroinnut sovelluksen paikaksi suuren alueen kuten `Helsinki`, sovelluksen käynnistämisessä voi kestää kauan (noin 3 minuuttia).
+
 ## Responderien ja Stationeiden Lisääminen:
 
 -   Lisää responderi tai station kartalle klikkaamalla haluttua sijaintia hiiren oikealla painikkeella. Valitse avautuvasta valikosta "Add Responder" tai "Add Station".
