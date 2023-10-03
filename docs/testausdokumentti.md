@@ -43,6 +43,26 @@ _utils.graph_-moduulin toimintaa on testattu _TestUtilsGraph_-luokalla. Testitap
 
 Suorituskykytestaus on vielä kesken, mutta olen luonut yksinkertaisia testejä vertaillaksemme IDA\*-algoritmin ja Dijkstran algoritmin suorituskykyä eri kokoisilla verkoilla.
 
+Suorituskykytestaus suoritetaan seuraavasti:
+
+- Verkon Luominen: Ensin luodaan kartta kyseisessä sijainnissa, joka toimii testiympäristönä.
+
+- Satunnaiset Solmut: Valitaan satunnaisesti kaksi solmua verkosta, jotka edustavat lähtö- ja saapumispaikkaa reitille.
+
+- Reitin Laskenta: Sekä IDA*- että Dijkstran algoritmit laskevat lyhimmän reitin näiden kahden solmun välillä.
+
+- Vertailu ja Analyysi: Suorituskykyä verrataan näiden kahden algoritmin välillä, ja tuloksia analysoidaan tarkasti. 
+
+Suorituskykytestaus suoritetaan kolmessa eri sijainnissa:
+
+- Paloheinä (Pieni)
+
+- Töölö (Keskikokoinen)
+
+- Helsinki (Suuri)
+
+Huomio: Testit voivat kestää suhteellisen kauan, jos sijainteja ei ole valmiiksi tallennettu kovamuistiin (ensimmäinen suorituskerta).
+
 Suorituskykytestauksen voi suorittaa seuraavasti:
 
 1. Siirry projektin juureen.
