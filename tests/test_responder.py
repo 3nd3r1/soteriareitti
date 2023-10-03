@@ -1,8 +1,6 @@
 """ tests/test_responder.py """
 import unittest
 
-from .helpers import draw
-
 from soteriareitti.core.map import Map
 from soteriareitti.core.responder import Responder, ResponderType
 

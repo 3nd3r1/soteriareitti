@@ -11,6 +11,7 @@ overpy = "^0.6"
 invoke = "^2.2.0"
 tkintermapview = "^1.29"
 customtkinter = "^5.2.0"
+python-dotenv = "^1.0.0"
 
 
 [tool.poetry.group.dev.dependencies]
