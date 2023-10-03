@@ -10,6 +10,7 @@ def configure_logging(debug: bool = False):
                         datefmt='%Y-%m-%d:%H:%M:%S',
                         level=level)
 
-    logging.getLogger("urllib3").setLevel(logging.INFO)
-    logging.getLogger("PIL.PngImagePlugin").setLevel(logging.INFO)
-    logging.getLogger("PIL.Image").setLevel(logging.INFO)
+    logging.getLogger("geocoder.base").setLevel(logging.ERROR if debug else logging.DEBUG)
+    logging.getLogger("urllib3").setLevel(logging.ERROR if debug else logging.INFO)
+    logging.getLogger("PIL.PngImagePlugin").setLevel(logging.ERROR if debug else logging.INFO)
+    logging.getLogger("PIL.Image").setLevel(logging.ERROR if debug else logging.INFO)

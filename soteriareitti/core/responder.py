@@ -1,4 +1,5 @@
 """ soteriareitti/core/responder.py """
+import logging
 from enum import Enum
 
 from soteriareitti.core.map import Map
@@ -26,9 +27,23 @@ class Responder:
         self.location = location
         self.available = True
 
+        # Store the last path to avoid recalculating it
+        self.__last_path: list[Location | None, Path | None] = [None, None]
+
+    def __repr__(self) -> str:
+        return (f"<soteriareitti.Responder type={self.type} "
+                f"location={self.location} available={self.available}>")
+
     def path_to(self, location: Location) -> Path | None:
         """ Returns the path to the given location. """
-        return self.__map.get_shortest_path(self.location, location)
+        if self.__last_path[0] != location:
+            logging.debug("Calculating path from %s to %s", self.location, location)
+            self.__last_path[0] = location
+            self.__last_path[1] = self.__map.get_shortest_path(self.location, location)
+        else:
+            logging.debug("Using stored path from %s to %s", self.location, location)
+
+        return self.__last_path[1]
 
     def cost_to(self, location: Location) -> float | None:
         """ Returns the distance to the given location. """

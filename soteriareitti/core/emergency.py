@@ -48,7 +48,7 @@ class Emergency:
 
     def handle(self, responders: list[Responder], stations: list[Station]):
         """ Handles the emergency. """
-        logging.debug("Handling emergency: %s", self)
+        logging.info("Handling emergency: %s", self)
         for responder_type in self.responder_types:
             best_responder = self.find_best_responder(responders, responder_type)
 
@@ -72,8 +72,9 @@ class Emergency:
             if best_station:
                 self.stations_from.append(best_station)
             else:
-                logging.debug("No available responders or stations for type %s", responder_type)
+                logging.error("No available responders or stations for type %s", responder_type)
                 raise ResponderNotFound
+        logging.info("Emergency handled.")
 
     def find_best_responder(self, responders: list[Responder],
                             responder_type: ResponderType) -> Responder | None:
@@ -87,7 +88,7 @@ class Emergency:
                 continue
 
             cost_responder = responder.cost_to(self.location)
-            if cost_responder < min_cost:
+            if cost_responder and cost_responder < min_cost:
                 best_responder = responder
                 min_cost = cost_responder
 

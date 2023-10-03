@@ -152,4 +152,5 @@ class MapView(customtkinter.CTkFrame):
         self._map_widget.delete_all_marker()
 
     def draw_path(self, path: Path, color: str = "#0000FF"):
-        self._map_widget.set_path([node.location.as_tuple() for node in path], color=color)
+        self._map_widget.set_path([node.location.as_tuple()
+                                  for node in path], color=color)

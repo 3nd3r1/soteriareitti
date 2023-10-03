@@ -51,7 +51,12 @@ class Map:
         logging.debug("Loaded graph (%s) from pickle file", self._graph)
 
     def __create_graph(self):
-        """ Create graph from data """
+        """ 
+        Create graph from data
+
+        - Edges from and to an interesection has a speed limit of 30km/h
+        - Other edges have the speed limit of the road + 30kmh/h
+        """
         logging.debug("Starting graph creation")
         # Create empty graph
         self._graph = Graph()
@@ -73,14 +78,22 @@ class Map:
             maxspeed = Speed(float(way.tags.get("maxspeed", "30")))
 
             nodes = [str(node.id) for node in way.nodes]
+            self._graph.nodes.get(nodes[0]).update(maxspeed=Speed(30))
+            self._graph.nodes.get(nodes[-1]).update(maxspeed=Speed(30))
+
+            for node_id in nodes[1:-1]:
+                self._graph.nodes.get(node_id).update(maxspeed=maxspeed)
+
             for edge in list(zip(nodes[:-1], nodes[1:])):
                 node_source = self._graph.nodes.get(edge[0])
                 node_target = self._graph.nodes.get(edge[1])
-                node_source.update(maxspeed=maxspeed)
-                node_target.update(maxspeed=maxspeed)
-                time = GeoUtils.calculate_time(node_source.location, node_target.location, maxspeed)
                 if not node_source or not node_target:
                     continue
+
+                time = GeoUtils.calculate_time(
+                    node_source.location, node_target.location,
+                    min(node_source.maxspeed, node_target.maxspeed,
+                        key=lambda s: s.kilometers_hour))
                 self._graph.add_edge(node_source, node_target, cost=time.minutes)
 
                 # If road is not one way, add edges from both directions

@@ -20,9 +20,9 @@ class SoteriaReitti:
         logging.debug("SoteriaReitti initialized")
 
     def load_place(self, place: str):
-        logging.debug("Starting loading place: %s", place)
+        logging.info("Loading place: %s", place)
         self._map.load_place(place)
-        logging.debug("Loading place finished")
+        logging.info("Loading finished")
 
     def clear(self):
         self._responders.clear()

@@ -35,8 +35,7 @@ class Location:
             return self.longitude == other.longitude and self.latitude == other.latitude
         if isinstance(other, tuple):
             return self.longitude == other[0] and self.latitude == other[1]
-        raise TypeError(
-            f"other must be utils_graph.Location or tuple, not {type(other)}")
+        return False
 
     def as_tuple(self) -> tuple[float, float]:
         return (self.latitude, self.longitude)
@@ -70,8 +69,7 @@ class Distance:
             return self.meters == distance.meters
         if isinstance(distance, (float, int)):
             return self.meters == distance
-        raise TypeError(
-            f"distance must be utils_graph.Distance, float or int, not {type(distance)}")
+        return False
 
     def __add__(self, distance: "Distance" or float | int) -> "Distance":
         if isinstance(distance, Distance):
@@ -120,6 +118,9 @@ class Speed:
     def __init__(self, kilometers_hour: float | int):
         self.kilometers_hour = kilometers_hour
 
+    def __str__(self) -> str:
+        return f"{self.kilometers_hour} km/h"
+
     def __repr__(self) -> str:
         return f"<soteriareitti.Speed kilometers_hour={self.kilometers_hour}>"
 
@@ -131,6 +132,9 @@ class Speed:
 class Time:
     def __init__(self, minutes: float | int):
         self.minutes = minutes
+
+    def __str__(self) -> str:
+        return f"{self.minutes} min"
 
     def __repr__(self) -> str:
         return f"<soteriareitti.Time minutes={self.minutes}>"

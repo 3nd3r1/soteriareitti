@@ -1,5 +1,4 @@
 """ soteriareitti/utils/graph.py """
-import logging
 from typing import Callable, Any
 from queue import PriorityQueue
 
@@ -302,7 +301,6 @@ class GraphUtils:
         path = Path.from_nodes([source])
 
         while True:
-            logging.debug("Limit: %s", limit)
             threshold = search(path, limit)
             if threshold < 0:
                 return path
