@@ -125,7 +125,7 @@ class Speed:
 
     @property
     def meters_second(self) -> float:
-        return (self.kilometers_hour / 1000) / 60
+        return self.kilometers_hour / 3.6
 
 
 class Time:
@@ -173,7 +173,6 @@ class GeoUtils:
                        maxspeed: Speed) -> Time:
         """ 
         Calculate how long it takes to travel between two locations
-        returns time in minutes
         """
 
         distance = GeoUtils.calculate_distance(location_source, location_target)

@@ -24,7 +24,6 @@ class Sidebar(customtkinter.CTkFrame):
     def __init__(self, master: "Gui", *args, **kwargs):
         super().__init__(master=master, width=250, *args, **kwargs)
         self.grid(row=0, column=0, padx=0, pady=0, sticky="nsew")
-
         self.master: "Gui" = master
         self.em_type = customtkinter.StringVar()
         self.em_location = customtkinter.StringVar()
@@ -34,6 +33,7 @@ class Sidebar(customtkinter.CTkFrame):
         self.__create_widgets()
 
     def __create_widgets(self):
+        self.grid_rowconfigure(11, weight=1)
         # Labels
         for label in Sidebar.labels:
             customtkinter.CTkLabel(self, text=label[0], font=("Ubuntu", label[1])).grid(
@@ -62,9 +62,16 @@ class Sidebar(customtkinter.CTkFrame):
             self, text="Create", command=self.create_emergency).grid(
             row=10, column=0, columnspan=3, sticky="w", padx=5, pady=5)
 
+        customtkinter.CTkButton(self, text="Clear", command=self.master.clear).grid(
+            row=12, column=0, columnspan=3, sticky="w", padx=5, pady=5)
+
     def create_emergency(self):
         self.master.event_generate("<<LoadingStart>>")
         self.master.update()
+
+        if not self.em_type.get() or not self.em_location.get():
+            return
+
         em_type = EmergencyType(self.em_type.get())
         em_responder_types = [k for k, v in self.em_responder_types.items() if v.get()]
         em_location = Location.from_str(self.em_location.get())

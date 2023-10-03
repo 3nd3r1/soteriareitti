@@ -109,14 +109,24 @@ class MapView(customtkinter.CTkFrame):
 
     def _create_responder(self, pos: tuple):
         dialog = OptionDialog("Select Responder Type", "Create", [r.value for r in ResponderType])
-        responder_type = ResponderType(dialog.get_input())
+        dialog_input = dialog.get_input()
+
+        if not dialog_input:
+            return
+
+        responder_type = ResponderType(dialog_input)
 
         self.master.app.create_responder(responder_type, Location(pos[0], pos[1]))
         self._map_widget.set_marker(pos[0], pos[1], responder_type.value)
 
     def _create_station(self, pos: tuple):
         dialog = OptionDialog("Select Staton Type", "Create", [s.value for s in StationType])
-        station_type = StationType(dialog.get_input())
+        dialog_input = dialog.get_input()
+
+        if not dialog_input:
+            return
+
+        station_type = StationType(dialog_input)
 
         self.master.app.create_station(station_type, Location(pos[0], pos[1]))
         self._map_widget.set_marker(pos[0], pos[1], station_type.value,
@@ -136,6 +146,10 @@ class MapView(customtkinter.CTkFrame):
 
     def clear_paths(self):
         self._map_widget.delete_all_path()
+
+    def clear_markers(self):
+        self._new_emergency_marker = None
+        self._map_widget.delete_all_marker()
 
     def draw_path(self, path: Path, color: str = "#0000FF"):
         self._map_widget.set_path([node.location.as_tuple() for node in path], color=color)

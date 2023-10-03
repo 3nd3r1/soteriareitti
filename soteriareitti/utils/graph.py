@@ -254,10 +254,18 @@ class GraphUtils:
 
     @staticmethod
     def ida_star_shortest_path(graph: Graph, heuristic: Callable[[Node, Node], float],
-                               source: Node, target: Node) -> Path | None:
+                               source: Node, target: Node, delta: float = 0) -> Path | None:
         """
         Use IDA* algorithm to find shortest path from source to target 
         https://en.wikipedia.org/wiki/Iterative_deepening_A*
+
+        args:
+            - graph: Graph
+            - heuristic: function that returns estimated cost from node to target as float
+            - source: Node
+            - target: Node
+            - delta: float that determines an allowed error in the estimated cost. 
+                The greater the delta, the faster the algorithm
         """
 
         def search(path: Path, limit: float) -> float:
@@ -300,9 +308,7 @@ class GraphUtils:
                 return path
             if threshold == float("inf"):
                 return None
-            # One meter is added to the threshold for faster convergence
-            # A meters inaccuracy is acceptable
-            limit = threshold + 1
+            limit = threshold + delta
 
     @staticmethod
     def dijkstra_shortest_path(graph: Graph, source: Node, target: Node) -> Path | None:

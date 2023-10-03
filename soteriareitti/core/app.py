@@ -24,6 +24,12 @@ class SoteriaReitti:
         self._map.load_place(place)
         logging.debug("Loading place finished")
 
+    def clear(self):
+        self._responders.clear()
+        self._stations.clear()
+        self.active_emergency = None
+        logging.debug("Cleared all app data")
+
     def create_emergency(self, emergency_type: EmergencyType, responder_types: list[ResponderType],
                          location: Location, description: str) -> Emergency:
         """ Creates an emergency call. """

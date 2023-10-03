@@ -6,6 +6,8 @@ import customtkinter
 from soteriareitti.ui.gui.mapview import MapView
 from soteriareitti.ui.gui.sidebar import Sidebar
 
+from soteriareitti.utils.settings import Settings
+
 from soteriareitti import SoteriaReitti
 
 
@@ -30,7 +32,7 @@ class Gui(customtkinter.CTk):
     """ Graphical interface class """
 
     APP_TITLE = "SoteriaReitti"
-    APP_PLACE = "Töölö"
+    APP_PLACE = Settings.app_place
     WIDTH = 1280
     HEIGHT = 720
 
@@ -82,3 +84,8 @@ class Gui(customtkinter.CTk):
     def run(self):
         threading.Thread(target=self.__load_place).start()
         self.mainloop()
+
+    def clear(self):
+        self.app.clear()
+        self.map_view.clear_paths()
+        self.map_view.clear_markers()
