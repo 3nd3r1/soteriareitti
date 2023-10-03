@@ -12,7 +12,7 @@ _CACHING_: Tämä asetus määrittää, tallennetaanko verkkotiedot kovamuistiin
 Esimerkki .env tiedosto:
 
 ```
-APP_PLACE="Töölö, Helsinki"
+APP_PLACE=Töölö
 CACHING=True
 ```
 
