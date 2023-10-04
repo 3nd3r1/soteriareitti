@@ -229,7 +229,7 @@ class GraphUtils:
             while stack:
                 current_node = stack.pop()
 
-                if current_node.id in component or visited.get(current_node.id, False):
+                if visited.get(current_node.id, False):
                     continue
 
                 component.append(current_node)

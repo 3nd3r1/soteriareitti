@@ -65,11 +65,14 @@ class Map:
         data = self._overpass_api.get_place_data(self._place)
 
         # Add all revieved nodes to graph
+        logging.debug("Adding nodes to graph...")
         for node in data.nodes:
             if not node.lat or not node.lon:
                 continue
             self._graph.add_node(str(node.id), location=Location(float(node.lat), float(node.lon)))
+        logging.debug("Nodes added")
 
+        logging.debug("Adding ways to graph...")
         # For each way (road) add edges between nodes
         for way in data.ways:
             one_way = way.tags.get("oneway", "no") == "yes"
@@ -100,8 +103,12 @@ class Map:
                 if not one_way:
                     self._graph.add_edge(node_target, node_source, cost=time.minutes)
 
+        logging.debug("Ways added")
         # Get largest component from graph so all nodes are connected
+
+        logging.debug("Getting largest component from graph...")
         self._graph = GraphUtils.get_largest_component(self._graph)
+        logging.debug("Largest component got")
 
         logging.debug("Created graph: %s", self._graph)
 
