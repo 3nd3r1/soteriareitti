@@ -30,6 +30,11 @@ Muista, että .env-tiedosto on herkkä tiedosto, ja siinä ei tulisi olla ylimä
 
 ## Responderien ja Stationeiden Lisääminen:
 
+
+**Responderit** ovat liikkuvia hätätilanteisiin vastaavia yksiköitä, kuten ambulansseja ja poliisiautoja, jotka voivat reagoida nopeasti ja liikkua paikasta toiseen tarvittaessa. 
+
+**Stationit** ovat paikallaan pysyviä hätätilanteiden vastaajia, kuten sairaaloita ja poliisiasemia, jotka eivät liiku vaan pysyvät tietyissä ennalta määrätyissä paikoissa. Tämä staattinen sijoittuminen tekee niistä tärkeitä tukipisteitä hätätilanteiden hallinnassa ja avunsaannissa.
+
 -   Lisää responderi tai station kartalle klikkaamalla haluttua sijaintia hiiren oikealla painikkeella. Valitse avautuvasta valikosta "Add Responder" tai "Add Station".
 
 -   Avautuvassa ikkunassa valitse responderin tai stationin tyyppi, ja vahvista valinta. Responderi tai station ilmestyy kartalle kyseiseen sijaintiin.
