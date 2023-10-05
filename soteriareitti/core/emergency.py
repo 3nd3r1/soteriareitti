@@ -5,7 +5,7 @@ from enum import Enum
 from soteriareitti.core.responder import ResponderType, Responder
 from soteriareitti.core.station import StationType, Station
 
-from soteriareitti.utils.geo import Location
+from soteriareitti.classes.geo import Location
 
 
 class ResponderNotFound(Exception):

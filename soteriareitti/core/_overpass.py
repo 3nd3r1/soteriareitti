@@ -2,9 +2,10 @@
 import logging
 import overpy
 
+from soteriareitti.classes.geo import Location, Distance
+
 from soteriareitti.utils.settings import Settings
 from soteriareitti.utils.overpass import OverpassUtils
-from soteriareitti.utils.geo import Location, Distance
 
 
 class OverpassAPI:

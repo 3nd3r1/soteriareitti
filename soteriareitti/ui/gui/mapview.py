@@ -6,8 +6,8 @@ import tkintermapview
 from soteriareitti.core.responder import ResponderType
 from soteriareitti.core.station import StationType
 
-from soteriareitti.utils.geo import Location
-from soteriareitti.utils.graph import Path
+from soteriareitti.classes.geo import Location
+from soteriareitti.classes.graph import Path
 
 if TYPE_CHECKING:
     from soteriareitti.ui.gui.gui import Gui

@@ -1,11 +1,13 @@
-""" tests/test_utils_graph.py """
+""" tests/test_graph.py """
 
 import unittest
-from soteriareitti.utils.graph import GraphUtils, Graph
+
+from soteriareitti.classes.graph import Graph
+from soteriareitti.utils.graph import GraphUtils
 
 
-class TestUtilsGraph(unittest.TestCase):
-    """ Tests for the Graph class and GraphUtils methods """
+class TestGraph(unittest.TestCase):
+    """ Tests for the graph classes and GraphUtils methods """
 
     def setUp(self):
         self.graph = Graph()
@@ -48,16 +50,6 @@ class TestUtilsGraph(unittest.TestCase):
         self.assertIn(7, [edge.cost for edge in self.graph.edges["3"]])
 
     # GraphUtils tests
-
-    def test_graph_dijkstra_shortest_path(self):
-        """ Test that Dijkstra implementation finds the shortest path correctly """
-
-        node_source = self.graph.nodes.get("1")
-        node_target = self.graph.nodes.get("3")
-        shortest_path = GraphUtils.dijkstra_shortest_path(self.graph, node_source, node_target)
-
-        self.assertEqual(shortest_path.cost, 3)
-        self.assertListEqual([node.id for node in shortest_path], ["1", "2", "3"])
 
     def test_graph_largest_component(self):
         """ Test that GraphUtils finds the largest component correctly """

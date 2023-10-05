@@ -3,8 +3,9 @@
 from enum import Enum
 
 from soteriareitti.core.map import Map
-from soteriareitti.utils.graph import Path
-from soteriareitti.utils.geo import Location
+
+from soteriareitti.classes.graph import Path
+from soteriareitti.classes.geo import Location
 
 
 class StationType(Enum):

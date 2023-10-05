@@ -1,11 +1,12 @@
-""" tests/test_utils_geo.py """
+""" tests/test_geo.py """
 
 import unittest
-from soteriareitti.utils.geo import GeoUtils, Location, Distance
+from soteriareitti.classes.geo import Location, Distance
+from soteriareitti.utils.geo import GeoUtils
 
 
-class TestUtilsGeo(unittest.TestCase):
-    """ Tests for the utils_geo module """
+class TestGeo(unittest.TestCase):
+    """ Tests for the geo classes and GeoUtils methods """
 
     def test_geo_distance(self):
         """ Test that the Distance class works correctly """

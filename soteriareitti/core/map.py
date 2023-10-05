@@ -5,8 +5,14 @@ import overpy
 
 from soteriareitti.core._overpass import OverpassAPI
 
-from soteriareitti.utils.graph import GraphUtils, Graph, Node, Edge, Path
-from soteriareitti.utils.geo import GeoUtils, Location, Distance, Speed
+from soteriareitti.algorithms.dijkstra import Dijkstra
+from soteriareitti.algorithms.ida_star import IdaStar
+
+from soteriareitti.classes.graph import Graph, Node, Edge, Path
+from soteriareitti.classes.geo import Location, Distance, Speed
+
+from soteriareitti.utils.graph import GraphUtils
+from soteriareitti.utils.geo import GeoUtils
 from soteriareitti.utils.file_reader import get_data
 from soteriareitti.utils.settings import Settings
 
@@ -159,7 +165,7 @@ class Map:
             logging.debug("No closest node found at source or target location.")
             return None
 
-        path = GraphUtils.ida_star_shortest_path(
+        path = IdaStar.get_shortest_path(
             self._graph, heuristic, source_node, target_node, delta=0.1)
 
         if path:
@@ -182,8 +188,8 @@ class Map:
         if not closest_node:
             raise ValueError(f"{location} does not have any nodes close enough")
 
-        dijkstra_to_data = GraphUtils.dijkstras_algorithm(reverse_graph, closest_node)
-        dijkstra_from_data = GraphUtils.dijkstras_algorithm(self._graph, closest_node)
+        dijkstra_to_data = Dijkstra.get_data(reverse_graph, closest_node)
+        dijkstra_from_data = Dijkstra.get_data(self._graph, closest_node)
 
         logging.debug("Dijkstra data generated")
         return {"to": dijkstra_to_data, "from": dijkstra_from_data}

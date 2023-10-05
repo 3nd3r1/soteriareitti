@@ -6,7 +6,7 @@ import customtkinter
 from soteriareitti.core.emergency import EmergencyType, ResponderNotFound
 from soteriareitti.core.responder import ResponderType
 
-from soteriareitti.utils.geo import Location
+from soteriareitti.classes.geo import Location
 
 if TYPE_CHECKING:
     from soteriareitti.ui.gui.gui import Gui

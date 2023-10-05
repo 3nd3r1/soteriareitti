@@ -6,7 +6,7 @@ from soteriareitti.core.responder import Responder, ResponderType
 from soteriareitti.core.emergency import Emergency, EmergencyType
 from soteriareitti.core.station import Station, StationType
 
-from soteriareitti.utils.geo import Location
+from soteriareitti.classes.geo import Location
 
 
 class SoteriaReitti:

@@ -2,13 +2,27 @@
 
 import random
 import time
+import cProfile
 
 from soteriareitti.core.map import Map
-from soteriareitti.utils.graph import GraphUtils
+
+from soteriareitti.algorithms.dijkstra import Dijkstra
+from soteriareitti.algorithms.ida_star import IdaStar
+
+from soteriareitti.classes.geo import Speed
+from soteriareitti.utils.geo import GeoUtils
 
 
 def random_node(graph):
     return random.choice(graph.get_nodes())
+
+
+def heuristic(node, target_node) -> float:
+    """ Minutes to travel from node to target node """
+    average_speed = Speed((node.maxspeed.kilometers_hour +
+                           target_node.maxspeed.kilometers_hour)/2)
+    return GeoUtils.calculate_time(node.location,
+                                   target_node.location, average_speed).minutes
 
 
 def run_test(map: Map, place: str):
@@ -19,17 +33,17 @@ def run_test(map: Map, place: str):
     target = random_node(graph)
 
     time_before = time.time()
-    path_ida = map.get_shortest_path(source.location, target.location)
+    path_ida = IdaStar.get_shortest_path(graph, heuristic, source, target, delta=0.1)
     time_ida = time.time()-time_before
 
     time_before = time.time()
-    path_dijkstra = GraphUtils.dijkstra_shortest_path(graph, source, target)
+    path_dijkstra = Dijkstra.get_shortest_path(graph, source, target)
     time_dijkstra = time.time()-time_before
 
-    print(f"Benchmarks were ran on graph: {graph}")
-    print(f"IDA* algorithm took {time_ida} s to find path: {path_ida}")
-    print(f"Dijkstras algorithm took {time_dijkstra} s to find path: {path_dijkstra}")
-    print()
+    print("Benchmarks were ran on graph: %s", graph)
+    print("IDA* algorithm took %s s to find path: %s", time_ida, path_ida)
+    print("Dijkstras algorithm took %s s to find path: %s", time_dijkstra, path_dijkstra)
+    print("")
 
 
 if __name__ == "__main__":
