@@ -41,3 +41,14 @@
 | 27.09.2023   | 2h                    | Korjataan Graph-luokan muunnoksen hajottamat testit.                                                                |
 | 29.09.2023   | 3h                    | Käyttöliittymän kehitystä, parannetaan testejä, viikkoraportti, käyttöohje, toteutusdokumentti ja testausdokumentti |
 | **Yhteensä** | **11h**               |                                                                                                                     |
+
+## Viikko 5
+
+| Päivämäärä   | Käytetty aika (tunni) | Toiminta                                                                                                 |
+| ------------ | --------------------- | -------------------------------------------------------------------------------------------------------- |
+| 02.10.2023   | 3h                    | Muutetaan verkkojen painot käyttämään aikaa. Nyt heuristiikka on matka/nopeus                            |
+| 03.10.2023   | 5h                    | Pieniä muutoksia käyttöliittymään, algoritmeja nopeutettu, testit korjattu ja parannettu dokumentaatiota |
+| 04.10.2023   | 2h                    | Verkon luomista nopeutettu. Käyttöohjetta parannettu                                                     |
+| 05.10.2023   | 2h                    | Projektin kansiorakenne parannettu                                                                       |
+| 06.10.2023   | 3h                    | IDA\*-algoritmin parantamista ja nopeuttamista, dokumentaation hiomista ja viikoraportin kirjoittaminen  |
+| **Yhteensä** | **15h**               |                                                                                                          |

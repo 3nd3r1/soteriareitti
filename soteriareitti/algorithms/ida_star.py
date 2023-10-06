@@ -1,4 +1,5 @@
 """ soteriareitti/algorithms/ida_star.py """
+import logging
 from typing import Callable
 from soteriareitti.classes.graph import Graph, Node, Path
 
@@ -24,6 +25,7 @@ class IdaStar:
         path = Path.from_nodes([source])
 
         while True:
+            logging.debug("IDA* search with limit %s", limit)
             threshold = IdaStar.search(graph, heuristic, target, path, limit)
             if threshold < 0:
                 return path
@@ -46,7 +48,7 @@ class IdaStar:
 
         min_cost = float("inf")
 
-        for edge in graph.edges[node.id]:
+        for edge in sorted(graph.edges[node.id], key=lambda e: heuristic(e.target, target)):
             if path.contains(edge.target):
                 continue
 

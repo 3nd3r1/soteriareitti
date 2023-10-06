@@ -17,17 +17,20 @@ def random_node(graph):
     return random.choice(graph.get_nodes())
 
 
+average_speed = None
+
+
 def heuristic(node, target_node) -> float:
     """ Minutes to travel from node to target node """
-    average_speed = Speed((node.maxspeed.kilometers_hour +
-                           target_node.maxspeed.kilometers_hour)/2)
     return GeoUtils.calculate_time(node.location,
                                    target_node.location, average_speed).minutes
 
 
 def run_test(map: Map, place: str):
+    global average_speed
     map.load_place(place)
     graph = map._graph
+    average_speed = map._average_speed
 
     source = random_node(graph)
     target = random_node(graph)
@@ -40,9 +43,10 @@ def run_test(map: Map, place: str):
     path_dijkstra = Dijkstra.get_shortest_path(graph, source, target)
     time_dijkstra = time.time()-time_before
 
-    print("Benchmarks were ran on graph: %s", graph)
-    print("IDA* algorithm took %s s to find path: %s", time_ida, path_ida)
-    print("Dijkstras algorithm took %s s to find path: %s", time_dijkstra, path_dijkstra)
+    print(f"Benchmarks were ran on graph: {graph}")
+    print(f"AVG speed: {average_speed}")
+    print(f"IDA* algorithm took {time_ida} s to find path: {path_ida}")
+    print(f"Dijkstras algorithm took {time_dijkstra} s to find path: {path_dijkstra}")
     print("")
 
 

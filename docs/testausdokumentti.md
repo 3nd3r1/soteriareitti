@@ -1,15 +1,15 @@
 # Testausdokumentti
 
-Ohjelmaa on testattu perusteellisesti automatisoiduilla yksikkö- ja järjestelmätesteillä sekä manuaalisilla käyttöliittymätesteillä. Tämä on varmistanut SoteriaReitti-sovelluksen vakaan ja virheettömän toiminnan erilaisissa tilanteissa ja käyttöympäristöissä.
+Ohjelmaa on testattu perusteellisesti automatisoiduilla suorituskyky- ja yksikkötesteillä sekä manuaalisilla järjestelmä- ja käyttöliittymätesteillä. Tämä on varmistanut SoteriaReitti-sovelluksen vakaan ja virheettömän toiminnan erilaisissa tilanteissa ja käyttöympäristöissä.
 
-Päivitetty 29.09.2023
+Päivitetty 06.10.2023
 
 ## Yksikkötestit
 
 [![Coverage Report](/docs/images/coverage.svg "Coverage Badge")](https://htmlpreview.github.io/?https://github.com/3nd3r1/soteriareitti/blob/main/docs/coverage/index.html)
 (Badgea voi klikata.)
 
-Yksikkötestauksen kattavuusraportissa on testattu SoteriaReitti-sovelluksen yksittäisiä komponentteja kuten Emergency, Station ja Utils. Testit kattavat kaikki keskeiset toiminnot, kuten hätätilanteiden reitityksen, stationeiden ja responderien hallinnan.
+Yksikkötestauksen kattavuusraportissa on testattu SoteriaReitti-sovelluksen yksittäisiä komponentteja kuten _Emergency_ ja _Responders_ . Testit kattavat kaikki keskeiset toiminnot, kuten hätätilanteiden reitityksen, stationeiden ja responderien hallinnan sekä yksittäisten tietorakenteiden toimivuuden.
 
 Testit tehtiin hyödyntäen Pythonin unittest-kirjastoa, joka mahdollisti automatisoitujen testien kirjoittamisen jokaiselle komponentille. Jokainen komponentti testattiin erikseen varmistaen, että jokainen osa-alue toimii oikein ja odotetulla tavalla.
 
@@ -22,26 +22,27 @@ Yksikkötestit voidaan suorittaa seuraavasti:
    `poetry run invoke test`
 
 ### Emergency
+_Emergency_-luokan toiminnallisuutta on testattu perusteellisesti käyttäen _TestEmergency_-luokkaa. Nämä testit kattavat hätätilanteiden hallinnan, reittien laskennan ja oikean responderin valinnan. Testit varmistavat, että hätätilanteiden reititys ja lähimmän responderin valinta toimivat oikein.
 
-_Emergency_-luokan toimintaa on testattu _TestEmergency_-luokalla. Testit kattavat hätätilanteiden hallinnan, reittien laskennan ja responderien oikeanlaisen kohdentamisen. Testitapaukset varmistavat, että hätätilanteiden reititys ja lähimmän responderin valinta toimivat oikein.
-
-### Station-luokka
-
-_Station_-luokan (sairaala, paloasema jne.) toimintaa on testattu _TestStation_-luokalla. Testit varmistavat, että stationit voidaan lisätä kartalle ja reitin löytäminen hätätilanteisiin ja hätätilanteista toimii oikein.
+### Station
+_Station_-luokan (kuten sairaalat ja paloasemat) toimintaa on testattu _TestStation_-luokalla. Testit takaavat, että asemat voidaan lisätä kartalle ja että reittien löytäminen hätätilanteisiin ja niistä pois toimii oikein.
 
 ### Responder
+_Responder_-luokan (kuten ambulanssit ja poliisiautot) toimintaa on testattu _TestResponder_-luokalla. Testit varmistavat, että vastausyksiköt voidaan lisätä kartalle oikein ja että reittien laskenta toimii sujuvasti.
 
-_Responders_-luokan (ambulanssit, poliisit autot jne.) toimintaa on testattu _TestResponder_-luokalla. Testit varmistavat, että responderit voidaan lisätä kartalle oikein, ~~ja niiden liikkuminen~~ ja reittien laskenta toimivat sujuvasti.
+### Geo
+_geo_-moduulin toimintaa on perusteellisesti testattu _TestGeo_-luokalla. Testitapaukset kattavat kaikki maantieteelliset laskelmat, kuten etäisyyksien laskemisen karttapisteiden välillä ja sijaintien konversion koordinaattimuodoista. Lisäksi testit varmistavat, että geo-moduulin kaikki tietorakenteet, kuten Location ja Distance, toimivat oikein.
 
-### Utils
+### Graph
+_graph_-moduulin toimintaa on testattu _TestGraph_-luokalla. Testitapaukset varmistavat, että kaikki verkkoon liittyvät toiminnot ja tietorakenteet, kuten _Graph_-luokka ja *get_largest_component*-metodi, toimivat oikein ja tehokkaasti. Testit takaavat, että graph-moduuli vastaa tarkasti tarpeisiimme.
 
-_utils.geo_-moduulin toimintaa on perusteellisesti testattu _TestUtilsGeo_-luokalla. Testitapaukset kattavat kaikki maantieteelliset laskelmat, kuten etäisyyksien laskemisen karttapisteiden välillä ja sijaintien konversion koordinaattimuodoista. Testit varmistavat, että _utils.geo_-moduuli toimii tarkasti ja tarkoituksenmukaisesti.
-
-_utils.graph_-moduulin toimintaa on testattu _TestUtilsGraph_-luokalla. Testitapaukset varmistavat, että kaikki graafitoiminnot, kuten lyhimmän reitin laskenta Dijkstran algoritmilla ja liikkuvien kohteiden reittien optimointi IDA\*-algoritmilla, toimivat oikein ja tehokkaasti. Testit takaavat, että _utils.graph_-moduuli vastaa tarkasti tarpeitaan.
+### Algoritmit
+_IDA*_- ja _Dijkstran_-algoritmien toimintaa on testattu vertaamalla niiden tuottamia tuloksia tiedettyihin pienempiin polkuihin yksinkertaisessa verkossa. Yksikkötestit varmistavat myös, että algoritmit tuottavat tulokset oikeassa muodossa.
 
 ## Suorituskykytestaus
 
-Suorituskykytestaus on vielä kesken, mutta olen luonut yksinkertaisia testejä vertaillaksemme IDA\*-algoritmin ja Dijkstran algoritmin suorituskykyä eri kokoisilla verkoilla.
+Suorituskykytestauksen tarkoituksena on testata IDA\*- ja Dijkstran-algoritmin suorituskykyä eri kokoisissa verkoissa. 
+Suorituskykytestauksen avulla voidaan myös verrata kahden algoritmin toimintaa.
 
 Suorituskykytestaus suoritetaan seuraavasti:
 
@@ -61,7 +62,8 @@ Suorituskykytestaus suoritetaan kolmessa eri sijainnissa:
 
 - Helsinki (Suuri)
 
-Huomio: Testit voivat kestää suhteellisen kauan, jos sijainteja ei ole valmiiksi tallennettu kovamuistiin (ensimmäinen suorituskerta).
+_Huomio_: Testit voivat kestää suhteellisen kauan, jos sijainteja ei ole valmiiksi tallennettu kovamuistiin (ensimmäinen suorituskerta). 
+Tämä kuitenkin huomioidaan aika mittauksissa.
 
 Suorituskykytestauksen voi suorittaa seuraavasti:
 

@@ -20,3 +20,4 @@ Projekti toteutettiin [Tiralabra](https://tiralabra.github.io/2021_p1/index) kur
 -   [Viikkoraportti #2](./docs/viikkoraportti_2.md)
 -   [Viikkoraportti #3](./docs/viikkoraportti_3.md)
 -   [Viikkoraportti #4](./docs/viikkoraportti_4.md)
+-   [Viikkoraportti #5](./docs/viikkoraportti_5.md)

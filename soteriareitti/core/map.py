@@ -28,6 +28,7 @@ class Map:
         self._overpass_api = OverpassAPI()
         self._graph = Graph()
         self._place = None
+        self._average_speed = Speed(34)
 
     def load_place(self, place: str):
         self._place = place
@@ -42,7 +43,7 @@ class Map:
 
     def __save_graph(self):
         """ Save graph to pickle file """
-        pickle.dump((Settings.cache_version, self._graph), open(
+        pickle.dump((Settings.cache_version, self._place, self._average_speed, self._graph), open(
             get_data(f"{self._place}-graph.pickle"), "wb"))
         logging.debug("Saved graph (%s) to pickle file", self._graph)
 
@@ -53,14 +54,17 @@ class Map:
             logging.debug("Trying to load deprecated cache cache version: %s current version: %s",
                           cache_data[0], Settings.cache_version)
             raise DeprecatedCache
-        self._graph = cache_data[1]
+        self._place = cache_data[1]
+        self._average_speed = cache_data[2]
+        self._graph = cache_data[3]
         logging.debug("Loaded graph (%s) from pickle file", self._graph)
 
     def __create_graph(self):
         """ 
         Create graph from data
 
-        - Edges from and to an interesection has a speed limit of 30km/h
+        - Edges from and to an interesection have a speed limit of 30km/h
+          this is because turning requires slowing down
         - Other edges have the speed limit of the road + 30kmh/h
         """
         logging.debug("Starting graph creation")
@@ -79,12 +83,12 @@ class Map:
         logging.debug("Nodes added")
 
         logging.debug("Adding ways to graph...")
+
         # For each way (road) add edges between nodes
         for way in data.ways:
             one_way = way.tags.get("oneway", "no") == "yes"
 
-            # Emergency vehicles can drive 30km/h faster than the speed limit
-            maxspeed = Speed(float(way.tags.get("maxspeed", "30")))
+            maxspeed = Speed(float(way.tags.get("maxspeed", "30"))+30)
 
             nodes = [str(node.id) for node in way.nodes]
             self._graph.nodes.get(nodes[0]).update(maxspeed=Speed(30))
@@ -151,10 +155,8 @@ class Map:
         """ Get shortest path from source to target """
         def heuristic(node: Node, target_node: Node) -> float:
             """ Minutes to travel from node to target node """
-            average_speed = Speed((node.maxspeed.kilometers_hour +
-                                  target_node.maxspeed.kilometers_hour)/2)
             return GeoUtils.calculate_time(node.location,
-                                           target_node.location, average_speed).minutes
+                                           target_node.location, self._average_speed).minutes
 
         logging.debug("Getting shortest path from %s to %s", source, target)
 
