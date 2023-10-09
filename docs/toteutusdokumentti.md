@@ -18,6 +18,12 @@ classDiagram
     Graph .. IdaStar
 ```
 
+### Algoritmien käyttö
+
+Sovelluksen nykyisessä toteutuksessa, kun uusi asema (Station) luodaan, sovellus käyttää Dijkstran algoritmia löytääkseen kaikki reitit asemalta jokaiseen kartan pisteeseen. Tämä mahdollistaa erittäin nopean lyhimmän reitin löytämisen suoraan muistista.
+
+Vastausyksiköiden, kuten ambulanssien tai poliisiautojen, lyhimmät reitit hätätapauksiin määritetään IDA*-algoritmilla. Tämä valinta johtuu siitä, että vastausyksiköt voivat liikkua vapaasti kartalla, mikä tekee staattisen muistin käytöstä epäkäytännöllistä. IDA*-algoritmin joustavuus mahdollistaa reittien dynaamisen laskennan ilman tarvetta pitkäaikaiseen muistissa säilyttämiseen. Tällä tavoin sovellus pystyy tarjoamaan tehokkaan ja joustavan reitinhakupalvelun erilaisiin hätätilanteisiin vastaamiseksi.
+
 ## Saavutetut Aika- ja Tilavaativuudet
 
 ### Dijkstra -analyysi
@@ -40,11 +46,11 @@ Vaikka IDA*-algoritmi ei ole aina nopein, se käyttää kuitenkin vähemmän mui
 
 ## Työn Mahdolliset Puutteet ja Parannusehdotukset
 
-Sovelluksen käytettävyydessä ja tehokkuudessa voi olla vielä parantamisen varaa tietyissä tilanteissa, erityisesti suurilla kartta-alueilla. Lisäksi käyttöliittymää voisi kehittää tarjoamaan enemmän visuaalista informaatiota käyttäjälle, kuten reittien näyttämisen animoituna kartalla.
+Lisäksi käyttöliittymää voisi kehittää tarjoamaan enemmän visuaalista informaatiota käyttäjälle, kuten reittien näyttämisen animoituna kartalla.
 
 ## Laajojen kielimallien käyttö.
 
-rojektin suurin osa on saatu päätökseen ilman laajojen kielimallien käyttöä. Kuitenkin olen hyödyntänyt ChatGPT:tä tieteellisten artikkelien selittämiseen, erityisesti IDA*-algoritmin tutkimisessa. Olen kertonut ChatGPT:lle artikkelin sisällön ja pyytänyt tiivistettyä yhteenvetoa siitä.
+Projektin suurin osa on saatu päätökseen ilman laajojen kielimallien käyttöä. Kuitenkin olen hyödyntänyt ChatGPT:tä tieteellisten artikkelien selittämiseen, erityisesti IDA*-algoritmin tutkimisessa. Olen kertonut ChatGPT:lle artikkelin sisällön ja pyytänyt tiivistettyä yhteenvetoa siitä.
 
 Lisäksi olen käyttänyt ChatGPT:tä muutaman kerran kirjoitusvirheiden korjaamiseen.
 
