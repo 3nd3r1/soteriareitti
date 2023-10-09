@@ -1,4 +1,5 @@
 """ soteriareitti/algorithms/dijkstra.py """
+import logging
 from queue import PriorityQueue
 
 from soteriareitti.classes.graph import Graph, Node, Edge, Path
@@ -9,6 +10,7 @@ class Dijkstra:
     @staticmethod
     def get_shortest_path(graph: Graph, source: Node, target: Node) -> Path | None:
         """ Use Dijkstra's algorithm to find shortest path from source to target """
+        logging.debug("Dijkstra's shortest path search started")
         previous = Dijkstra.get_data(graph, source)
         path = GraphUtils.reconstruct_path(previous, source, target)
         if path:

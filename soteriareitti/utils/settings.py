@@ -15,7 +15,7 @@ class Settings:
 
     # Cache
     caching = os.getenv("CACHING", "True") == "True"
-    cache_version = "6"  # Change this when cache is deprecated
+    cache_version = "7"  # Change this when cache is deprecated
 
     # OSM
     max_size = None

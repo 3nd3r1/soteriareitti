@@ -28,7 +28,7 @@ class Map:
         self._overpass_api = OverpassAPI()
         self._graph = Graph()
         self._place = None
-        self._average_speed = Speed(34)
+        self._average_speed = Speed(40)
 
     def load_place(self, place: str):
         self._place = place

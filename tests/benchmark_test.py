@@ -2,15 +2,15 @@
 
 import random
 import time
-import cProfile
 
 from soteriareitti.core.map import Map
 
 from soteriareitti.algorithms.dijkstra import Dijkstra
 from soteriareitti.algorithms.ida_star import IdaStar
 
-from soteriareitti.classes.geo import Speed
 from soteriareitti.utils.geo import GeoUtils
+
+from soteriareitti.utils.logging import configure_logging
 
 
 def random_node(graph):
@@ -18,12 +18,16 @@ def random_node(graph):
 
 
 average_speed = None
+heuristic_dp = {}
 
 
 def heuristic(node, target_node) -> float:
     """ Minutes to travel from node to target node """
-    return GeoUtils.calculate_time(node.location,
-                                   target_node.location, average_speed).minutes
+    if heuristic_dp.get(node.id, False):
+        return heuristic_dp[node.id]
+    heuristic_dp[node.id] = GeoUtils.calculate_time(node.location,
+                                                    target_node.location, average_speed).minutes
+    return heuristic_dp[node.id]
 
 
 def run_test(map: Map, place: str):
@@ -32,6 +36,7 @@ def run_test(map: Map, place: str):
     graph = map._graph
     average_speed = map._average_speed
 
+    heuristic_dp.clear()
     source = random_node(graph)
     target = random_node(graph)
 
@@ -51,6 +56,7 @@ def run_test(map: Map, place: str):
 
 
 if __name__ == "__main__":
+    configure_logging(False)
     map = Map()
 
     # Tests in Paloheinä (small)
