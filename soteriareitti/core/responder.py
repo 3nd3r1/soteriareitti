@@ -52,4 +52,10 @@ class Responder:
         if not path_to:
             return None
 
-        return self.path_to(location).cost
+        return path_to.cost
+
+    def move(self, location: Location) -> None:
+        """ Moves the responder to the given location. """
+        logging.debug("Moving responder from %s to %s", self.location, location)
+        self.location = location
+        self.__last_path = [None, None]

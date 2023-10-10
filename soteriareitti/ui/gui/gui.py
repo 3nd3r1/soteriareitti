@@ -1,6 +1,5 @@
 """ soteriareitti/ui/gui.py """
 import logging
-import threading
 import customtkinter
 
 from soteriareitti.ui.gui.mapview import MapView
@@ -52,7 +51,6 @@ class Gui(customtkinter.CTk):
         self.grid_rowconfigure(0, weight=1)
 
         self._loader = Loader(master=self)
-
         self.map_view = MapView(master=self, address=Gui.APP_PLACE)
         self.sidebar = Sidebar(master=self)
 
@@ -81,10 +79,11 @@ class Gui(customtkinter.CTk):
         self.update()
 
     def run(self):
-        threading.Thread(target=self.__load_place).start()
+        self.after(10, self.__load_place)
         self.mainloop()
 
     def clear(self):
         self.app.clear()
         self.map_view.clear_paths()
         self.map_view.clear_markers()
+        self.map_view.responder_simulators.clear()

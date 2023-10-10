@@ -60,14 +60,19 @@ class Sidebar(customtkinter.CTkFrame):
             column += 1
 
         customtkinter.CTkButton(
-            self, text="Create", command=self.create_emergency).grid(
+            self, text="Create", command=self._create_emergency).grid(
             row=10, column=0, columnspan=3, sticky="w", padx=5, pady=5)
 
-        customtkinter.CTkButton(self, text="Clear", command=self.master.clear).grid(
-            row=12, column=0, columnspan=3, sticky="w", padx=5, pady=5)
+        customtkinter.CTkButton(
+            self, text="Clear", command=self.master.clear).grid(
+            row=12, column=0, columnspan=1, sticky="w", padx=5, pady=5)
 
-    def create_emergency(self):
+        customtkinter.CTkSwitch(
+            self, text="Simulate Responders",
+            variable=self.master.map_view.simulate_responders).grid(
+            row=12, column=1, columnspan=2, sticky="w", padx=5, pady=5)
 
+    def _create_emergency(self):
         self.master.start_loading()
         if not self.em_type.get() or self.em_location.get() == "":
             logging.error("Emergency type or location not set")
@@ -92,6 +97,7 @@ class Sidebar(customtkinter.CTkFrame):
         for responder in emergency.responders:
             path_to_emergency = responder.path_to(emergency.location)
             self.master.map_view.draw_path(path_to_emergency, "#FF0000")
+            self.master.map_view.responder_simulators[responder].set_path(path_to_emergency)
 
         for station in emergency.stations_from:
             path_to_emergency = station.path_to(emergency.location)

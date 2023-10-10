@@ -9,6 +9,8 @@ from soteriareitti.core.station import StationType
 from soteriareitti.classes.geo import Location
 from soteriareitti.classes.graph import Path
 
+from soteriareitti.utils.simulation import ResponderSimulator
+
 if TYPE_CHECKING:
     from soteriareitti.ui.gui.gui import Gui
 
@@ -79,7 +81,14 @@ class MapView(customtkinter.CTkFrame):
 
         self.master: "Gui" = master
         self.address_var = customtkinter.StringVar(value=address)
+
         self._new_emergency_marker = None
+        self._responder_markers = {}
+        self._station_markers = {}
+
+        self.simulate_responders = customtkinter.BooleanVar(value=False)
+        self.responder_simulators = {}
+        self.master.after(0, self._update_simulation)
 
         self.__create_map_widget()
         self.__create_search_widget()
@@ -101,11 +110,22 @@ class MapView(customtkinter.CTkFrame):
         search_entry = customtkinter.CTkEntry(master=self, placeholder_text="Address..",
                                               textvariable=self.address_var)
         search_entry.grid(row=0, column=0, sticky="nswe", padx=10, pady=10)
-        search_entry.bind("<Return>", self._update_address)
+        search_entry.bind("<Return>", self.__update_address)
 
-        search_button = customtkinter.CTkButton(master=self, text="Hae", width=90,
-                                                command=self._update_address)
+        search_button = customtkinter.CTkButton(master=self, text="Search", width=90,
+                                                command=self.__update_address)
         search_button.grid(row=0, column=1, sticky="nswe", padx=10, pady=10)
+
+    def __update_address(self, _event=None):
+        self._map_widget.set_address(self.address_var.get())
+
+    def _update_simulation(self):
+        if self.simulate_responders.get() and self.master.app:
+            for responder_simulator in self.responder_simulators.values():
+                responder_simulator.update()
+                pos = responder_simulator.responder.location.as_tuple()
+                self._responder_markers[responder_simulator.responder].set_position(pos[0], pos[1])
+        self.master.after(1000, self._update_simulation)
 
     def _create_responder(self, pos: tuple):
         dialog = OptionDialog("Select Responder Type", "Create", [r.value for r in ResponderType])
@@ -114,10 +134,15 @@ class MapView(customtkinter.CTkFrame):
         if not dialog_input:
             return
 
+        self.master.start_loading()
         responder_type = ResponderType(dialog_input)
 
-        self.master.app.create_responder(responder_type, Location(pos[0], pos[1]))
-        self._map_widget.set_marker(pos[0], pos[1], responder_type.value)
+        new_responder = self.master.app.create_responder(responder_type, Location(pos[0], pos[1]))
+        new_marker = self._map_widget.set_marker(pos[0], pos[1], responder_type.value)
+        self._responder_markers[new_responder] = new_marker
+        self.responder_simulators[new_responder] = ResponderSimulator(
+            self.master.app.map, new_responder)
+        self.master.stop_loading()
 
     def _create_station(self, pos: tuple):
         dialog = OptionDialog("Select Staton Type", "Create", [s.value for s in StationType])
@@ -129,13 +154,12 @@ class MapView(customtkinter.CTkFrame):
         self.master.start_loading()
         station_type = StationType(dialog_input)
 
-        self.master.app.create_station(station_type, Location(pos[0], pos[1]))
-        self._map_widget.set_marker(pos[0], pos[1], station_type.value,
-                                    marker_color_circle="#0000FF")
-        self.master.stop_loading()
+        new_station = self.master.app.create_station(station_type, Location(pos[0], pos[1]))
+        new_marker = self._map_widget.set_marker(pos[0], pos[1], station_type.value,
+                                                 marker_color_circle="#0000FF")
 
-    def _update_address(self, _event=None):
-        self._map_widget.set_address(self.address_var.get())
+        self._station_markers[new_station] = new_marker
+        self.master.stop_loading()
 
     def set_emergency_location(self, pos: tuple):
         self.master.sidebar.em_location.set(str(Location(pos[0], pos[1])))
@@ -151,6 +175,8 @@ class MapView(customtkinter.CTkFrame):
 
     def clear_markers(self):
         self._new_emergency_marker = None
+        self._responder_markers.clear()
+        self._station_markers.clear()
         self._map_widget.delete_all_marker()
 
     def draw_path(self, path: Path, color: str = "#0000FF"):

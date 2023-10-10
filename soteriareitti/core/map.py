@@ -27,8 +27,10 @@ class Map:
     def __init__(self):
         self._overpass_api = OverpassAPI()
         self._graph = Graph()
+
         self._place = None
         self._average_speed = Speed(40)
+        self._bounding_box = [float("inf"), float("inf"), float("-inf"), float("-inf")]
 
     def load_place(self, place: str):
         self._place = place
@@ -43,8 +45,9 @@ class Map:
 
     def __save_graph(self):
         """ Save graph to pickle file """
-        pickle.dump((Settings.cache_version, self._place, self._average_speed, self._graph), open(
-            get_data(f"{self._place}-graph.pickle"), "wb"))
+        pickle.dump((Settings.cache_version, self._place,
+                     self._average_speed, self._bounding_box, self._graph),
+                    open(get_data(f"{self._place}-graph.pickle"), "wb"))
         logging.debug("Saved graph (%s) to pickle file", self._graph)
 
     def __load_cached_graph(self):
@@ -56,7 +59,8 @@ class Map:
             raise DeprecatedCache
         self._place = cache_data[1]
         self._average_speed = cache_data[2]
-        self._graph = cache_data[3]
+        self._bounding_box = cache_data[3]
+        self._graph = cache_data[4]
         logging.debug("Loaded graph (%s) from pickle file", self._graph)
 
     def __create_graph(self):
@@ -79,6 +83,10 @@ class Map:
         for node in data.nodes:
             if not node.lat or not node.lon:
                 continue
+            self._bounding_box[0] = min(self._bounding_box[0], float(node.lat))
+            self._bounding_box[1] = min(self._bounding_box[1], float(node.lon))
+            self._bounding_box[2] = max(self._bounding_box[2], float(node.lat))
+            self._bounding_box[3] = max(self._bounding_box[3], float(node.lon))
             self._graph.add_node(str(node.id), location=Location(float(node.lat), float(node.lon)))
         logging.debug("Nodes added")
 
@@ -214,3 +222,7 @@ class Map:
             logging.debug("Path reconstructed: %s", path)
 
         return path
+
+    @property
+    def bounding_box(self) -> list[float, float, float, float]:
+        return self._bounding_box

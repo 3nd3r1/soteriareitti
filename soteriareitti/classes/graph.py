@@ -57,6 +57,7 @@ class Path:
     def __init__(self, edges: list[Edge] | None = None):
         self.cost: float = 0.0
         self.__visited = {}
+        self.__edges = []
 
         if edges:
             for edge in edges:
@@ -64,9 +65,7 @@ class Path:
                     raise TypeError(f"Edge must be Edge, not {type(edge)}")
                 self.cost += edge.cost
                 self.__visited[edge.target] = True
-            self.__edges = edges
-        else:
-            self.__edges = []
+                self.__edges.append(edge)
 
     @classmethod
     def from_nodes(cls, nodes: list[Node]):
@@ -113,6 +112,16 @@ class Path:
         if len(self.__edges) > 0:
             return self.__edges[-1].target
         return None
+
+    @property
+    def first(self) -> Node | None:
+        if len(self.__edges) > 0:
+            return self.__edges[0].source
+        return None
+
+    @property
+    def edges(self) -> list[Edge]:
+        return self.__edges
 
 
 class Graph:
