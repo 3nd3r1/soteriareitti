@@ -67,12 +67,11 @@ class Sidebar(customtkinter.CTkFrame):
             row=12, column=0, columnspan=3, sticky="w", padx=5, pady=5)
 
     def create_emergency(self):
-        self.master.event_generate("<<LoadingStart>>")
-        self.master.update()
 
+        self.master.start_loading()
         if not self.em_type.get() or self.em_location.get() == "":
             logging.error("Emergency type or location not set")
-            self.master.event_generate("<<LoadingEnd>>")
+            self.master.stop_loading()
             return
 
         em_type = EmergencyType(self.em_type.get())
@@ -85,7 +84,7 @@ class Sidebar(customtkinter.CTkFrame):
                 em_type, em_responder_types, em_location, em_description)
         except ResponderNotFound:
             logging.error("Responders or stations not found!")
-            self.master.event_generate("<<LoadingEnd>>")
+            self.master.stop_loading()
             return
 
         self.master.map_view.clear_paths()
@@ -98,4 +97,4 @@ class Sidebar(customtkinter.CTkFrame):
             path_to_emergency = station.path_to(emergency.location)
             self.master.map_view.draw_path(path_to_emergency, "#0000FF")
 
-        self.master.event_generate("<<LoadingEnd>>")
+        self.master.stop_loading()

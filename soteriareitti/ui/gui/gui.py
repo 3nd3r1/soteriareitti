@@ -47,9 +47,6 @@ class Gui(customtkinter.CTk):
         self.bind("<Command-q>", self.__on_closing)
         self.bind("<Command-w>", self.__on_closing)
 
-        self.bind("<<LoadingStart>>", self.__on_loading_start)
-        self.bind("<<LoadingEnd>>", self.__on_loading_end)
-
         self.grid_columnconfigure(0, weight=0)
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
@@ -61,25 +58,27 @@ class Gui(customtkinter.CTk):
 
         self.app = SoteriaReitti()
 
-    def __load_place(self, _event=0):
-        self.__on_loading_start()
+    def __load_place(self):
+        self.start_loading()
         self.app.load_place(Gui.APP_PLACE)
-        self.__on_loading_end()
+        self.stop_loading()
 
-    def __on_loading_start(self, _event=0):
+    def __on_closing(self, _event=0):
+        self.destroy()
+
+    def start_loading(self):
         logging.debug("Loading started")
         self.sidebar.grid_forget()
         self.map_view.grid_forget()
         self._loader.show()
+        self.update()
 
-    def __on_loading_end(self, _event=0):
+    def stop_loading(self):
         logging.debug("Loading ended")
         self._loader.hide()
         self.sidebar.grid(row=0, column=0, sticky="nsew")
         self.map_view.grid(row=0, column=1, sticky="nsew")
-
-    def __on_closing(self, _event=0):
-        self.destroy()
+        self.update()
 
     def run(self):
         threading.Thread(target=self.__load_place).start()

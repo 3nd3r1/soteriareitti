@@ -126,11 +126,13 @@ class MapView(customtkinter.CTkFrame):
         if not dialog_input:
             return
 
+        self.master.start_loading()
         station_type = StationType(dialog_input)
 
         self.master.app.create_station(station_type, Location(pos[0], pos[1]))
         self._map_widget.set_marker(pos[0], pos[1], station_type.value,
                                     marker_color_circle="#0000FF")
+        self.master.stop_loading()
 
     def _update_address(self, _event=None):
         self._map_widget.set_address(self.address_var.get())
