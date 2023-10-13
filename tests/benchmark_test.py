@@ -18,16 +18,12 @@ def random_node(graph):
 
 
 average_speed = None
-heuristic_dp = {}
 
 
 def heuristic(node, target_node) -> float:
     """ Minutes to travel from node to target node """
-    if heuristic_dp.get(node.id, False):
-        return heuristic_dp[node.id]
-    heuristic_dp[node.id] = GeoUtils.calculate_time(node.location,
-                                                    target_node.location, average_speed).minutes
-    return heuristic_dp[node.id]
+    return GeoUtils.calculate_time(node.location,
+                                   target_node.location, average_speed).minutes
 
 
 def run_test(map: Map, place: str):
@@ -36,7 +32,6 @@ def run_test(map: Map, place: str):
     graph = map._graph
     average_speed = map._average_speed
 
-    heuristic_dp.clear()
     source = random_node(graph)
     target = random_node(graph)
 
