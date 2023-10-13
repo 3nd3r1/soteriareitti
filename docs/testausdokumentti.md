@@ -21,6 +21,9 @@ Yksikkötestit voidaan suorittaa seuraavasti:
 3. Suorita testit komennolla:
    `poetry run invoke test`
 
+### Map
+_Map_-luokan toiminnallisuutta on testattu _TestMap_-luokan avulla, joka sisältää useita testejä. Näissä testeissä tarkastellaan muun muassa verkon luontia ja verkon lataamista välimuistista.
+
 ### Emergency
 _Emergency_-luokan toiminnallisuutta on testattu perusteellisesti käyttäen _TestEmergency_-luokkaa. Nämä testit kattavat hätätilanteiden hallinnan, reittien laskennan ja oikean responderin valinnan. Testit varmistavat, että hätätilanteiden reititys ja lähimmän responderin valinta toimivat oikein.
 
