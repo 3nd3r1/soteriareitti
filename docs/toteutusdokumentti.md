@@ -6,17 +6,22 @@ SoteriaReitti-sovellus on suunniteltu modulaariseksi ja selkeäksi, mikä mahdol
 
 ### Ohjelman rakennetta kuvaava luokka-diagrammi
 
-```mermaid
-classDiagram
-    SoteriaReitti "*" -- "1" Map
-    SoteriaReitti "*" -- "1" Emergency
-    SoteriaReitti "*" -- "*" Responder
-    SoteriaReitti "*" -- "*" Station
-    Map .. Graph
-    Map .. Geo
-    Graph .. Dijkstra
-    Graph .. IdaStar
-```
+![Class Diagram](./images/classdiagram-dark.png#gh-dark-mode-only)
+![Class Diagram](./images/classdiagram-light.png#gh-light-mode-only)
+
+- SoteriaReitti: Tämä pääluokka hallitsee koko sovellusta. Se sisältää kaikki Responderit, Stationit ja Emergencyt, jotka ovat keskeisiä toimijoita hätätilanteiden hallinnassa.
+
+- Ui-moduuli: Tämä moduuli vastaa SoteriaReitti-ohjelman käyttöliittymästä. Siinä käytetään tällä hetkellä tkinter-pohjaista Gui-luokkaa, joka mahdollistaa sovelluksen suorittamisen graafisessa käyttöliittymässä.
+
+- Responder-luokka: Tämä luokka kuvaa vastausyksikköjä kuten poliisiautoja ja ambulansseja. Responderit voivat liikkua kartalla ja reagoida hätätilanteisiin.
+
+- Station-luokka: Tämä luokka kuvaa hätätilanteisiin vastaavia asemia, kuten sairaaloita ja poliisiasemia. Stationit ovat staattisia, eli ne eivät liiku. Station-luokka mahdollistaa myös potilaiden tai vankien kuljettamisen hätätilanteista.
+
+- Emergency-luokka: Tämä luokka kuvaa yksittäisiä hätätapauksia. Kussakin hätätilanteessa voi olla enintään kolme Responderia tai Stationia, jotka vastaavat tilanteesta.
+
+- Map-luokka: Tämä luokka edustaa karttaa ja hallinnoi kaikkia sijaintitietoja sekä reititystä hätätilanteiden kohteiden välillä.
+
+- Apuluokat: Lisäksi sovelluksessa on muita apuluokkia, kuten Geo-moduuli, joka liittyy suunnistamiseen, Graph-moduuli, joka käsittelee verkkotietorakenteita, ja Algorithms-moduuli, joka sisältää käytettävät algoritmit, kuten IdaStar ja Dijkstra. Nämä luokat mahdollistavat sovelluksen monipuolisen toiminnallisuuden ja tehokkaan suorituksen hätätilanteiden hallinnassa.
 
 ### Algoritmien käyttö
 
@@ -36,6 +41,8 @@ IDA\*-algoritmin aikavaativuus riippuu käytetystä heuristiikasta ja verkosta. 
 
 Yleisesti ottaen IDA*-algoritmin aikavaativuus on vaikea määrittää tarkasti, koska se riippuu käytetystä heuristiikasta ja verkosta. Mutta suurissa ja monimutkaisissa verkoissa IDA*-algoritmi voi olla hidas, koska se voi joutua tutkimaan suuren määrän tiloja ennen optimaalisen ratkaisun löytämistä. Algoritmin tehokkuus riippuu suuresti heuristiikkafunktion laadusta ja siitä, miten hyvin se arvioi etäisyyksiä lopullisesta tavoitetilasta. Tehokkuuden parantamiseksi IDA*-algoritmin käytössä voisi harkita myös parempia hakuavaruuden rajausstrategioita ja optimointitekniikoita.
 
+Ohjelmaani kehittäessäni olen hyödyntänyt useita strategioita IDA*-algoritmin tehostamiseksi. Esimerkiksi olen ottanut käyttöön delta-parametrin, joka määrittelee sallitun virheen tason, jonka IDA*-haku saa tuottaa. Jokaisen iteraation aikana threshold-arvon on kasvettava vähintään delta-yksiköllä, mahdollistaen hieman epätarkan, mutta huomattavasti nopeamman tuloksen. Tämä kompromissi tarkkuuden ja suorituskyvyn välillä on osoittautunut tehokkaaksi, kun pyritään optimoimaan IDA*-algoritmin suoritusaikaa erityisesti suurissa ja monimutkaisissa verkkoissa.
+
 ### Vertailu
 
 IDA*-algoritmi osoittaa tehokkuutensa erityisesti pienissä verkoissa, missä sen heuristiikkaan perustuva seuraavan solmun valinta tapahtuu tehokkaasti. Pienissä verkoissa IDA*-algoritmi suoriutuu hyvin ja löytää optimaalisen reitin.
@@ -46,7 +53,8 @@ Vaikka IDA*-algoritmi ei ole aina nopein, se käyttää kuitenkin vähemmän mui
 
 ## Työn Mahdolliset Puutteet ja Parannusehdotukset
 
-Lisäksi käyttöliittymää voisi kehittää tarjoamaan enemmän visuaalista informaatiota käyttäjälle, kuten reittien näyttämisen animoituna kartalla.
+- Käyttöliittymää voisi kehittää tarjoamaan enemmän visuaalista informaatiota käyttäjälle, kuten reittien näyttämisen animoituna kartalla.
+- Virheenkäsittely: Tällä hetkellä ohjelmassani ei ole juurikaan virheenkäsittelyä käyttäjän puolella. Virhetilanteissa virheilmoitukset tulostetaan konsoliin, mikäli ohjelma on debug-tilassa. On kuitenkin tärkeää huomata, että ohjelman ei tulisi kaatua mistään virheistä, vaan se pyrkii jatkamaan suoritustaan parhaansa mukaan.
 
 ## Laajojen kielimallien käyttö.
 

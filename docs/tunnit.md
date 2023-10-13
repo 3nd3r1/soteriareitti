@@ -52,3 +52,12 @@
 | 05.10.2023   | 2h                    | Projektin kansiorakenne parannettu                                                                       |
 | 06.10.2023   | 3h                    | IDA\*-algoritmin parantamista ja nopeuttamista, dokumentaation hiomista ja viikoraportin kirjoittaminen  |
 | **Yhteensä** | **15h**               |                                                                                                          |
+
+## Viikko 6
+
+| Päivämäärä   | Käytetty aika (tunni) | Toiminta                                                                                         |
+| ------------ | --------------------- | ------------------------------------------------------------------------------------------------ |
+| 09.10.2023   | 2h                    | Tehdään IDA\*-algoritmista iteratiivinen, jotta recursio raja ei ylity. Dokumentaation korjailua |
+| 10.10.2023   | 3h                    | Parannetaan Loading-näkymää. Luodaan responderien simulointi toiminnallisuus                     |
+| 13.10.2023   | 3h                    | Kirjoitetaan viikkoraportti. Hiotaan dokumentaatiota. Parannetaan testejä ja siivotaan koodia    |
+| **Yhteensä** | **8h**                |                                                                                                  |
