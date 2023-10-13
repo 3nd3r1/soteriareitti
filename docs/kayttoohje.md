@@ -3,9 +3,10 @@
 SoteriaReitti-sovelluksen käyttäminen on suoraviivaista ja intuitiivista. Seuraavassa on vaiheittainen ohje sovelluksen käyttöön:
 
 ## Sovelluksen Konfigurointi
+
 Sovellusta voi konfiguroida .env-tiedoston avulla. Tämä tiedosto mahdollistaa erilaisten asetusten määrittämisen, jolloin voit räätälöidä sovelluksen toimintaa tarpeidesi mukaan. Tässä muutamia keskeisiä asetuksia:
 
-_APP\_PLACE_: Tämä asetus määrittää paikan, jonka perusteella sovellus toimii. Voit muuttaa tätä arvoa vaihtamalla paikan nimen tai koordinaatit. Esimerkiksi voit asettaa sen "Töölö, Helsinki" tai muihin koordinaatteihin, jotka vastaavat aluetta, jolla haluat testata sovellusta.
+_APP_PLACE_: Tämä asetus määrittää paikan, jonka perusteella sovellus toimii. Voit muuttaa tätä arvoa vaihtamalla paikan nimen tai koordinaatit. Esimerkiksi voit asettaa sen "Töölö, Helsinki" tai muihin koordinaatteihin, jotka vastaavat aluetta, jolla haluat testata sovellusta.
 
 _CACHING_: Tämä asetus määrittää, tallennetaanko verkkotiedot kovamuistiin vai ei. Jos tämä asetus on `True`, sovellus tallentaa verkon (graph) kovamuistiin, mikä parantaa suorituskykyä toistuvissa käynnistyksissä. Jos asetus on `False`, verkkoa ei tallenneta kovamuistiin, ja se lasketaan uudelleen joka kerta, kun sovellus käynnistetään.
 
@@ -30,18 +31,17 @@ Muista, että .env-tiedosto on herkkä tiedosto, ja siinä ei tulisi olla ylimä
 
 ## Vastausyksiköt ja Asemat
 
-
-Vastausyksiköt eli **Responderit** ovat liikkuvia hätätilanteisiin vastaavia yksiköitä, kuten ambulansseja ja poliisiautoja, jotka voivat reagoida nopeasti ja liikkua paikasta toiseen tarvittaessa. 
+Vastausyksiköt eli **Responderit** ovat liikkuvia hätätilanteisiin vastaavia yksiköitä, kuten ambulansseja ja poliisiautoja, jotka voivat reagoida nopeasti ja liikkua paikasta toiseen tarvittaessa.
 
 Asemat eli **Stationit** ovat paikallaan pysyviä hätätilanteiden vastaajia, kuten sairaaloita ja poliisiasemia, jotka eivät liiku vaan pysyvät tietyissä ennalta määrätyissä paikoissa. Tämä staattinen sijoittuminen tekee niistä tärkeitä tukipisteitä hätätilanteiden hallinnassa ja avunsaannissa.
 
 ### Miten lisätä vastausyksikkö tai asema:
 
-1.   Lisää vastausyksikkö tai asema kartalle klikkaamalla haluttua sijaintia hiiren **oikealla** painikkeella. Valitse avautuvasta valikosta "Create Responder" tai "Create Station".
-![Add Responder or Station](./images/add_responder_1.png)
+1.  Lisää vastausyksikkö tai asema kartalle klikkaamalla haluttua sijaintia hiiren **oikealla** painikkeella. Valitse avautuvasta valikosta "Create Responder" tai "Create Station".
+    ![Add Responder or Station](./images/add_responder_1.png)
 
 -   Avautuvassa ikkunassa valitse vastausyksikön tai aseman tyyppi, ja vahvista valinta. Responderi tai station ilmestyy kartalle kyseiseen sijaintiin.
-![Specify Type](./images/add_responder_2.png)
+    ![Specify Type](./images/add_responder_2.png)
 
 ## Hätätilanteet
 
@@ -49,12 +49,10 @@ Hätätilanne eli **Emergency** kuvaa aktiivista hätätilannetta tietyssä sija
 
 ### Miten luoda hätätilanne:
 
-1. Valitse hätätilanteen sijainti kartalta klikkaamalla hiiren **oikealla** painikkeella haluamaasi sijaintia kartalla. Hätätilanteen sijainnin tulee olla alueella, joka on määritetty .env-tiedostossa.
+1. Valitse hätätilanteen sijainti kartalta klikkaamalla hiiren **vasemmalla** painikkeella haluamaasi sijaintia kartalla. Hätätilanteen sijainnin tulee olla alueella, joka on määritetty .env-tiedostossa.
 
 ![Emergency Location](./images/emergency_1.png)
 ![Emergency Location](./images/emergency_2.png)
-
-
 
 2. Syötä hätätilanteen tiedot sovelluksen vasemmalla olevaan valikkoon. Tässä vaiheessa voit määrittää, mitä vastausyksiköitä hätätilanteeseen tarvitaan ja lisätä muita olennaisia tietoja.
 
@@ -78,4 +76,4 @@ Voit aloittaa simuloinnin napsauttamalla "Simulate Responders" -painiketta sovel
 
 ## Tunnettut Virheet
 
-- Vastausyksikön ja hätätilanteen luominen voi kestää jonkin aikaa. Tämä johtuu siitä, että vastausyksiköt käyttävät hitaampaa IDA*-reititysalgoritmia, mikä voi kestää hetken. Tämän ei kuitenkaan pitäisi yleensä viedä yli minuuttia aikaa. Jos loading-näkymä on ollut näkyvillä yli 3 minuuttia, on todennäköistä, että ohjelmassa on tapahtunut virhe.
+-   Vastausyksikön ja hätätilanteen luominen voi kestää jonkin aikaa. Tämä johtuu siitä, että vastausyksiköt käyttävät hitaampaa IDA\*-reititysalgoritmia, mikä voi kestää hetken. Tämän ei kuitenkaan pitäisi yleensä viedä yli minuuttia aikaa. Jos loading-näkymä on ollut näkyvillä yli 3 minuuttia, on todennäköistä, että ohjelmassa on tapahtunut virhe.
