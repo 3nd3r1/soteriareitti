@@ -17,6 +17,12 @@ class Node:
     def __repr__(self):
         return f"<soteriareitti.Node id={self.id}>"
 
+    def __lt__(self, other):
+        return False
+
+    def __gt__(self, other):
+        return False
+
     def update(self, node: "Node" or None = None, **kwargs):
         """ Update node with data from another node """
         if node:
