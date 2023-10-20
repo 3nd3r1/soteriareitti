@@ -43,6 +43,7 @@ class IdaStar:
         min_cost = float("inf")
         stack = [source]
         previous.clear()
+        previous[source.id] = Edge(source, source, 0)
         cost = {}
         cost[source.id] = 0
 

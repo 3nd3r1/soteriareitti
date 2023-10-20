@@ -10,17 +10,27 @@ from soteriareitti.classes.graph import Path
 
 
 class ResponderSimulator:
-    """ This class is used to simulate a single responder moving around the map"""
+    """
+      This class is used to simulate a single responder moving around the map
 
-    def __init__(self, app_map: Map, responder: Responder):
+        args:
+            - app_map: Map
+            - responder: Responder
+            - path_generation: bool - if True, keeps generating new random paths
+                                      to travel if one is completed
+    """
+
+    def __init__(self, app_map: Map, responder: Responder, path_generation: bool = True):
         self.__map = app_map
         self.responder = responder
 
         self._next_move_time: float | None = None
         self._current_move: int | None = None
         self._path: Path | None = None
+        self._path_generation = path_generation
 
-        self._generate_path()
+        if self._path_generation:
+            self._generate_path()
 
     def _generate_path(self):
         """ Generate a random path to travel """
@@ -37,6 +47,8 @@ class ResponderSimulator:
         time_now = time.time()
         self.responder.move(self._path.edges[self._current_move].target.location)
         if self._current_move == len(self._path.edges) - 1:
+            if not self._path_generation:
+                return
             self._generate_path()
         else:
             self._current_move += 1

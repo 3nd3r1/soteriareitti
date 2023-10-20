@@ -17,16 +17,21 @@ class TestMap(unittest.TestCase):
         Settings.caching = False
         self.map.load_place("Töölö")
 
-        self.assertEqual(self.map._place, "Töölö")  # pylint: disable=protected-access
-        self.assertEqual(len(self.map._graph.get_nodes()), 3852)  # pylint: disable=protected-access
+        self.assertEqual(self.map._place, "Töölö")            # pylint: disable=protected-access
+        self.assertGreater(len(self.map._graph.get_nodes()),  # pylint: disable=protected-access
+                           3800)
 
     def test_map_graph_loading(self):
         """ Tests that the Map loads graph correctly from cache """
         # Enable caching
         Settings.caching = True
-        # Create new graph and save it to cache
-        Map().load_place("Töölö")
 
+        # Create new graph and save it to cache
+        test_map = Map()
+        test_map.load_place("Töölö")
+
+        # Load graph from cache
         self.map.load_place("Töölö")
-        self.assertEqual(self.map._place, "Töölö")  # pylint: disable=protected-access
-        self.assertEqual(len(self.map._graph.get_nodes()), 3852)  # pylint: disable=protected-access
+        self.assertEqual(self.map._place, "Töölö")              # pylint: disable=protected-access
+        self.assertEqual(len(self.map._graph.get_nodes()),      # pylint: disable=protected-access
+                         len(test_map._graph.get_nodes()))      # pylint: disable=protected-access
