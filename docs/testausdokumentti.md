@@ -42,6 +42,9 @@ _graph_-moduulin toimintaa on testattu _TestGraph_-luokalla. Testitapaukset varm
 ### Algoritmit
 _IDA*_- ja _Dijkstran_-algoritmien toimintaa on testattu vertaamalla niiden tuottamia tuloksia tiedettyihin pienempiin polkuihin yksinkertaisessa verkossa. Yksikkötestit varmistavat myös, että algoritmit tuottavat tulokset oikeassa muodossa.
 
+### Simulators
+_ResponderSimulator_-luokan toimintaa on testattu _TestSimulation_-luokalla. Testit varmistavat, että vastausyksikköjen simulointi toimii oikein.
+
 ## Suorituskykytestaus
 
 Suorituskykytestauksen tarkoituksena on testata IDA\*- ja Dijkstran-algoritmin suorituskykyä eri kokoisissa verkoissa. 
