@@ -1,7 +1,6 @@
 """ tests/test_simulation.py """
 
 import unittest
-import time
 
 from soteriareitti.core.map import Map
 from soteriareitti.core.responder import Responder, ResponderType

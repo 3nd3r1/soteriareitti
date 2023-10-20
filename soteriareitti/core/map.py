@@ -45,18 +45,19 @@ class Map:
 
     def __save_graph(self):
         """ Save graph to pickle file """
-        pickle.dump((Settings.cache_version, self._place,
-                     self._average_speed, self._bounding_box, self._graph),
-                    open(get_data(f"{self._place}-graph.pickle"), "wb"))
+        with open(get_data(f"{self._place}-graph.pickle"), "wb") as file:
+            pickle.dump((Settings.cache_version, self._place,
+                        self._average_speed, self._bounding_box, self._graph), file)
         logging.debug("Saved graph (%s) to pickle file", self._graph)
 
     def __load_cached_graph(self):
         """ Load graph from pickle file """
-        cache_data = pickle.load(open(get_data(f"{self._place}-graph.pickle"), "rb"))
-        if cache_data[0] != Settings.cache_version:
-            logging.debug("Trying to load deprecated cache cache version: %s current version: %s",
-                          cache_data[0], Settings.cache_version)
-            raise DeprecatedCache
+        with open(get_data(f"{self._place}-graph.pickle"), "rb") as file:
+            cache_data = pickle.load(file)
+            if cache_data[0] != Settings.cache_version:
+                logging.debug("Trying to load deprecated cache version: %s, current version: %s",
+                              cache_data[0], Settings.cache_version)
+                raise DeprecatedCache
         self._place = cache_data[1]
         self._average_speed = cache_data[2]
         self._bounding_box = cache_data[3]
