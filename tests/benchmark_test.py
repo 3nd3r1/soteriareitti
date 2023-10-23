@@ -1,5 +1,4 @@
 # pylint: disable-all
-
 import random
 import time
 
@@ -20,15 +19,24 @@ def random_node(graph):
 average_speed = None
 
 
+dp = {}
+
+
 def heuristic(node, target_node) -> float:
     """ Minutes to travel from node to target node """
-    return GeoUtils.calculate_time(node.location,
-                                   target_node.location, average_speed).minutes
+    if dp.get(node.id, False):
+        return dp.get(node.id)
+
+    dp[node.id] = GeoUtils.calculate_time(node.location,
+                                          target_node.location, average_speed).minutes
+    return dp[node.id]
 
 
 def run_test(map: Map, place: str):
     global average_speed
+    global dp
     map.load_place(place)
+    dp = {}
     graph = map._graph
     average_speed = map._average_speed
 
@@ -51,7 +59,7 @@ def run_test(map: Map, place: str):
 
 
 if __name__ == "__main__":
-    configure_logging(False)
+    configure_logging(True)
     map = Map()
 
     # Tests in Paloheinä (small)

@@ -2,10 +2,11 @@
 import logging
 from typing import Callable
 from soteriareitti.classes.graph import Graph, Node, Edge, Path
-from soteriareitti.utils.graph import GraphUtils
 
 
 class IdaStar:
+    min_cost = {}
+
     @staticmethod
     def get_shortest_path(graph: Graph, heuristic: Callable[[Node, Node], float],
                           source: Node, target: Node, delta: float = 0) -> Path | None:
@@ -24,12 +25,12 @@ class IdaStar:
 
         logging.debug("IDA* shortest path search started")
         limit = heuristic(source, target)
-        previous = {}
+        IdaStar.min_cost.clear()
+        path = Path.from_nodes([source])
 
         while True:
-            threshold = IdaStar.search(graph, heuristic, previous, source, target, limit)
+            threshold = IdaStar.search(graph, heuristic, path, target, limit, delta/10000)
             if threshold < 0:
-                path = GraphUtils.reconstruct_path(previous, source, target).reverse()
                 logging.debug("Found IDA* shortest path: %s", path)
                 return path
             if threshold == float("inf"):
@@ -38,29 +39,43 @@ class IdaStar:
 
     @staticmethod
     def search(graph: Graph, heuristic: Callable[[Node, Node], float],
-               previous: dict[str, Edge], source: Node, target: Node, limit: float) -> float:
+               path: Path, target: Node, limit: float, delta: float) -> float:
         """ IDA* search method. Uses iterative depth-first search """
-        min_cost = float("inf")
-        stack = [source]
-        previous.clear()
-        previous[source.id] = Edge(source, source, 0)
-        cost = {}
-        cost[source.id] = 0
+
+        stack = [(Edge(path.last, path.last, 0), 0)]
+        min_threshold = float("inf")
+        path.pop()
 
         while stack:
-            node = stack.pop()
-            threshold = cost[node.id] + heuristic(node, target)
+            edge, depth = stack.pop()
+            path.add_node(edge.target, edge.cost)
+            node = path.last
 
-            if node.id == target.id:
-                return -1
-            if threshold > limit:
-                min_cost = min(min_cost, threshold)
+            f_value = path.cost + heuristic(node, target)
+            if f_value > limit:
+                min_threshold = min(min_threshold, f_value)
+                for _ in range(depth):
+                    path.pop()
                 continue
 
-            for edge in graph.edges[node.id]:
-                if cost[node.id]+edge.cost < cost.get(edge.target.id, float("inf")):
-                    previous[edge.target.id] = edge
-                    cost[edge.target.id] = cost[node.id]+edge.cost
-                    stack.append(edge.target)
+            if node == target:
+                return -1
 
-        return min_cost
+            if path.cost-delta > IdaStar.min_cost.get(node.id, float("inf")):
+                for _ in range(depth):
+                    path.pop()
+                continue
+
+            IdaStar.min_cost[node.id] = path.cost
+
+            if len(graph.edges[node.id]) == 0:
+                for _ in range(depth):
+                    path.pop()
+                continue
+
+            successors = sorted(graph.edges[node.id], key=lambda e: -heuristic(e.target, target))
+            for index, edge in enumerate(successors):
+                next_depth = depth + 1 if index == 0 else 1
+                stack.append((edge, next_depth))
+
+        return min_threshold
