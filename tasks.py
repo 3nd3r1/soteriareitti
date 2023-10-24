@@ -60,3 +60,12 @@ def lint(ctx):
         value_suffix='/10'
     )
     badge.write_badge('./docs/images/pylint-badge.svg', overwrite=True)
+
+
+@task
+def build(ctx):
+    ctx.run("rm -rf dist/soteriareitti/")
+    ctx.run("""pyinstaller soteriareitti/main.py -n SoteriaReitti -w
+             --icon=soteriareitti/resources/icon.ico""")
+    ctx.run("cp -r resources dist/soteriareitti/_internal")
+    ctx.run("cp .env dist/soteriareitti/")

@@ -11,7 +11,7 @@ except FileNotFoundError:
 
 
 class Settings:
-    app_place = os.getenv("APP_PLACE", "Töölö")
+    app_place = os.getenv("APP_PLACE", "Helsinki")
 
     # Cache
     caching = os.getenv("CACHING", "True") == "True"

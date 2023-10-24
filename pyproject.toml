@@ -6,7 +6,7 @@ authors = ["3nd3r1 <ender.spam.guru@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = ">=3.10,<3.13"
 overpy = "^0.6"
 invoke = "^2.2.0"
 tkintermapview = "^1.29"
@@ -21,6 +21,7 @@ pytest = "^7.4.2"
 coverage = "^7.3.1"
 coverage-badge = "^1.1.0"
 anybadge = "^1.14.0"
+pyinstaller = "^6.1.0"
 
 [build-system]
 requires = ["poetry-core"]

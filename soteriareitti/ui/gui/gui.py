@@ -6,6 +6,7 @@ from soteriareitti.ui.gui.mapview import MapView
 from soteriareitti.ui.gui.sidebar import Sidebar
 
 from soteriareitti.utils.settings import Settings
+from soteriareitti.utils.file_reader import get_resources
 
 from soteriareitti import SoteriaReitti
 
@@ -32,6 +33,7 @@ class Gui(customtkinter.CTk):
 
     APP_TITLE = "SoteriaReitti"
     APP_PLACE = Settings.app_place
+    APP_ICON = "icon.ico"
     WIDTH = 1280
     HEIGHT = 720
 
@@ -41,6 +43,7 @@ class Gui(customtkinter.CTk):
         self.title(Gui.APP_TITLE)
         self.geometry(f"{Gui.WIDTH}x{Gui.HEIGHT}")
         self.minsize(Gui.WIDTH, Gui.HEIGHT)
+        self.iconbitmap(get_resources(Gui.APP_ICON))
 
         self.protocol("WM_DELETE_WINDOW", self.__on_closing)
         self.bind("<Command-q>", self.__on_closing)
