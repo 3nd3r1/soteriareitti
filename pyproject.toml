@@ -22,6 +22,7 @@ coverage = "^7.3.1"
 coverage-badge = "^1.1.0"
 anybadge = "^1.14.0"
 pyinstaller = "^6.1.0"
+xlsxwriter = "^3.1.9"
 
 [build-system]
 requires = ["poetry-core"]

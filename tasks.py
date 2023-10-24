@@ -31,6 +31,14 @@ def benchmark(ctx):
 
 
 @task
+def benchmark_excel(ctx):
+    if sys.platform.startswith("win"):
+        ctx.run("py tests/benchmark_excel.py")
+    else:
+        ctx.run("python tests/benchmark_excel.py")
+
+
+@task
 def test(ctx):
     ctx.run("pytest .")
 
