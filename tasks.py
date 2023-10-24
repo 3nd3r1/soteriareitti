@@ -66,6 +66,6 @@ def lint(ctx):
 def build(ctx):
     ctx.run("rm -rf dist/soteriareitti/")
     ctx.run("""pyinstaller soteriareitti/main.py -n SoteriaReitti -w
-             --icon=soteriareitti/resources/icon.ico""")
+             --icon=resources/icon.ico""")
     ctx.run("cp -r resources dist/soteriareitti/_internal")
     ctx.run("cp .env dist/soteriareitti/")
