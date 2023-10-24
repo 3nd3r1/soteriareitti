@@ -1,4 +1,5 @@
 # pylint: disable-all
+import os
 import xlsxwriter
 import random
 import time
@@ -55,32 +56,28 @@ def run_test(map: Map, place: str):
     time_dijkstra = time.time()-time_before
 
     if path_ida and path_dijkstra:
-        ida_results.append([len(path_ida), time_ida, path_ida.cost])
-        dijkstra_results.append([len(path_dijkstra), time_dijkstra, path_dijkstra.cost])
+        ida_results.append([path_ida.cost, time_ida])
+        dijkstra_results.append([path_dijkstra.cost, time_dijkstra])
 
 
 if __name__ == "__main__":
     configure_logging(True)
     map = Map()
 
-    for _ in range(20):
-        # Tests in Paloheinä (small)
-        run_test(map, "Paloheinä")
-
-        # Tests in Töölö (small)
-        run_test(map, "Töölö")
-
-        # Tests in Helsinki (large)
+    for _ in range(100):
         run_test(map, "Helsinki")
+
+    if os.path.exists(get_data("benchmark.xlsx")):
+        os.remove(get_data("benchmark.xlsx"))
 
     workbook = xlsxwriter.Workbook(get_data("benchmark.xlsx"))
     worksheet = workbook.add_worksheet()
     for row_num, row_data in enumerate(ida_results):
         worksheet.write(row_num, 0, row_data[0])
         worksheet.write(row_num, 1, row_data[1])
-        worksheet.write(row_num, 2, row_data[2])
+
     for row_num, row_data in enumerate(dijkstra_results):
-        worksheet.write(row_num, 4, row_data[0])
-        worksheet.write(row_num, 5, row_data[1])
-        worksheet.write(row_num, 6, row_data[2])
+        worksheet.write(row_num, 3, row_data[0])
+        worksheet.write(row_num, 4, row_data[1])
+
     workbook.close()

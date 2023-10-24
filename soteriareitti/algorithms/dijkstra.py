@@ -11,14 +11,14 @@ class Dijkstra:
     def get_shortest_path(graph: Graph, source: Node, target: Node) -> Path | None:
         """ Use Dijkstra's algorithm to find shortest path from source to target """
         logging.debug("Dijkstra's shortest path search started")
-        previous = Dijkstra.get_data(graph, source)
+        previous = Dijkstra.get_data(graph, source, target)
         path = GraphUtils.reconstruct_path(previous, source, target)
         if path:
             return path.reverse()
         return None
 
     @staticmethod
-    def get_data(graph: Graph, source: Node) -> dict[str, Edge]:
+    def get_data(graph: Graph, source: Node, target: Node | None = None) -> dict[str, Edge]:
         """
         Dijkstra's algorithm
         https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm 
@@ -45,6 +45,9 @@ class Dijkstra:
 
         while not queue.empty():
             u_node = queue.get()[1]
+
+            if target and u_node.id == target.id:
+                break
 
             if visited.get(u_node.id, False):
                 continue
