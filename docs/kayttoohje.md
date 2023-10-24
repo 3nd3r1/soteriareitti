@@ -21,13 +21,26 @@ Muista, että .env-tiedosto on herkkä tiedosto, ja siinä ei tulisi olla ylimä
 
 ## Sovelluksen Käynnistäminen:
 
-1. Asenna Riippuvuudet:
-   Ennen kuin aloitat, varmista, että olet asentanut sovelluksen riippuvuudet komennolla `poetry install`.
+Lataa ensin projektin uusin release [täältä](https://github.com/3nd3r1/soteriareitti/releases).
 
-2. Käynnistä Sovellus:
-   Käynnistä sovellus komennolla `poetry run invoke start`.
+### Käynnistäminen lähdekoodista
+1. Navigoi juuri-hakemistoon komennolla 
 
-**HUOM**: Jos olet konfiguroinnut sovelluksen paikaksi suuren alueen kuten `Helsinki`, sovelluksen käynnistämisessä voi kestää hetken (noin 30 sekunttia).
+    `cd soteriareitti`
+
+2. Ennen kuin aloitat, varmista, että olet asentanut sovelluksen riippuvuudet komennolla 
+
+    `poetry install`.
+
+3. Käynnistä sovellus komennolla 
+
+    `poetry run invoke start`.
+
+### Käynnistäminen zip-tiedostosta (Vain Windows)
+
+1. Kun lataus on vlamis, pura ladattu zip-tiedosto koneellesi.
+2. Käynnistä SoteriaReitti suorittamalla tiedosto *SoteriaReitti.exe*
+
 
 ## Vastausyksiköt ja Asemat
 
