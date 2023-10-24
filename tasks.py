@@ -65,7 +65,6 @@ def lint(ctx):
 @task
 def build(ctx):
     ctx.run("rm -rf dist/soteriareitti/")
-    ctx.run("""pyinstaller soteriareitti/main.py -n SoteriaReitti -w
-             --icon=resources/icon.ico""")
+    ctx.run("pyinstaller soteriareitti/main.py -n SoteriaReitti -w --icon=resources/icon.ico")  # pylint: disable=line-too-long
     ctx.run("cp -r resources dist/soteriareitti/_internal")
     ctx.run("cp .env dist/soteriareitti/")
