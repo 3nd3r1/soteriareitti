@@ -1,4 +1,4 @@
-# SoteriaReitti
+# ![Logo](/docs/images/logo.svg)
 
 [![Coverage Report](/docs/images/coverage.svg "Coverage Badge")](https://htmlpreview.github.io/?https://github.com/3nd3r1/soteriareitti/blob/main/docs/coverage/index.html)
 ![PyLint Score](/docs/images/pylint-badge.svg)
