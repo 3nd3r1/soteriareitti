@@ -19,17 +19,10 @@ def random_node(graph):
 average_speed = None
 
 
-dp = {}
-
-
 def heuristic(node, target_node) -> float:
     """ Minutes to travel from node to target node """
-    if dp.get(node.id, False):
-        return dp.get(node.id)
-
-    dp[node.id] = GeoUtils.calculate_time(node.location,
-                                          target_node.location, average_speed).minutes
-    return dp[node.id]
+    return GeoUtils.calculate_time(node.location,
+                                   target_node.location, average_speed).minutes
 
 
 def run_test(map: Map, place: str):
@@ -51,10 +44,10 @@ def run_test(map: Map, place: str):
     path_dijkstra = Dijkstra.get_shortest_path(graph, source, target)
     time_dijkstra = time.time()-time_before
 
-    print(f"Benchmarks were ran on graph: {graph}")
+    print(f"Benchmarks were ran in {place} ({graph})")
     print(f"AVG speed: {average_speed}")
     print(f"IDA* algorithm took {time_ida} s to find path: {path_ida}")
-    print(f"Dijkstras algorithm took {time_dijkstra} s to find path: {path_dijkstra}")
+    print(f"Dijkstra's algorithm took {time_dijkstra} s to find path: {path_dijkstra}")
     print("")
 
 
@@ -62,11 +55,14 @@ if __name__ == "__main__":
     configure_logging(True)
     map = Map()
 
-    # Tests in Paloheinä (small)
-    run_test(map, "Paloheinä")
+    # Tests in Sipoo (small)
+    run_test(map, "Sipoo")
 
-    # Tests in Töölö (small)
-    run_test(map, "Töölö")
+    # Tests in Kirkkonummi (medium)
+    run_test(map, "Kirkkonummi")
+
+    # Tests in Espoo (semi-large)
+    run_test(map, "Espoo")
 
     # Tests in Helsinki (large)
     run_test(map, "Helsinki")

@@ -2,7 +2,7 @@
 
 Ohjelmaa on testattu perusteellisesti automatisoiduilla suorituskyky- ja yksikkötesteillä sekä manuaalisilla järjestelmä- ja käyttöliittymätesteillä. Tämä on varmistanut SoteriaReitti-sovelluksen vakaan ja virheettömän toiminnan erilaisissa tilanteissa ja käyttöympäristöissä.
 
-Päivitetty 06.10.2023
+Päivitetty 24.10.2023
 
 ## Yksikkötestit
 
@@ -52,30 +52,40 @@ Suorituskykytestauksen avulla voidaan myös verrata kahden algoritmin toimintaa.
 
 Suorituskykytestaus suoritetaan seuraavasti:
 
-- Verkon Luominen: Ensin luodaan kartta kyseisessä sijainnissa, joka toimii testiympäristönä.
+1. Verkon Luominen: Ensin luodaan kartta kyseisessä sijainnissa, joka toimii testiympäristönä.
 
-- Satunnaiset Solmut: Valitaan satunnaisesti kaksi solmua verkosta, jotka edustavat lähtö- ja saapumispaikkaa reitille.
+2. Satunnaiset Solmut: Valitaan satunnaisesti kaksi solmua verkosta, jotka edustavat lähtö- ja saapumispaikkaa reitille.
 
-- Reitin Laskenta: Sekä IDA*- että Dijkstran algoritmit laskevat lyhimmän reitin näiden kahden solmun välillä.
+3. Reitin Laskenta: Sekä IDA*- että Dijkstran algoritmit laskevat lyhimmän reitin näiden kahden solmun välillä.
 
-- Vertailu ja Analyysi: Suorituskykyä verrataan näiden kahden algoritmin välillä, ja tuloksia analysoidaan tarkasti. 
+4. Vertailu ja Analyysi: Suorituskykyä verrataan näiden kahden algoritmin välillä, ja tuloksia analysoidaan tarkasti. 
 
 Suorituskykytestaus suoritetaan kolmessa eri sijainnissa:
 
-- Paloheinä (Pieni)
+- Sipoo (37690 solmua)
 
-- Töölö (Keskikokoinen)
+- Kirkkonummi (65489 solmua)
 
-- Helsinki (Suuri)
+- Espoo (131369 solmua)
 
-_Huomio_: Testit voivat kestää suhteellisen kauan, jos sijainteja ei ole valmiiksi tallennettu kovamuistiin (ensimmäinen suorituskerta). 
-Tämä kuitenkin huomioidaan aika mittauksissa.
+- Helsinki (146464 solmua)
 
-Suorituskykytestauksen voi suorittaa seuraavasti:
+### Suorituskykytestauksen suoritus
 
 1. Siirry projektin juureen.
 2. Lataa projektin riippuvuudet komennolla: `poetry install`
 3. Suorita testit komennolla: `poetry run invoke benchmark`
+
+### Johtopäätökset
+
+#### Suorituskykytestaus Helsingissä
+
+![Benchmark Lines](./images/benchmark-result.png)
+
+- IDA* -> <font color="#FFAB40">Keltainen</font>
+- Dijkstra -> <font color="#999999">Harmaa</font>
+
+Tuloksista voidaan havaita, että IDA* ja Dijkstra-algoritmit ovat suunnilleen yhtä nopeita pienissä reiteissä, jotka kestävät noin 9 minuuttia tai vähemmän. Kuitenkin kun reitin kesto ylittää 9 minuuttia, IDA* alkaa vaatia merkittävästi enemmän aikaa verrattuna Dijkstraan. Dijkstran suoritusaika pysyy melko vakiona suuremmillakin reiteillä, kun taas IDA*:n suoritusaika kasvaa nopeasti suurten reittien pituuden myötä.
 
 ## Järjestelmätestaus
 
