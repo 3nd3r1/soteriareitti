@@ -1,12 +1,14 @@
 """ soteriareitti/ui/gui/sidebar.py """
 import logging
 from typing import TYPE_CHECKING
+from PIL import Image
 import customtkinter
 
 from soteriareitti.core.emergency import EmergencyType, ResponderNotFound
 from soteriareitti.core.responder import ResponderType
 
 from soteriareitti.classes.geo import Location
+from soteriareitti.utils.file_reader import get_resources
 
 if TYPE_CHECKING:
     from soteriareitti.ui.gui.gui import Gui
@@ -15,7 +17,6 @@ if TYPE_CHECKING:
 class Sidebar(customtkinter.CTkFrame):
     WIDTH = 325
     labels = [
-        ("SoteriaReitti", 32, 0, 0, "w", 5, 5),
         ("New Emergency:", 24, 1, 0, "w", 5, 5),
         ("Location:", 16, 2, 0, "w", 5, 5),
         ("Type:", 16, 4, 0, "w", 5, 5),
@@ -36,6 +37,12 @@ class Sidebar(customtkinter.CTkFrame):
 
     def __create_widgets(self):
         self.grid_rowconfigure(11, weight=1)
+        # Logo
+        logo_image = customtkinter.CTkImage(dark_image=Image.open(
+            get_resources("logo.png")), size=(250, 65))
+        customtkinter.CTkLabel(self, image=logo_image, text="", width=Sidebar.WIDTH).grid(
+            row=0, column=0, sticky="w", padx=5, pady=5)
+
         # Labels
         for label in Sidebar.labels:
             customtkinter.CTkLabel(self, text=label[0], font=("Ubuntu", label[1])).grid(
