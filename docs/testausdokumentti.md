@@ -21,6 +21,9 @@ Yksikkötestit voidaan suorittaa seuraavasti:
 3. Suorita testit komennolla:
    `poetry run invoke test`
 
+### App
+_SoteriaReitti_-luokan eli sovelluksen pääluokan toiminnallisuutta on testattu _TestSoteriaReitti_-luokan avulla. Luokka testaa, että kaikki ohjelman pienemmät komponentit toimivat yhdessä oikein pääluokan tasolla.
+
 ### Map
 _Map_-luokan toiminnallisuutta on testattu _TestMap_-luokan avulla, joka sisältää useita testejä. Näissä testeissä tarkastellaan muun muassa verkon luontia ja verkon lataamista välimuistista.
 

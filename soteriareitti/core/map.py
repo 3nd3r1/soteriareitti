@@ -227,3 +227,7 @@ class Map:
     @property
     def bounding_box(self) -> list[float, float, float, float]:
         return self._bounding_box
+
+    @property
+    def place(self) -> str | None:
+        return self._place
