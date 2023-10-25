@@ -34,7 +34,7 @@ class Location:
         if isinstance(other, Location):
             return self.longitude == other.longitude and self.latitude == other.latitude
         if isinstance(other, tuple):
-            return self.longitude == other[0] and self.latitude == other[1]
+            return self.longitude == other[1] and self.latitude == other[0]
         return False
 
     def as_tuple(self) -> tuple[float, float]:
