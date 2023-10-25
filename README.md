@@ -11,20 +11,20 @@ Uusin release: [v0.1.0-beta](https://github.com/3nd3r1/soteriareitti/releases/ta
 
 ## Screenshot
 
-![SoteriaReitti](./docs/images/preview.png)
+![SoteriaReitti](/docs/images/preview.png)
 
 ## Dokumentaatio
 
--   [Käyttöohje](./docs/kayttoohje.md)
--   [Määrittelydokumentti](./docs/maarittelydokumentti.md)
--   [Toteutusdokumentti](./docs/toteutusdokumentti.md)
--   [Testausdokumentti](./docs/testausdokumentti.md)
+-   [Käyttöohje](/docs/fi/kayttoohje.md)
+-   [Määrittelydokumentti](/docs/fi/maarittelydokumentti.md)
+-   [Toteutusdokumentti](/docs/fi/toteutusdokumentti.md)
+-   [Testausdokumentti](/docs/fi/testausdokumentti.md)
 
 ### Viikkoraportit
 
--   [Viikkoraportti #1](./docs/viikkoraportti_1.md)
--   [Viikkoraportti #2](./docs/viikkoraportti_2.md)
--   [Viikkoraportti #3](./docs/viikkoraportti_3.md)
--   [Viikkoraportti #4](./docs/viikkoraportti_4.md)
--   [Viikkoraportti #5](./docs/viikkoraportti_5.md)
--   [Viikkoraportti #6](./docs/viikkoraportti_6.md)
+-   [Viikkoraportti #1](/docs/fi/viikkoraportti_1.md)
+-   [Viikkoraportti #2](/docs/fi/viikkoraportti_2.md)
+-   [Viikkoraportti #3](/docs/fi/viikkoraportti_3.md)
+-   [Viikkoraportti #4](/docs/fi/viikkoraportti_4.md)
+-   [Viikkoraportti #5](/docs/fi/viikkoraportti_5.md)
+-   [Viikkoraportti #6](/docs/fi/viikkoraportti_6.md)
