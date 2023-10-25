@@ -5,6 +5,7 @@ import tkintermapview
 
 from soteriareitti.core.responder import ResponderType
 from soteriareitti.core.station import StationType
+from soteriareitti.core.map import InvalidLocation
 
 from soteriareitti.classes.geo import Location
 from soteriareitti.classes.graph import Path
@@ -137,11 +138,18 @@ class MapView(customtkinter.CTkFrame):
         self.master.start_loading()
         responder_type = ResponderType(dialog_input)
 
-        new_responder = self.master.app.create_responder(responder_type, Location(pos[0], pos[1]))
+        try:
+            new_responder = self.master.app.create_responder(
+                responder_type, Location(pos[0], pos[1]))
+        except InvalidLocation:
+            self.master.stop_loading()
+            return
+
         new_marker = self._map_widget.set_marker(pos[0], pos[1], responder_type.value)
         self._responder_markers[new_responder] = new_marker
         self.responder_simulators[new_responder] = ResponderSimulator(
             self.master.app.map, new_responder)
+
         self.master.stop_loading()
 
     def _create_station(self, pos: tuple):
@@ -154,7 +162,12 @@ class MapView(customtkinter.CTkFrame):
         self.master.start_loading()
         station_type = StationType(dialog_input)
 
-        new_station = self.master.app.create_station(station_type, Location(pos[0], pos[1]))
+        try:
+            new_station = self.master.app.create_station(station_type, Location(pos[0], pos[1]))
+        except InvalidLocation:
+            self.master.stop_loading()
+            return
+
         new_marker = self._map_widget.set_marker(pos[0], pos[1], station_type.value,
                                                  marker_color_circle="#0000FF")
 

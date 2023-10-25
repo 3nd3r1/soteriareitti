@@ -13,17 +13,18 @@ if TYPE_CHECKING:
 
 
 class Sidebar(customtkinter.CTkFrame):
+    WIDTH = 325
     labels = [
-        ("SoteriaReitti", 32, 0, 0, 3, "w", 5, 5),
-        ("New Emergency:", 24, 1, 0, 3, "w", 5, 5),
-        ("Location:", 16, 2, 0, 3, "w", 5, 5),
-        ("Type:", 16, 4, 0, 3, "w", 5, 5),
-        ("Description:", 16, 6, 0, 3, "w", 5, 5),
-        ("Responders:", 16, 8, 0, 3, "w", 5, 5),
+        ("SoteriaReitti", 32, 0, 0, "w", 5, 5),
+        ("New Emergency:", 24, 1, 0, "w", 5, 5),
+        ("Location:", 16, 2, 0, "w", 5, 5),
+        ("Type:", 16, 4, 0, "w", 5, 5),
+        ("Description:", 16, 6, 0, "w", 5, 5),
+        ("Responders:", 16, 8, 0, "w", 5, 5),
     ]
 
     def __init__(self, master: "Gui", *args, **kwargs):
-        super().__init__(master=master, width=250, *args, **kwargs)
+        super().__init__(master=master, width=Sidebar.WIDTH, *args, **kwargs)
         self.grid(row=0, column=0, padx=0, pady=0, sticky="nsew")
         self.master: "Gui" = master
         self.em_type = customtkinter.StringVar()
@@ -38,39 +39,43 @@ class Sidebar(customtkinter.CTkFrame):
         # Labels
         for label in Sidebar.labels:
             customtkinter.CTkLabel(self, text=label[0], font=("Ubuntu", label[1])).grid(
-                row=label[2], column=label[3], columnspan=label[4], sticky=label[5],
-                padx=label[6], pady=label[7])
+                row=label[2], column=label[3], sticky=label[4],
+                padx=label[5], pady=label[6])
 
         # Inputs
-        customtkinter.CTkOptionMenu(
-            self, variable=self.em_type, values=[k.value for k in EmergencyType]).grid(
-            row=5, column=0, columnspan=3, sticky="w", padx=5, pady=5)
+        customtkinter.CTkOptionMenu(self, variable=self.em_type,
+                                    values=[k.value for k in EmergencyType],
+                                    width=Sidebar.WIDTH).grid(
+            row=5, column=0, sticky="w", padx=5, pady=5)
         customtkinter.CTkLabel(
             self, textvariable=self.em_location).grid(
-            row=3, column=0, columnspan=3, sticky="w", padx=5, pady=5)
+            row=3, column=0, sticky="w", padx=5, pady=5)
         customtkinter.CTkEntry(
-            self, textvariable=self.em_description, width=200).grid(
-            row=7, column=0, columnspan=3, sticky="w", padx=5, pady=5)
-
-        column = 0
-        for key, value in self.em_responder_types.items():
+            self, textvariable=self.em_description, width=Sidebar.WIDTH).grid(
+            row=7, column=0, sticky="w", padx=5, pady=5)
+        div = customtkinter.CTkFrame(self, width=Sidebar.WIDTH)
+        div.grid(row=9, column=0, sticky="w", padx=5, pady=5)
+        for column, (key, value) in enumerate(self.em_responder_types.items()):
             customtkinter.CTkCheckBox(
-                self, text=key.value, variable=value).grid(
-                row=9, column=column, columnspan=1, sticky="w", padx=5, pady=5)
-            column += 1
+                div, text=key.value, variable=value).grid(
+                row=0, column=column,  sticky="w", padx=5, pady=5)
+
+        # Create button
+        customtkinter.CTkButton(
+            self, text="Create", command=self._create_emergency, width=Sidebar.WIDTH).grid(
+            row=10, column=0, sticky="w", padx=5, pady=5)
+
+        # Clear and simulate responders
+        div = customtkinter.CTkFrame(self, width=Sidebar.WIDTH)
+        div.grid(row=12, column=0, sticky="w", padx=5, pady=5)
 
         customtkinter.CTkButton(
-            self, text="Create", command=self._create_emergency).grid(
-            row=10, column=0, columnspan=3, sticky="w", padx=5, pady=5)
-
-        customtkinter.CTkButton(
-            self, text="Clear", command=self.master.clear).grid(
-            row=12, column=0, columnspan=1, sticky="w", padx=5, pady=5)
-
+            div, text="Clear", command=self.master.clear).grid(
+            row=0, column=0, columnspan=1, sticky="w", padx=5, pady=5)
         customtkinter.CTkSwitch(
-            self, text="Simulate Responders",
+            div, text="Simulate Responders",
             variable=self.master.map_view.simulate_responders).grid(
-            row=12, column=1, columnspan=2, sticky="w", padx=5, pady=5)
+            row=0, column=1, columnspan=2, sticky="w", padx=5, pady=5)
 
     def _create_emergency(self):
         self.master.start_loading()

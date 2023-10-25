@@ -21,6 +21,10 @@ class DeprecatedCache(Exception):
     """ Raised when deprecated cache is loaded """
 
 
+class InvalidLocation(Exception):
+    """ Raised when a location is invalid or outside of the map """
+
+
 class Map:
     """ Map class that contains all the data and methods for the map """
 
@@ -131,14 +135,15 @@ class Map:
 
         logging.debug("Created graph: %s", self._graph)
 
-    def get_closest_node(self, location: Location) -> Node | None:
-        """ Get closest node from a location that is atleast 50 meters close"""
+    def get_closest_node(self, location: Location,
+                         max_distance: Distance = Distance(100)) -> Node | None:
+        """ Get closest node from a location that is atleast `max_distance` close"""
         logging.debug("Getting closest node from %s", location)
 
-        min_distance = Distance(50)
         closest_node = None
+        min_distance = max_distance
 
-        data = self._overpass_api.get_around_data(location, min_distance)
+        data = self._overpass_api.get_around_data(location, max_distance)
         data_nodes: list[overpy.Node] = data.nodes
 
         for node in data_nodes:
@@ -160,6 +165,9 @@ class Map:
 
         return closest_node
 
+    def is_valid_location(self, location: Location) -> bool:
+        return self.get_closest_node(location) is not None
+
     def get_shortest_path(self, source: Location, target: Location) -> Path | None:
         """ Get shortest path from source to target """
         def heuristic(node: Node, target_node: Node) -> float:
@@ -173,8 +181,7 @@ class Map:
         target_node = self.get_closest_node(target)
 
         if not source_node or not target_node:
-            logging.debug("No closest node found at source or target location.")
-            return None
+            raise InvalidLocation(f"{source} or {target} does not have any nodes close enough")
 
         path = IdaStar.get_shortest_path(
             self._graph, heuristic, source_node, target_node, delta=0.1)
@@ -197,7 +204,8 @@ class Map:
         closest_node = self.get_closest_node(location)
 
         if not closest_node:
-            raise ValueError(f"{location} does not have any nodes close enough")
+            logging.error("Invalid location: %s", location)
+            raise InvalidLocation(f"{location} does not have any nodes close enough")
 
         dijkstra_to_data = Dijkstra.get_data(reverse_graph, closest_node)
         dijkstra_from_data = Dijkstra.get_data(self._graph, closest_node)
@@ -214,8 +222,9 @@ class Map:
         node_target = self.get_closest_node(location_target)
 
         if not node_source or not node_target:
-            logging.debug("Source or target node not found")
-            return None
+            logging.error("Invalid location: %s or %s", location_source, location_target)
+            raise InvalidLocation(
+                f"{location_source} or {location_target} does not have any nodes close enough")
 
         path = GraphUtils.reconstruct_path(dijkstra_data, node_source, node_target)
 

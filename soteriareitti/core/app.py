@@ -1,7 +1,7 @@
 """ soteriareitti/core/app.py """
 import logging
 
-from soteriareitti.core.map import Map
+from soteriareitti.core.map import Map, InvalidLocation
 from soteriareitti.core.responder import Responder, ResponderType
 from soteriareitti.core.emergency import Emergency, EmergencyType
 from soteriareitti.core.station import Station, StationType
@@ -34,6 +34,10 @@ class SoteriaReitti:
                          location: Location, description: str) -> Emergency:
         """ Creates an emergency call. """
 
+        if not self.map.is_valid_location(location):
+            logging.error("Invalid location: %s", location)
+            raise InvalidLocation
+
         self.active_emergency = Emergency(emergency_type, responder_types, location, description)
         self.active_emergency.handle(self.responders, self.stations)
 
@@ -42,6 +46,11 @@ class SoteriaReitti:
 
     def create_responder(self, responder_type: ResponderType, location: Location) -> Responder:
         """ Creates a first responder """
+
+        if not self.map.is_valid_location(location):
+            logging.error("Invalid location: %s", location)
+            raise InvalidLocation
+
         new_responder = Responder(self.map, responder_type, location)
         self.responders.append(new_responder)
 
@@ -50,6 +59,11 @@ class SoteriaReitti:
 
     def create_station(self, station_type: StationType, location: Location) -> Station:
         """ Creates a station """
+
+        if not self.map.is_valid_location(location):
+            logging.error("Invalid location: %s", location)
+            raise InvalidLocation
+
         new_station = Station(self.map, station_type, location)
         self.stations.append(new_station)
 
