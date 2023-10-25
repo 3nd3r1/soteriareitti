@@ -51,10 +51,10 @@ Asemat eli **Stationit** ovat paikallaan pysyviä hätätilanteiden vastaajia, k
 ### Miten lisätä vastausyksikkö tai asema:
 
 1.  Lisää vastausyksikkö tai asema kartalle klikkaamalla haluttua sijaintia hiiren **oikealla** painikkeella. Valitse avautuvasta valikosta "Create Responder" tai "Create Station".
-    ![Add Responder or Station](./images/add_responder_1.png)
+    ![Add Responder or Station](/docs/images/add_responder_1.png)
 
 -   Avautuvassa ikkunassa valitse vastausyksikön tai aseman tyyppi, ja vahvista valinta. Responderi tai station ilmestyy kartalle kyseiseen sijaintiin.
-    ![Specify Type](./images/add_responder_2.png)
+    ![Specify Type](/docs/images/add_responder_2.png)
 
 ## Hätätilanteet
 
@@ -64,16 +64,16 @@ Hätätilanne eli **Emergency** kuvaa aktiivista hätätilannetta tietyssä sija
 
 1. Valitse hätätilanteen sijainti kartalta klikkaamalla hiiren **vasemmalla** painikkeella haluamaasi sijaintia kartalla. Hätätilanteen sijainnin tulee olla alueella, joka on määritetty .env-tiedostossa.
 
-![Emergency Location](./images/emergency_1.png)
-![Emergency Location](./images/emergency_2.png)
+![Emergency Location](/docs/images/emergency_1.png)
+![Emergency Location](/docs/images/emergency_2.png)
 
 2. Syötä hätätilanteen tiedot sovelluksen vasemmalla olevaan valikkoon. Tässä vaiheessa voit määrittää, mitä vastausyksiköitä hätätilanteeseen tarvitaan ja lisätä muita olennaisia tietoja.
 
-![Emergency Info](./images/emergency_3.png)
+![Emergency Info](/docs/images/emergency_3.png)
 
 3. Luo hätätilanne klikkaamalla 'Create'. Sovellus näyttää nyt reitin lähimmistä vastausyksiköistä hätätilanteen sijaintiin.
 
-![Emergency Info](./images/emergency_4.png)
+![Emergency Info](/docs/images/emergency_4.png)
 
 Näiden ohjeiden avulla voit hyödyntää SoteriaReitti-sovelluksen tarjoamia reittisuunnittelutoimintoja hätätilanteiden hallinnassa!
 
@@ -85,7 +85,7 @@ Vastausyksiköiden liikettä kartalla voidaan simuloida sovelluksessa. Kun simul
 
 Voit aloittaa simuloinnin napsauttamalla "Simulate Responders" -painiketta sovelluksen vasemmassa valikossa.
 
-![Simulate](./images/simulate.png)
+![Simulate](/docs/images/simulate.png)
 
 ## Tunnettut Virheet
 

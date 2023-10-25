@@ -6,8 +6,8 @@ SoteriaReitti-sovellus on suunniteltu modulaariseksi ja selkeäksi, mikä mahdol
 
 ### Ohjelman rakennetta kuvaava luokka-diagrammi
 
-![Class Diagram](./images/classdiagram-dark.png#gh-dark-mode-only)
-![Class Diagram](./images/classdiagram-light.png#gh-light-mode-only)
+![Class Diagram](/docs/images/classdiagram-dark.png#gh-dark-mode-only)
+![Class Diagram](/docs/images/classdiagram-light.png#gh-light-mode-only)
 
 - SoteriaReitti: Tämä pääluokka hallitsee koko sovellusta. Se sisältää kaikki Responderit, Stationit ja Emergencyt, jotka ovat keskeisiä toimijoita hätätilanteiden hallinnassa.
 

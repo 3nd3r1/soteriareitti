@@ -83,7 +83,7 @@ Suorituskykytestaus suoritetaan kolmessa eri sijainnissa:
 
 #### Suorituskykytestaus Helsingissä
 
-![Benchmark Lines](./images/benchmark-result.png)
+![Benchmark Lines](/docs/images/benchmark-result.png)
 
 - IDA* -> <font color="#FFAB40">Keltainen</font>
 - Dijkstra -> <font color="#999999">Harmaa</font>
