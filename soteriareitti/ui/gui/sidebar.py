@@ -1,19 +1,17 @@
 """ soteriareitti/ui/gui/sidebar.py """
-import logging
 from typing import TYPE_CHECKING
 from PIL import Image
 import customtkinter
 
-from soteriareitti.core.emergency import EmergencyType, ResponderNotFound
-from soteriareitti.core.responder import ResponderType
+from soteriareitti.core.emergency import EmergencyType
 
-from soteriareitti.classes.geo import Location
 from soteriareitti.utils.file_reader import get_resources
 
 if TYPE_CHECKING:
     from soteriareitti.ui.gui.gui import Gui
 
 
+# pylint: disable-next=too-many-ancestors
 class Sidebar(customtkinter.CTkFrame):
     WIDTH = 325
     labels = [
@@ -28,10 +26,6 @@ class Sidebar(customtkinter.CTkFrame):
         super().__init__(master=master, width=Sidebar.WIDTH, *args, **kwargs)
         self.grid(row=0, column=0, padx=0, pady=0, sticky="nsew")
         self.master: "Gui" = master
-        self.em_type = customtkinter.StringVar()
-        self.em_location = customtkinter.StringVar()
-        self.em_description = customtkinter.StringVar()
-        self.em_responder_types = {k: customtkinter.BooleanVar() for k in ResponderType}
 
         self.__create_widgets()
 
@@ -50,26 +44,26 @@ class Sidebar(customtkinter.CTkFrame):
                 padx=label[5], pady=label[6])
 
         # Inputs
-        customtkinter.CTkOptionMenu(self, variable=self.em_type,
+        customtkinter.CTkOptionMenu(self, variable=self.master.em_type,
                                     values=[k.value for k in EmergencyType],
                                     width=Sidebar.WIDTH).grid(
             row=5, column=0, sticky="w", padx=5, pady=5)
         customtkinter.CTkLabel(
-            self, textvariable=self.em_location).grid(
+            self, textvariable=self.master.em_location).grid(
             row=3, column=0, sticky="w", padx=5, pady=5)
         customtkinter.CTkEntry(
-            self, textvariable=self.em_description, width=Sidebar.WIDTH).grid(
+            self, textvariable=self.master.em_description, width=Sidebar.WIDTH).grid(
             row=7, column=0, sticky="w", padx=5, pady=5)
         div = customtkinter.CTkFrame(self, width=Sidebar.WIDTH)
         div.grid(row=9, column=0, sticky="w", padx=5, pady=5)
-        for column, (key, value) in enumerate(self.em_responder_types.items()):
+        for column, (key, value) in enumerate(self.master.em_responder_types.items()):
             customtkinter.CTkCheckBox(
                 div, text=key.value, variable=value).grid(
                 row=0, column=column,  sticky="w", padx=5, pady=5)
 
         # Create button
         customtkinter.CTkButton(
-            self, text="Create", command=self._create_emergency, width=Sidebar.WIDTH).grid(
+            self, text="Create", command=self.master.create_emergency, width=Sidebar.WIDTH).grid(
             row=10, column=0, sticky="w", padx=5, pady=5)
 
         # Clear and simulate responders
@@ -81,38 +75,5 @@ class Sidebar(customtkinter.CTkFrame):
             row=0, column=0, columnspan=1, sticky="w", padx=5, pady=5)
         customtkinter.CTkSwitch(
             div, text="Simulate Responders",
-            variable=self.master.map_view.simulate_responders).grid(
+            variable=self.master.simulate_responders).grid(
             row=0, column=1, columnspan=2, sticky="w", padx=5, pady=5)
-
-    def _create_emergency(self):
-        self.master.start_loading()
-        if not self.em_type.get() or self.em_location.get() == "":
-            logging.error("Emergency type or location not set")
-            self.master.stop_loading()
-            return
-
-        em_type = EmergencyType(self.em_type.get())
-        em_responder_types = [k for k, v in self.em_responder_types.items() if v.get()]
-        em_location = Location.from_str(self.em_location.get())
-        em_description = self.em_description.get()
-
-        try:
-            emergency = self.master.app.create_emergency(
-                em_type, em_responder_types, em_location, em_description)
-        except ResponderNotFound:
-            logging.error("Responders or stations not found!")
-            self.master.stop_loading()
-            return
-
-        self.master.map_view.clear_paths()
-
-        for responder in emergency.responders:
-            path_to_emergency = responder.path_to(emergency.location)
-            self.master.map_view.draw_path(path_to_emergency, "#FF0000")
-            self.master.map_view.responder_simulators[responder].set_path(path_to_emergency)
-
-        for station in emergency.stations_from:
-            path_to_emergency = station.path_to(emergency.location)
-            self.master.map_view.draw_path(path_to_emergency, "#0000FF")
-
-        self.master.stop_loading()

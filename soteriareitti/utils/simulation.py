@@ -38,7 +38,10 @@ class ResponderSimulator:
             random_location = Location(
                 random.uniform(self.__map.bounding_box[0], self.__map.bounding_box[2]),
                 random.uniform(self.__map.bounding_box[1], self.__map.bounding_box[3]))
+            if not self.__map.is_valid_location(random_location):
+                continue
             self._path = self.__map.get_shortest_path(self.responder.location, random_location)
+
         self._current_move = 0
         self._next_move_time = 0
 

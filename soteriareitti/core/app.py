@@ -13,7 +13,7 @@ class SoteriaReitti:
     def __init__(self):
         self.map = Map()
 
-        self.active_emergency = None
+        self.emergencies: list[Emergency] = []
         self.responders: list[Responder] = []
         self.stations: list[Station] = []
 
@@ -27,7 +27,7 @@ class SoteriaReitti:
     def clear(self):
         self.responders.clear()
         self.stations.clear()
-        self.active_emergency = None
+        self.emergencies.clear()
         logging.debug("Cleared all app data")
 
     def create_emergency(self, emergency_type: EmergencyType, responder_types: list[ResponderType],
@@ -38,11 +38,12 @@ class SoteriaReitti:
             logging.error("Invalid location: %s", location)
             raise InvalidLocation
 
-        self.active_emergency = Emergency(emergency_type, responder_types, location, description)
-        self.active_emergency.handle(self.responders, self.stations)
+        new_emergency = Emergency(emergency_type, responder_types, location, description)
+        new_emergency.handle(self.responders, self.stations)
+        self.emergencies.append(new_emergency)
 
-        logging.debug("Created emergency call: %s", self.active_emergency)
-        return self.active_emergency
+        logging.debug("Created emergency call: %s", new_emergency)
+        return new_emergency
 
     def create_responder(self, responder_type: ResponderType, location: Location) -> Responder:
         """ Creates a first responder """
