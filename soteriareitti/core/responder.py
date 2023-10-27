@@ -71,6 +71,9 @@ class Responder(MapPoint):
     @property
     def at_station(self) -> bool:
         """ Returns True if the responder is at a station. """
+        if not self.station:
+            return False
+
         return self.location == self.station.location
 
     @property

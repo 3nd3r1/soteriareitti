@@ -2,7 +2,7 @@
 import time
 import random
 
-from soteriareitti.core.map import MapPoint
+from soteriareitti.core.map import MapPoint, InvalidLocation
 from soteriareitti.core.responder import Responder, ResponderStatus
 
 from soteriareitti.classes.geo import Time, Location
@@ -35,12 +35,19 @@ class ResponderSimulator:
     def _generate_path(self):
         """ Generate a random path to travel """
         while not self._path:
-            random_location = Location(
-                random.uniform(self.__map.bounding_box[0], self.__map.bounding_box[2]),
-                random.uniform(self.__map.bounding_box[1], self.__map.bounding_box[3]))
-            if not self.__map.is_valid_location(random_location):
-                continue
-            self._path = self.__map.get_shortest_path(self.responder.location, random_location)
+            responder_map = self.responder.map
+            while True:
+                try:
+                    random_location = Location(
+                        random.uniform(responder_map.bounding_box[0],
+                                       responder_map.bounding_box[2]),
+                        random.uniform(responder_map.bounding_box[1],
+                                       responder_map.bounding_box[3]))
+                    self._destination = MapPoint(responder_map, random_location, "ida_star")
+                    break
+                except InvalidLocation:
+                    pass
+            self._path = self.responder.path_to(self._destination)
 
         self._current_move = 0
         self._next_move_time = 0
@@ -51,15 +58,20 @@ class ResponderSimulator:
         self.responder.move(self._path.edges[self._current_move].target.location)
         if self._current_move == len(self._path.edges) - 1:
             if self.responder.status == ResponderStatus.DISPATCHED:
+                # If responder has been sent to emergency
                 self.responder.set_status(ResponderStatus.ON_SCENE, None)
-                self._next_move_time = time_now + Time(60).seconds
+                self._next_move_time = time_now + Time(1).seconds
             elif (self.responder.status == ResponderStatus.ON_SCENE and
                   not self._patrolling and self.responder.station):
+                # If responder has been on scene for 1 minute
                 self.responder.set_status(ResponderStatus.AVAILABLE, self.responder.station)
             elif self._patrolling:
+                # If responder is patrolling
                 self._generate_path()
             else:
                 self._destination = None
+                self._current_move = None
+                self._path = None
                 self.responder.set_status(ResponderStatus.AVAILABLE, None)
             return
 
@@ -79,8 +91,3 @@ class ResponderSimulator:
         time_now = time.time()
         if time_now >= self._next_move_time:
             self._handle_move()
-
-    def set_path(self, path: Path):
-        self._current_move = 0
-        self._next_move_time = 0
-        self._path = path

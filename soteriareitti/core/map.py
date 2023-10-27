@@ -48,8 +48,12 @@ class MapPoint:
             raise ValueError(f"Maps are different")
 
         if self.path_algorithm == "dijkstra":
-            return self.map.reconstruct_path(self.location, map_point.location,
+            path = self.map.reconstruct_path(self.location, map_point.location,
                                              self.__dijkstra_data)
+            if path:
+                return path.reverse()
+            return None
+
         if self.path_algorithm == "ida_star":
             return self.map.get_shortest_path(self.location, map_point.location)
 

@@ -94,7 +94,7 @@ class Gui(customtkinter.CTk):
 
     APP_TITLE = "SoteriaReitti"
     APP_PLACE = Settings.app_place
-    APP_ICON = "icon.ico"
+    APP_ICON = "icon.png"
     WIDTH = 1280
     HEIGHT = 720
 
@@ -104,7 +104,7 @@ class Gui(customtkinter.CTk):
         self.title(Gui.APP_TITLE)
         self.geometry(f"{Gui.WIDTH}x{Gui.HEIGHT}")
         self.minsize(Gui.WIDTH, Gui.HEIGHT)
-        self.iconbitmap(get_resources(Gui.APP_ICON))
+        self.iconphoto(False, tkinter.PhotoImage(file=get_resources(Gui.APP_ICON)))
 
         self.protocol("WM_DELETE_WINDOW", self.__on_closing)
         self.bind("<Command-q>", self.__on_closing)
@@ -181,8 +181,7 @@ class Gui(customtkinter.CTk):
             return
 
         self.map_view.set_responder_marker(new_responder)
-        self._simulators[new_responder] = ResponderSimulator(
-            self.app.map, new_responder)
+        self._simulators[new_responder] = ResponderSimulator(new_responder)
 
         self.stop_loading()
 
@@ -231,9 +230,8 @@ class Gui(customtkinter.CTk):
         self.map_view.set_new_emergency_marker(None)
 
         for responder in emergency.responders:
-            path_to_emergency = responder.path_to(emergency.location)
+            path_to_emergency = responder.path_to(emergency)
             self.map_view.draw_path(path_to_emergency)
-            self._simulators[responder].set_path(path_to_emergency)
 
         self.stop_loading()
 

@@ -44,7 +44,7 @@ class SoteriaReitti:
     def create_responder(self, responder_type: ResponderType, location: Location) -> Responder:
         """ Creates a responder """
 
-        new_responder = Responder(self.map, responder_type, location)
+        new_responder = Responder(self.map, location, responder_type)
         self.responders.append(new_responder)
 
         logging.debug("Created responder: %s", new_responder)
@@ -53,7 +53,7 @@ class SoteriaReitti:
     def create_station(self, station_type: StationType, location: Location) -> Station:
         """ Creates a station """
 
-        new_station = Station(self.map, station_type, location)
+        new_station = Station(self.map, location, station_type)
         self.stations.append(new_station)
 
         logging.debug("Created station: %s", new_station)
