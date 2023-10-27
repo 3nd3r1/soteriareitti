@@ -235,10 +235,6 @@ class Gui(customtkinter.CTk):
             self.map_view.draw_path(path_to_emergency)
             self._simulators[responder].set_path(path_to_emergency)
 
-        for station in emergency.stations_from:
-            path_to_emergency = station.path_to(emergency.location)
-            self.map_view.draw_path(path_to_emergency)
-
         self.stop_loading()
 
     def run(self):

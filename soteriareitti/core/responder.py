@@ -2,10 +2,10 @@
 import logging
 from enum import Enum
 
-from soteriareitti.core.map import Map
+from soteriareitti.core.map import Map, MapPoint
+from soteriareitti.core.station import Station
 
 from soteriareitti.classes.geo import Location
-from soteriareitti.classes.graph import Path
 
 
 class ResponderType(Enum):
@@ -14,48 +14,71 @@ class ResponderType(Enum):
     FIRE_TRUCK = "fire_truck"
 
 
-class Responder:
+class ResponderStatus(Enum):
+    AVAILABLE = "available"
+    DISPATCHED = "dispatched"
+    ON_SCENE = "on_scene"
+    OUT_OF_SERVICE = "out_of_service"
+
+
+class Responder(MapPoint):
     """
-    The `Responder` class represents first responders that area used to respond to emergency calls.
+    The `Responder` class represents units that are dispatched to emergency calls.
 
     For example: an ambulance, fire truck or police car.
     """
 
-    def __init__(self, app_map: Map, responder_type: ResponderType, location: Location):
-        self.__map = app_map
+    def __init__(self, app_map: Map, location: Location,
+                 responder_type: ResponderType, station: Station | None = None):
+        super().__init__(app_map, location, path_algorithm="ida_star")
 
-        self.type = responder_type
-        self.location = location
-        self.available = True
+        self.type: ResponderType = responder_type
+        self.station: Station | None = station
 
-        # Store the last path to avoid recalculating it
-        self.__last_path: list[Location | None, Path | None] = [None, None]
+        self._destination: MapPoint | None = None
+        self._status: ResponderStatus = ResponderStatus.AVAILABLE
 
     def __repr__(self) -> str:
         return (f"<soteriareitti.Responder type={self.type} "
-                f"location={self.location} available={self.available}>")
+                f"location={self.location} status={self.status.value}>")
 
-    def path_to(self, location: Location) -> Path | None:
-        """ Returns the path to the given location. """
-        if self.__last_path[0] != location:
-            logging.debug("Calculating path from %s to %s", self.location, location)
-            self.__last_path[0] = location
-            self.__last_path[1] = self.__map.get_shortest_path(self.location, location)
-        else:
-            logging.debug("Using stored path from %s to %s", self.location, location)
+    def set_status(self, status: ResponderStatus, destination: MapPoint | None = None) -> None:
+        """
+        Method for changing the responders status and destination
 
-        return self.__last_path[1]
+         Args: 
+            - status: The status to set the responder to.
+            - destination (optional): The MapPoint to dispatch the responder to.
+        """
+        self._destination = destination
+        self._status = status
 
-    def cost_to(self, location: Location) -> float | None:
-        """ Returns the distance to the given location. """
-        path_to = self.path_to(location)
-        if not path_to:
-            return None
+    def path_to(self, map_point: MapPoint) -> float | None:
+        if self.at_station:
+            return self.station.path_to(map_point)
+        return super().path_to(map_point)
 
-        return path_to.cost
+    def cost_to(self, map_point: MapPoint) -> float | None:
+        if self.at_station:
+            return self.station.cost_to(map_point)
+        return super().cost_to(map_point)
 
     def move(self, location: Location) -> None:
         """ Moves the responder to the given location. """
         logging.debug("Moving responder from %s to %s", self.location, location)
-        self.location = location
-        self.__last_path = [None, None]
+        self.set_location(location)
+
+    @property
+    def at_station(self) -> bool:
+        """ Returns True if the responder is at a station. """
+        return self.location == self.station.location
+
+    @property
+    def status(self) -> ResponderStatus:
+        """ Returns the status of the responder. """
+        return self._status
+
+    @property
+    def destination(self) -> MapPoint | None:
+        """ Returns the destination of the responder. """
+        return self._destination
