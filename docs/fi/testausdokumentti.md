@@ -27,11 +27,7 @@ _SoteriaReitti_-luokan eli sovelluksen pääluokan toiminnallisuutta on testattu
 
 ### Map
 
-_Map_-luokan toiminnallisuutta on testattu _TestMap_-luokan avulla, joka sisältää useita testejä. Näissä testeissä tarkastellaan muun muassa verkon luontia ja verkon lataamista välimuistista.
-
-### MapPoint
-
-_MapPoint_-luokan toimintaa on testattu _TestMapPoint_-luokan avulla. _TestMapPoint_-luokka testaa, että _MapPoint_ löytää oikeat reitit sekä dijkstra, että IDA\* algoritmeilla.
+_Map_-luokan toiminnallisuutta on kattavasti testattu _TestMap_-luokan avulla. Testitulokset käsittävät useita eri osa-alueita, kuten verkon luomisen ja verkon lataamisen välimuistista. _TestMap_-luokka ei ainoastaan tarkista _Map_-luokan perustoiminnot, vaan se myös testaa _MapPoint_-luokan toimivuutta. Erityisesti se varmistaa, että _MapPoint_ löytää oikeat reitit sekä Dijkstran että IDA\* algoritmeilla. Tämä testausprosessi on oleellinen varmistaessa, että kartan luonti, lataaminen ja reitinhaku toimivat tarkoitetulla tavalla eri tilanteissa.
 
 ### Emergency
 
