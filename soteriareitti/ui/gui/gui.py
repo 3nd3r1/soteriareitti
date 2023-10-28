@@ -1,4 +1,5 @@
 """ soteriareitti/ui/gui.py """
+from typing import Any
 import logging
 import tkinter.messagebox
 import customtkinter
@@ -38,7 +39,7 @@ class Loader(customtkinter.CTkFrame):
 
 
 class OptionDialog(customtkinter.CTkToplevel):
-    def __init__(self, title: str, button_text: str, options: list, *args, **kwargs):
+    def __init__(self, title: str, button_text: str, options_list: list, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("500x500")
         self.minsize(500, 500)
@@ -63,30 +64,34 @@ class OptionDialog(customtkinter.CTkToplevel):
 
         self.__title = title
         self.__button_text = button_text
-        self.__options = options
 
-        self.__value = None
-        self.__variable = customtkinter.StringVar(master=self)
+        self.__options_list = options_list
+        self.__values = [None for _ in range(len(options_list))]
+        self.__variables = [customtkinter.StringVar(master=self) for _ in range(len(options_list))]
 
     def __create_widgets(self):
         customtkinter.CTkLabel(self, text=self.__title, font=(
             "Ubuntu", 32)).grid(row=1, column=1, pady=10)
-        customtkinter.CTkOptionMenu(self, variable=self.__variable,
-                                    values=self.__options).grid(row=2, column=1, pady=10)
+
+        for index, options in enumerate(self.__options_list):
+            customtkinter.CTkOptionMenu(self, variable=self.__variables[index],
+                                        values=options).grid(row=2+index, column=1, pady=10)
+
         customtkinter.CTkButton(self, text=self.__button_text,
-                                command=self.__on_submit).grid(row=3, column=1, pady=10)
+                                command=self.__on_submit).grid(
+            row=2+len(self.__options_list), column=1, pady=10)
 
     def __on_submit(self, _event=0):
-        self.__value = self.__variable.get()
+        self.__values = [variable.get() for variable in self.__variables]
         self.__on_closing()
 
     def __on_closing(self, _event=0):
         self.grab_release()
         self.destroy()
 
-    def get_input(self) -> str:
+    def get_input(self) -> Any:
         self.master.wait_window(self)
-        return self.__value
+        return self.__values
 
 
 class Gui(customtkinter.CTk):
@@ -163,18 +168,23 @@ class Gui(customtkinter.CTk):
         self.update()
 
     def create_responder(self, pos: tuple):
-        dialog = OptionDialog("Select Responder Type", "Create", [r.value for r in ResponderType])
+        dialog = OptionDialog("Create new Responder",
+                              "Create", [[r.value for r in ResponderType],
+                                         [station.id for station in self.app.stations]])
         dialog_input = dialog.get_input()
 
-        if not dialog_input:
+        if len(dialog_input) != 2 or not dialog_input[0]:
             return
 
         self.start_loading()
-        responder_type = ResponderType(dialog_input)
+        responder_type = ResponderType(dialog_input[0])
+        station = None
+        if dialog_input[1]:
+            station = [station for station in self.app.stations if station.id == dialog_input[1]][0]
 
         try:
             new_responder = self.app.create_responder(
-                responder_type, Location(pos[0], pos[1]))
+                responder_type, Location(pos[0], pos[1]), station)
         except InvalidLocation:
             self.stop_loading()
             tkinter.messagebox.showerror(title="Error", message="Invalid location")
@@ -186,14 +196,14 @@ class Gui(customtkinter.CTk):
         self.stop_loading()
 
     def create_station(self, pos: tuple):
-        dialog = OptionDialog("Select Staton Type", "Create", [s.value for s in StationType])
+        dialog = OptionDialog("Create new Station", "Create", [[s.value for s in StationType]])
         dialog_input = dialog.get_input()
 
-        if not dialog_input:
+        if len(dialog_input) == 0 or not dialog_input[0]:
             return
 
         self.start_loading()
-        station_type = StationType(dialog_input)
+        station_type = StationType(dialog_input[0])
 
         try:
             new_station = self.app.create_station(station_type, Location(pos[0], pos[1]))

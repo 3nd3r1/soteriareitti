@@ -60,10 +60,10 @@ class ResponderSimulator:
             if self.responder.status == ResponderStatus.DISPATCHED:
                 # If responder has been sent to emergency
                 self.responder.set_status(ResponderStatus.ON_SCENE, None)
-                self._next_move_time = time_now + Time(1).seconds
+                self._next_move_time = time_now + 30
             elif (self.responder.status == ResponderStatus.ON_SCENE and
                   not self._patrolling and self.responder.station):
-                # If responder has been on scene for 1 minute
+                # If responder has been on scene for 30 seconds
                 self.responder.set_status(ResponderStatus.AVAILABLE, self.responder.station)
             elif self._patrolling:
                 # If responder is patrolling

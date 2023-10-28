@@ -23,6 +23,10 @@ class Station(MapPoint):
     def __init__(self, app_map: Map, location: Location, station_type: StationType):
         super().__init__(app_map, location, path_algorithm="dijkstra")
         self.type = station_type
+        self.id: str = station_type.value + str(id(self))
+
+    def __str__(self):
+        return self.id
 
     def __repr__(self):
         return f"<soteriareitti.Station type={self.type} location={self.location}>"

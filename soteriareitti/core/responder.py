@@ -35,7 +35,7 @@ class Responder(MapPoint):
         self.type: ResponderType = responder_type
         self.station: Station | None = station
 
-        self._destination: MapPoint | None = None
+        self._destination: MapPoint | None = station if station and not self.at_station else None
         self._status: ResponderStatus = ResponderStatus.AVAILABLE
 
     def __repr__(self) -> str:
@@ -74,7 +74,7 @@ class Responder(MapPoint):
         if not self.station:
             return False
 
-        return self.location == self.station.location
+        return self.location.rounded(3) == self.station.location.rounded(3)
 
     @property
     def status(self) -> ResponderStatus:

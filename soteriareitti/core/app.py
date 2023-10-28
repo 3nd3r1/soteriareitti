@@ -41,10 +41,11 @@ class SoteriaReitti:
         logging.debug("Created emergency call: %s", new_emergency)
         return new_emergency
 
-    def create_responder(self, responder_type: ResponderType, location: Location) -> Responder:
+    def create_responder(self, responder_type: ResponderType,
+                         location: Location, station: Station | None = None) -> Responder:
         """ Creates a responder """
 
-        new_responder = Responder(self.map, location, responder_type)
+        new_responder = Responder(self.map, location, responder_type, station)
         self.responders.append(new_responder)
 
         logging.debug("Created responder: %s", new_responder)
