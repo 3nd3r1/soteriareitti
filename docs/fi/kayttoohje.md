@@ -24,36 +24,37 @@ Muista, että .env-tiedosto on herkkä tiedosto, ja siinä ei tulisi olla ylimä
 Lataa ensin projektin uusin release [täältä](https://github.com/3nd3r1/soteriareitti/releases).
 
 ### Käynnistäminen lähdekoodista
-1. Navigoi juuri-hakemistoon komennolla 
+
+1. Navigoi juuri-hakemistoon komennolla
 
     `cd soteriareitti`
 
-2. Ennen kuin aloitat, varmista, että olet asentanut sovelluksen riippuvuudet komennolla 
+2. Ennen kuin aloitat, varmista, että olet asentanut sovelluksen riippuvuudet komennolla
 
     `poetry install`.
 
-3. Käynnistä sovellus komennolla 
+3. Käynnistä sovellus komennolla
 
     `poetry run invoke start`.
 
 ### Käynnistäminen zip-tiedostosta (Vain Windows)
 
-1. Kun lataus on vlamis, pura ladattu zip-tiedosto koneellesi.
-2. Käynnistä SoteriaReitti suorittamalla tiedosto *SoteriaReitti.exe*
-
+1. Kun lataus on valmis, pura ladattu zip-tiedosto koneellesi.
+2. Käynnistä SoteriaReitti suorittamalla tiedosto _SoteriaReitti.exe_
 
 ## Vastausyksiköt ja Asemat
 
 Vastausyksiköt eli **Responderit** ovat liikkuvia hätätilanteisiin vastaavia yksiköitä, kuten ambulansseja ja poliisiautoja, jotka voivat reagoida nopeasti ja liikkua paikasta toiseen tarvittaessa.
 
-Asemat eli **Stationit** ovat paikallaan pysyviä hätätilanteiden vastaajia, kuten sairaaloita ja poliisiasemia, jotka eivät liiku vaan pysyvät tietyissä ennalta määrätyissä paikoissa. Tämä staattinen sijoittuminen tekee niistä tärkeitä tukipisteitä hätätilanteiden hallinnassa ja avunsaannissa.
+Asemat eli **Stationit** ovat paikallaan pysyviä hätätilanteiden vastaajia, kuten sairaaloita ja poliisiasemia. Vastausyksiköllä voi olla oma asema, johon se palaa suoritettuaan tehtävän.
 
 ### Miten lisätä vastausyksikkö tai asema:
 
 1.  Lisää vastausyksikkö tai asema kartalle klikkaamalla haluttua sijaintia hiiren **oikealla** painikkeella. Valitse avautuvasta valikosta "Create Responder" tai "Create Station".
     ![Add Responder or Station](/docs/images/add_responder_1.png)
 
--   Avautuvassa ikkunassa valitse vastausyksikön tai aseman tyyppi, ja vahvista valinta. Responderi tai station ilmestyy kartalle kyseiseen sijaintiin.
+-   Avautuvassa ikkunassa valitse haluttu vastausyksikön tai aseman tyyppi. Vastausyksiköille on mahdollista valita myös vapaaehtoisesti oma asema, mikäli sellainen on olemassa. Vahvista valinta, ja vastausyksikkö tai asema näkyy nyt kartalla valitussa sijainnissa.
+
     ![Specify Type](/docs/images/add_responder_2.png)
 
 ## Hätätilanteet
@@ -79,7 +80,7 @@ Näiden ohjeiden avulla voit hyödyntää SoteriaReitti-sovelluksen tarjoamia re
 
 ## Simulointi
 
-Vastausyksiköiden liikettä kartalla voidaan simuloida sovelluksessa. Kun simulointi on käynnistetty, vastausyksiköt alkavat liikkua satunnaisiin sijainteihin kartalla. Jos heidät määrätään vastaamaan hätätilanteeseen, vastausyksiköt alkavat liikkua kohti hätätilanteen sijaintia. Tämä simulointi on tarkoitettu antamaan käyttäjälle käsityksen siitä, miten sovellus toimisi oikeassa tilanteessa.
+Vastausyksiköiden liikettä kartalla voidaan simuloida sovelluksessa. Simuloinnin ollessa käynnissä, vastausyksiköt palaavat omalle asemalleen, mikäli sellainen on määritelty, tai navigoivat hätätilanteeseen, jos heille on annettu sellainen tehtävä. Tämä simulointitoiminto on tarkoitettu antamaan käyttäjälle käsityksen siitä, miten sovellus toimisi oikeassa hätätilanteessa.
 
 ### Miten käynnistää simulointi
 
@@ -89,4 +90,4 @@ Voit aloittaa simuloinnin napsauttamalla "Simulate Responders" -painiketta sovel
 
 ## Tunnettut Virheet
 
--   Vastausyksikön ja hätätilanteen luominen voi kestää jonkin aikaa. Tämä johtuu siitä, että vastausyksiköt käyttävät hitaampaa IDA\*-reititysalgoritmia, mikä voi kestää hetken. Tämän ei kuitenkaan pitäisi yleensä viedä yli minuuttia aikaa. Jos loading-näkymä on ollut näkyvillä yli 3 minuuttia, on todennäköistä, että ohjelmassa on tapahtunut virhe.
+-   Jotkin satunnaiset virheet voivat aiheuttaa sen, että sovellus jää jumiin latausnäkymään. Tällöin sovellus voidaan käynnistää uudelleen, ja ohjelma toimii taas.
