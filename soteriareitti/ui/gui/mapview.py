@@ -70,17 +70,24 @@ class MapView(customtkinter.CTkFrame):
         self.master.em_location.set(str(Location(*pos)))
 
     def set_responder_marker(self, responder: Responder):
-        if responder in self._responder_markers:
-            self._responder_markers[responder].set_position(
-                responder.location.latitude, responder.location.longitude)
+        if self._responder_markers.get(responder):
+            if responder.at_station:
+                self._responder_markers[responder].delete()
+                self._responder_markers[responder] = None
+            else:
+                self._responder_markers[responder].set_position(
+                    responder.location.latitude, responder.location.longitude)
+                self._responder_markers[responder].set_text(
+                    f"{responder.type.value} ({responder.status.value})")
             return
 
-        new_responder_marker = self._map_widget.set_marker(
-            responder.location.latitude, responder.location.longitude,
-            responder.type.value, marker_color_outside="#9BDCEA",
-            marker_color_circle="#68929B")
+        if not responder.at_station:
+            new_responder_marker = self._map_widget.set_marker(
+                responder.location.latitude, responder.location.longitude,
+                f"{responder.type.value} ({responder.status.value})",
+                marker_color_outside="#9BDCEA", marker_color_circle="#68929B")
 
-        self._responder_markers[responder] = new_responder_marker
+            self._responder_markers[responder] = new_responder_marker
 
     def set_station_marker(self, station: Station):
         if station in self._station_markers:
@@ -107,17 +114,19 @@ class MapView(customtkinter.CTkFrame):
         self._emergency_markers[emergency] = new_emergency_marker
 
     def set_new_emergency_marker(self, location: Location | None = None):
-        if not location and self._new_emergency_marker:
-            self._new_emergency_marker.delete()
-            self._new_emergency_marker = None
+        if not location:
+            if self._new_emergency_marker:
+                self._new_emergency_marker.delete()
+                self._new_emergency_marker = None
             return
 
         if self._new_emergency_marker:
             self._new_emergency_marker.set_position(location.latitude, location.longitude)
-        else:
-            self._new_emergency_marker = self._map_widget.set_marker(
-                location.latitude, location.longitude, "New Emergency",
-                marker_color_outside="#FDAC61", marker_color_circle="#B07741")
+            return
+
+        self._new_emergency_marker = self._map_widget.set_marker(
+            location.latitude, location.longitude, "New Emergency",
+            marker_color_outside="#FDAC61", marker_color_circle="#B07741")
 
     def clear_paths(self):
         self._map_widget.delete_all_path()

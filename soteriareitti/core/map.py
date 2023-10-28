@@ -1,4 +1,5 @@
 """ soteriareitti/core/map.py """
+from typing import Literal
 import logging
 import pickle
 import overpy
@@ -23,6 +24,66 @@ class DeprecatedCache(Exception):
 
 class InvalidLocation(Exception):
     """ Raised when a location is invalid or outside of the map """
+
+
+class MapPoint:
+    """ A MapPoint represents a location on the given map """
+
+    def __init__(self, app_map: "Map", location: Location,
+                 path_algorithm: Literal["dijkstra", "ida_star"] = "ida_star"):
+        if not app_map.is_valid_location(location):
+            raise InvalidLocation
+
+        self.map = app_map
+        self._location = location
+
+        self.__dijkstra_data = None
+        if path_algorithm == "dijkstra":
+            self.__dijkstra_data = self.map.get_dijkstra_data(location)
+
+    def path_to(self, map_point: "MapPoint") -> Path | None:
+        """ Returns the path to another map_point if the path exists """
+
+        if map_point.map != self.map:
+            raise ValueError(f"Maps are different")
+
+        if self.path_algorithm == "dijkstra":
+            path = self.map.reconstruct_path(self.location, map_point.location,
+                                             self.__dijkstra_data)
+            if path:
+                return path.reverse()
+            return None
+
+        if self.path_algorithm == "ida_star":
+            return self.map.get_shortest_path(self.location, map_point.location)
+
+        raise ValueError(f"Path algorithm {self.path_algorithm} not recognised")
+
+    def cost_to(self, map_point: "MapPoint") -> float | None:
+        """ Returns the cost to another map_point if the path exists """
+        path_to = self.path_to(map_point)
+        if path_to:
+            return path_to.cost
+        return None
+
+    def set_location(self, location: Location) -> None:
+        """ Changes the location of the map_point"""
+        if not self.map.is_valid_location(location):
+            raise InvalidLocation
+
+        self._location = location
+        if self.path_algorithm == "dijkstra":
+            self.__dijkstra_data = self.map.get_dijkstra_data(location)
+
+    @property
+    def location(self) -> Location:
+        return self._location
+
+    @property
+    def path_algorithm(self) -> Literal["dijkstra", "ida_star"]:
+        if self.__dijkstra_data:
+            return "dijkstra"
+        return "ida_star"
 
 
 class Map:
@@ -135,8 +196,8 @@ class Map:
 
         logging.debug("Created graph: %s", self._graph)
 
-    def get_closest_node(self, location: Location,
-                         max_distance: Distance = Distance(100)) -> Node | None:
+    def _get_closest_node(self, location: Location,
+                          max_distance: Distance = Distance(100)) -> Node | None:
         """ Get closest node from a location that is atleast `max_distance` close"""
         logging.debug("Getting closest node from %s", location)
 
@@ -166,10 +227,10 @@ class Map:
         return closest_node
 
     def is_valid_location(self, location: Location) -> bool:
-        return self.get_closest_node(location) is not None
+        return self._get_closest_node(location) is not None
 
     def get_shortest_path(self, source: Location, target: Location) -> Path | None:
-        """ Get shortest path from source to target """
+        """ Get shortest path from source to target  using IDA* """
         def heuristic(node: Node, target_node: Node) -> float:
             """ Minutes to travel from node to target node """
             return GeoUtils.calculate_time(node.location,
@@ -177,8 +238,8 @@ class Map:
 
         logging.debug("Getting shortest path from %s to %s", source, target)
 
-        source_node = self.get_closest_node(source)
-        target_node = self.get_closest_node(target)
+        source_node = self._get_closest_node(source)
+        target_node = self._get_closest_node(target)
 
         if not source_node or not target_node:
             raise InvalidLocation(f"{source} or {target} does not have any nodes close enough")
@@ -195,31 +256,29 @@ class Map:
 
     def get_dijkstra_data(self, location: Location) -> dict[dict, dict]:
         """ 
-        Generate dijkstra data that contains shortest path
-        from all nodes to location and from location to all nodes 
+        Generate dijkstra data that contains the shortest path
+        from `location` to all nodes of the map
         """
 
         logging.debug("Generating dijkstra data from/to %s", location)
-        reverse_graph = GraphUtils.reverse_graph(self._graph)
-        closest_node = self.get_closest_node(location)
+        closest_node = self._get_closest_node(location)
 
         if not closest_node:
             logging.error("Invalid location: %s", location)
             raise InvalidLocation(f"{location} does not have any nodes close enough")
 
-        dijkstra_to_data = Dijkstra.get_data(reverse_graph, closest_node)
-        dijkstra_from_data = Dijkstra.get_data(self._graph, closest_node)
+        dijkstra_data = Dijkstra.get_data(self._graph, closest_node)
 
         logging.debug("Dijkstra data generated")
-        return {"to": dijkstra_to_data, "from": dijkstra_from_data}
+        return dijkstra_data
 
     def reconstruct_path(self, location_source: Location, location_target: Location,
                          dijkstra_data: dict[str, Edge]) -> Path | None:
         """ Reconstruct path from dijkstra data """
 
         logging.debug("Reconstructing path from %s to %s", location_source, location_target)
-        node_source = self.get_closest_node(location_source)
-        node_target = self.get_closest_node(location_target)
+        node_source = self._get_closest_node(location_source)
+        node_target = self._get_closest_node(location_target)
 
         if not node_source or not node_target:
             logging.error("Invalid location: %s or %s", location_source, location_target)

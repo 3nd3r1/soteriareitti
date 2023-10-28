@@ -22,35 +22,48 @@ Yksikkötestit voidaan suorittaa seuraavasti:
    `poetry run invoke test`
 
 ### App
+
 _SoteriaReitti_-luokan eli sovelluksen pääluokan toiminnallisuutta on testattu _TestSoteriaReitti_-luokan avulla. Luokka testaa, että kaikki ohjelman pienemmät komponentit toimivat yhdessä oikein pääluokan tasolla.
 
 ### Map
+
 _Map_-luokan toiminnallisuutta on testattu _TestMap_-luokan avulla, joka sisältää useita testejä. Näissä testeissä tarkastellaan muun muassa verkon luontia ja verkon lataamista välimuistista.
 
+### MapPoint
+
+_MapPoint_-luokan toimintaa on testattu _TestMapPoint_-luokan avulla. _TestMapPoint_-luokka testaa, että _MapPoint_ löytää oikeat reitit sekä dijkstra, että IDA\* algoritmeilla.
+
 ### Emergency
+
 _Emergency_-luokan toiminnallisuutta on testattu perusteellisesti käyttäen _TestEmergency_-luokkaa. Nämä testit kattavat hätätilanteiden hallinnan, reittien laskennan ja oikean responderin valinnan. Testit varmistavat, että hätätilanteiden reititys ja lähimmän responderin valinta toimivat oikein.
 
 ### Station
-_Station_-luokan (kuten sairaalat ja paloasemat) toimintaa on testattu _TestStation_-luokalla. Testit takaavat, että asemat voidaan lisätä kartalle ja että reittien löytäminen hätätilanteisiin ja niistä pois toimii oikein.
+
+_Station_-luokan (kuten sairaalat ja paloasemat) toimintaa on testattu _TestStation_-luokalla. Testit takaavat, että asemat voidaan lisätä kartalle..
 
 ### Responder
-_Responder_-luokan (kuten ambulanssit ja poliisiautot) toimintaa on testattu _TestResponder_-luokalla. Testit varmistavat, että vastausyksiköt voidaan lisätä kartalle oikein ja että reittien laskenta toimii sujuvasti.
+
+_Responder_-luokan (kuten ambulanssit ja poliisiautot) toimintaa on testattu _TestResponder_-luokalla. Testit varmistavat, että vastausyksiköt voidaan lisätä kartalle oikein.
 
 ### Geo
+
 _geo_-moduulin toimintaa on perusteellisesti testattu _TestGeo_-luokalla. Testitapaukset kattavat kaikki maantieteelliset laskelmat, kuten etäisyyksien laskemisen karttapisteiden välillä ja sijaintien konversion koordinaattimuodoista. Lisäksi testit varmistavat, että geo-moduulin kaikki tietorakenteet, kuten Location ja Distance, toimivat oikein.
 
 ### Graph
-_graph_-moduulin toimintaa on testattu _TestGraph_-luokalla. Testitapaukset varmistavat, että kaikki verkkoon liittyvät toiminnot ja tietorakenteet, kuten _Graph_-luokka ja *get_largest_component*-metodi, toimivat oikein ja tehokkaasti. Testit takaavat, että graph-moduuli vastaa tarkasti tarpeisiimme.
+
+_graph_-moduulin toimintaa on testattu _TestGraph_-luokalla. Testitapaukset varmistavat, että kaikki verkkoon liittyvät toiminnot ja tietorakenteet, kuten _Graph_-luokka ja _get_largest_component_-metodi, toimivat oikein ja tehokkaasti. Testit takaavat, että graph-moduuli vastaa tarkasti tarpeisiimme.
 
 ### Algoritmit
-_IDA*_- ja _Dijkstran_-algoritmien toimintaa on testattu vertaamalla niiden tuottamia tuloksia tiedettyihin pienempiin polkuihin yksinkertaisessa verkossa. Yksikkötestit varmistavat myös, että algoritmit tuottavat tulokset oikeassa muodossa.
+
+_IDA\*_- ja _Dijkstran_-algoritmien toimintaa on testattu vertaamalla niiden tuottamia tuloksia tiedettyihin pienempiin polkuihin yksinkertaisessa verkossa. Yksikkötestit varmistavat myös, että algoritmit tuottavat tulokset oikeassa muodossa.
 
 ### Simulators
+
 _ResponderSimulator_-luokan toimintaa on testattu _TestSimulation_-luokalla. Testit varmistavat, että vastausyksikköjen simulointi toimii oikein.
 
 ## Suorituskykytestaus
 
-Suorituskykytestauksen tarkoituksena on testata IDA\*- ja Dijkstran-algoritmin suorituskykyä eri kokoisissa verkoissa. 
+Suorituskykytestauksen tarkoituksena on testata IDA\*- ja Dijkstran-algoritmin suorituskykyä eri kokoisissa verkoissa.
 Suorituskykytestauksen avulla voidaan myös verrata kahden algoritmin toimintaa.
 
 Suorituskykytestaus suoritetaan seuraavasti:
@@ -59,19 +72,19 @@ Suorituskykytestaus suoritetaan seuraavasti:
 
 2. Satunnaiset Solmut: Valitaan satunnaisesti kaksi solmua verkosta, jotka edustavat lähtö- ja saapumispaikkaa reitille.
 
-3. Reitin Laskenta: Sekä IDA*- että Dijkstran algoritmit laskevat lyhimmän reitin näiden kahden solmun välillä.
+3. Reitin Laskenta: Sekä IDA\*- että Dijkstran algoritmit laskevat lyhimmän reitin näiden kahden solmun välillä.
 
-4. Vertailu ja Analyysi: Suorituskykyä verrataan näiden kahden algoritmin välillä, ja tuloksia analysoidaan tarkasti. 
+4. Vertailu ja Analyysi: Suorituskykyä verrataan näiden kahden algoritmin välillä, ja tuloksia analysoidaan tarkasti.
 
 Suorituskykytestaus suoritetaan kolmessa eri sijainnissa:
 
-- Sipoo (37690 solmua)
+-   Sipoo (37690 solmua)
 
-- Kirkkonummi (65489 solmua)
+-   Kirkkonummi (65489 solmua)
 
-- Espoo (131369 solmua)
+-   Espoo (131369 solmua)
 
-- Helsinki (146464 solmua)
+-   Helsinki (146464 solmua)
 
 ### Suorituskykytestauksen suoritus
 
@@ -85,10 +98,10 @@ Suorituskykytestaus suoritetaan kolmessa eri sijainnissa:
 
 ![Benchmark Lines](/docs/images/benchmark-result.png)
 
-- IDA* -> <font color="#FFAB40">Keltainen</font>
-- Dijkstra -> <font color="#999999">Harmaa</font>
+-   IDA\* -> <font color="#FFAB40">Keltainen</font>
+-   Dijkstra -> <font color="#999999">Harmaa</font>
 
-Tuloksista voidaan havaita, että IDA* ja Dijkstra-algoritmit ovat suunnilleen yhtä nopeita pienissä reiteissä, jotka kestävät noin 9 minuuttia tai vähemmän. Kuitenkin kun reitin kesto ylittää 9 minuuttia, IDA* alkaa vaatia merkittävästi enemmän aikaa verrattuna Dijkstraan. Dijkstran suoritusaika pysyy melko vakiona suuremmillakin reiteillä, kun taas IDA*:n suoritusaika kasvaa nopeasti suurten reittien pituuden myötä.
+Tuloksista voidaan havaita, että IDA* ja Dijkstra-algoritmit ovat suunnilleen yhtä nopeita pienissä reiteissä, jotka kestävät noin 9 minuuttia tai vähemmän. Kuitenkin kun reitin kesto ylittää 9 minuuttia, IDA* alkaa vaatia merkittävästi enemmän aikaa verrattuna Dijkstraan. Dijkstran suoritusaika pysyy melko vakiona suuremmillakin reiteillä, kun taas IDA\*:n suoritusaika kasvaa nopeasti suurten reittien pituuden myötä.
 
 ## Järjestelmätestaus
 

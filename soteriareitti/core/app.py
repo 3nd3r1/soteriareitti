@@ -1,7 +1,7 @@
 """ soteriareitti/core/app.py """
 import logging
 
-from soteriareitti.core.map import Map, InvalidLocation
+from soteriareitti.core.map import Map
 from soteriareitti.core.responder import Responder, ResponderType
 from soteriareitti.core.emergency import Emergency, EmergencyType
 from soteriareitti.core.station import Station, StationType
@@ -34,25 +34,18 @@ class SoteriaReitti:
                          location: Location, description: str) -> Emergency:
         """ Creates an emergency call. """
 
-        if not self.map.is_valid_location(location):
-            logging.error("Invalid location: %s", location)
-            raise InvalidLocation
-
-        new_emergency = Emergency(emergency_type, responder_types, location, description)
-        new_emergency.handle(self.responders, self.stations)
+        new_emergency = Emergency(self.map, location, emergency_type, responder_types, description)
+        new_emergency.handle(self.responders)
         self.emergencies.append(new_emergency)
 
         logging.debug("Created emergency call: %s", new_emergency)
         return new_emergency
 
-    def create_responder(self, responder_type: ResponderType, location: Location) -> Responder:
-        """ Creates a first responder """
+    def create_responder(self, responder_type: ResponderType,
+                         location: Location, station: Station | None = None) -> Responder:
+        """ Creates a responder """
 
-        if not self.map.is_valid_location(location):
-            logging.error("Invalid location: %s", location)
-            raise InvalidLocation
-
-        new_responder = Responder(self.map, responder_type, location)
+        new_responder = Responder(self.map, location, responder_type, station)
         self.responders.append(new_responder)
 
         logging.debug("Created responder: %s", new_responder)
@@ -61,11 +54,7 @@ class SoteriaReitti:
     def create_station(self, station_type: StationType, location: Location) -> Station:
         """ Creates a station """
 
-        if not self.map.is_valid_location(location):
-            logging.error("Invalid location: %s", location)
-            raise InvalidLocation
-
-        new_station = Station(self.map, station_type, location)
+        new_station = Station(self.map, location, station_type)
         self.stations.append(new_station)
 
         logging.debug("Created station: %s", new_station)

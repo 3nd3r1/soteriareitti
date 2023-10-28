@@ -3,7 +3,7 @@ import unittest
 
 from soteriareitti import SoteriaReitti
 
-from soteriareitti.core.responder import Responder, ResponderType
+from soteriareitti.core.responder import Responder, ResponderType, ResponderStatus
 from soteriareitti.core.station import Station, StationType
 from soteriareitti.core.emergency import Emergency, EmergencyType
 from soteriareitti.classes.geo import Location
@@ -16,12 +16,12 @@ class TestSoteriaReitti(unittest.TestCase):
         self.app = SoteriaReitti()
         self.app.load_place("Töölö")
         self.app.emergencies = [
-            Emergency(EmergencyType.FIRE, [ResponderType.AMBULANCE],
-                      Location(60.1781, 24.9170), "Test emergency")]
+            Emergency(self.app.map, Location(60.1781, 24.9170), EmergencyType.FIRE,
+                      [ResponderType.AMBULANCE], "Test emergency")]
         self.app.responders = [
-            Responder(self.app.map, ResponderType.AMBULANCE, Location(60.1783, 24.9170))]
+            Responder(self.app.map, Location(60.1783, 24.9170), ResponderType.AMBULANCE)]
         self.app.stations = [
-            Station(self.app.map, StationType.FIRE_STATION, Location(60.1799, 24.9269))]
+            Station(self.app.map, Location(60.1799, 24.9269), StationType.FIRE_STATION)]
 
     def test_app_constructor(self):
         """ Test the constructor of the SoteriaReitti class """
@@ -45,7 +45,7 @@ class TestSoteriaReitti(unittest.TestCase):
         self.assertEqual(len(self.app.emergencies), 2)
         self.assertEqual(id(self.app.emergencies[-1]), id(test_emergency))
         self.assertEqual(len(test_emergency.responders), 1)
-        self.assertFalse(test_emergency.responders[0].available)
+        self.assertEqual(test_emergency.responders[0].status, ResponderStatus.DISPATCHED)
 
     def test_app_create_responder(self):
         """ Test the create_responder method  """
