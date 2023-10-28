@@ -19,6 +19,7 @@ Uusin release: [v0.1.0-beta](https://github.com/3nd3r1/soteriareitti/releases/ta
 -   [Määrittelydokumentti](/docs/fi/maarittelydokumentti.md)
 -   [Toteutusdokumentti](/docs/fi/toteutusdokumentti.md)
 -   [Testausdokumentti](/docs/fi/testausdokumentti.md)
+-   [Changelog](/docs/fi/changelog.md)
 
 ### Viikkoraportit
 

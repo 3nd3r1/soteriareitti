@@ -2,7 +2,7 @@
 
 Ohjelmaa on testattu perusteellisesti automatisoiduilla suorituskyky- ja yksikkötesteillä sekä manuaalisilla järjestelmä- ja käyttöliittymätesteillä. Tämä on varmistanut SoteriaReitti-sovelluksen vakaan ja virheettömän toiminnan erilaisissa tilanteissa ja käyttöympäristöissä.
 
-Päivitetty 24.10.2023
+Päivitetty 28.10.2023
 
 ## Yksikkötestit
 
