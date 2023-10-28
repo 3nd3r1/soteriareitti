@@ -7,7 +7,7 @@ SoteriaReitti on Pythonilla toteutettava sovellus, joka on suunniteltu hätäty�
 
 Projekti toteutettiin [Tiralabra](https://tiralabra.github.io/2021_p1/index) kurssille Helsingin yliopistossa.
 
-Uusin release: [v0.1.0-beta](https://github.com/3nd3r1/soteriareitti/releases/tag/v0.1.0-beta)
+Uusin release: [v0.2.0-beta - Lopullinen Palautus](https://github.com/3nd3r1/soteriareitti/releases/tag/v0.2.0-beta)
 
 ## Screenshot
 
