@@ -72,7 +72,7 @@ def lint(ctx):
 
 @task
 def build(ctx):
-    ctx.run("rm -rf dist/soteriareitti/")
-    ctx.run("pyinstaller soteriareitti/main.py -n SoteriaReitti -w --icon=resources/icon.ico")  # pylint: disable=line-too-long
-    ctx.run("cp -r resources dist/soteriareitti/_internal")
-    ctx.run("cp .env dist/soteriareitti/")
+    ctx.run("rm -rf dist/SoteriaReitti/")
+    ctx.run("pyinstaller soteriareitti/main.py -n SoteriaReitti -w --icon=resources/icon.ico --hidden-import='PIL._tkinter_finder'")  # pylint: disable=line-too-long
+    ctx.run("cp -r resources dist/SoteriaReitti/_internal")
+    ctx.run("cp .env dist/SoteriaReitti/")

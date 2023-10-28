@@ -37,10 +37,12 @@ Lataa ensin projektin uusin release [täältä](https://github.com/3nd3r1/soteri
 
     `poetry run invoke start`.
 
-### Käynnistäminen zip-tiedostosta (Vain Windows)
+### Käynnistäminen zip-tiedostosta
+
+**HUOM:** Tällä hetkellä zip-tiedostossa on vain suoritettava linuxille. Voit luoda suoritettavan tiedoston windowsille komennolla `poetry run invoke build`, jolloin tiedosto luodaan _dist_-kansioon.
 
 1. Kun lataus on valmis, pura ladattu zip-tiedosto koneellesi.
-2. Käynnistä SoteriaReitti suorittamalla tiedosto _SoteriaReitti.exe_
+2. Käynnistä SoteriaReitti suorittamalla tiedosto _SoteriaReitti.exe_ (windows) tai _SoteriaReitti_ (linux)
 
 ## Vastausyksiköt ja Asemat
 
