@@ -1,4 +1,4 @@
-# Testausdokumentti
+# SoteriaReitti - Testausdokumentti
 
 Ohjelmaa on testattu perusteellisesti automatisoiduilla suorituskyky- ja yksikkötesteillä sekä manuaalisilla järjestelmä- ja käyttöliittymätesteillä. Tämä on varmistanut SoteriaReitti-sovelluksen vakaan ja virheettömän toiminnan erilaisissa tilanteissa ja käyttöympäristöissä.
 
