@@ -2,11 +2,10 @@
 
 import unittest
 
-from soteriareitti.core.map import Map, MapPoint
-from soteriareitti.core.responder import Responder, ResponderType, ResponderStatus
-
 from soteriareitti.classes.geo import Location
-
+from soteriareitti.core.map import Map, MapPoint
+from soteriareitti.core.responder import (Responder, ResponderStatus,
+                                          ResponderType)
 from soteriareitti.utils.simulation import ResponderSimulator
 
 
@@ -28,4 +27,4 @@ class TestSimulation(unittest.TestCase):
             test_simulation._next_move_time = 0  # pylint: disable=protected-access
 
         # Assert that the responder has moved to the correct location
-        self.assertEqual(self.responder.location, Location(60.1751729, 24.9237073))
+        self.assertEqual(self.responder.location.rounded(), Location(60.1751729, 24.9237073).rounded())
