@@ -19,4 +19,4 @@ class Settings:
 
     # OSM
     max_size = None
-    timeout = 30
+    timeout = 120
