@@ -8,14 +8,18 @@ SoteriaReitti is an application implemented in Python, designed for emergency wo
 
 Latest release: [v0.2.0-beta](https://github.com/3nd3r1/soteriareitti/releases/tag/v0.2.0-beta)
 
+## Language
+
+This README.md is available in finnish here: [README_FI.md](./README_FI.md)
+
 ## Screenshot
 
 ![SoteriaReitti](/docs/images/preview.png)
 
 ## Documentation
 
--   [User Guide](/docs/fi/user_guide.md)
--   [Specifications](/docs/fi/specifications.md)
+-   [User Guide](/docs/en/user_guide.md)
+-   [Specifications](/docs/en/specifications.md)
 -   [Implementation](/docs/en/implementation.md)
 -   [Testing](/docs/en/testing.md)
 -   [Changelog](/docs/fi/changelog.md)

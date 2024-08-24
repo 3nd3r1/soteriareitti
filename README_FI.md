@@ -10,6 +10,10 @@ Projekti toteutettiin [Tiralabra](https://tiralabra.github.io/2021_p1/index) kur
 
 Uusin release: [v0.2.0-beta - Lopullinen Palautus](https://github.com/3nd3r1/soteriareitti/releases/tag/v0.2.0-beta)
 
+## Language
+
+Tämä README on saatavilla englanniksi täältä: [README.md](./README.md)
+
 ## Screenshot
 
 ![SoteriaReitti](/docs/images/preview.png)
